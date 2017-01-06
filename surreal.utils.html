@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.utils package &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="index.html"/>
+        <link rel="up" title="surreal package" href="surreal.html"/>
+        <link rel="prev" title="surreal package" href="surreal.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">surreal</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="surreal.html">surreal package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="surreal.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">surreal.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="surreal.html#module-surreal">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">surreal</a> &raquo;</li>
+        
+          <li><a href="surreal.html">surreal package</a> &raquo;</li>
+        
+      <li>surreal.utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/surreal.utils.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="surreal-utils-package">
+<h1>surreal.utils package<a class="headerlink" href="#surreal-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-surreal.utils.common">
+<span id="surreal-utils-common-module"></span><h2>surreal.utils.common module<a class="headerlink" href="#module-surreal.utils.common" title="Permalink to this headline">¶</a></h2>
+<p>Miscellaneous utility functions</p>
+</div>
+<div class="section" id="module-surreal.utils.console">
+<span id="surreal-utils-console-module"></span><h2>surreal.utils.console module<a class="headerlink" href="#module-surreal.utils.console" title="Permalink to this headline">¶</a></h2>
+<p>Console utilities</p>
+<dl class="function">
+<dt id="surreal.utils.console.color_format">
+<code class="descclassname">surreal.utils.console.</code><code class="descname">color_format</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console.html#color_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.color_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colorize a string with special formatting syntax.</p>
+<p>Syntax [color,styles,background]`string to be colorized`
+styles should be represented as single-char shorthands,
+e.g. <code class="docutils literal"><span class="pre">bil</span></code> means bold and italic and blinking text.</p>
+<div class="example admonition" id="index-0">
+<p class="first admonition-title">Example</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>This is [blue]`blue` text with [red,bu]`bold underlined red`
+This is [green,il,yellow]`green italic blinking text on yellow`
+Square bracket[yoyo][magenta,,green]`vanilla magenta text on green`
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.colorize">
+<code class="descclassname">surreal.utils.console.</code><code class="descname">colorize</code><span class="sig-paren">(</span><em>text</em>, <em>color=None</em>, <em>styles=[]</em>, <em>background=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console.html#colorize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.colorize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colorize text display in console.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> (<em>str</em>) &#8211; to be colorized</li>
+<li><strong>color</strong> (<em>str</em>) &#8211; gray, red, green, yellow, blue, magenta, cyan, white</li>
+<li><strong>styles</strong> (<em>list or tuple</em>) &#8211; bold (b), dark (d), italic (i), underline (u),
+blink (l), reverse (r), hidden (h), strikethrough (s)</li>
+<li><strong>background</strong> (<em>str</em>) &#8211; gray, red, green, yellow, blue, magenta, cyan, white</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>str</em> &#8211; colorized string</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Some of the styles and colors might not display in certain terminals.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.cprint">
+<code class="descclassname">surreal.utils.console.</code><code class="descname">cprint</code><span class="sig-paren">(</span><em>text</em>, <em>color=None</em>, <em>styles=[]</em>, <em>background=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console.html#cprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.cprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints colorized text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>color</strong> &#8211; same as <code class="docutils literal"><span class="pre">colorize()</span></code></li>
+<li><strong>styles</strong> &#8211; same as <code class="docutils literal"><span class="pre">colorize()</span></code></li>
+<li><strong>background</strong> &#8211; same as <code class="docutils literal"><span class="pre">colorize()</span></code></li>
+<li><strong>**kwargs</strong> &#8211; kwargs for print()</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.query_yes_no">
+<code class="descclassname">surreal.utils.console.</code><code class="descname">query_yes_no</code><span class="sig-paren">(</span><em>question</em>, <em>default='yes'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console.html#query_yes_no"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.query_yes_no" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask a yes/no question via input() and return their answer.</p>
+<p>&#8220;question&#8221; is a string that is presented to the user.
+&#8220;default&#8221; is the presumed answer if the user just hits &lt;Enter&gt;.
+It must be &#8220;yes&#8221; (the default), &#8220;no&#8221; or None (meaning
+an answer is required of the user).</p>
+<p>The &#8220;answer&#8221; return value is True for &#8220;yes&#8221; or False for &#8220;no&#8221;.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-surreal.utils" title="Permalink to this headline">¶</a></h2>
+<p>Package of utility scripts</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="surreal.html" class="btn btn-neutral" title="surreal package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford RL Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
