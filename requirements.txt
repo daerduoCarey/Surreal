@@ -1,0 +1,7 @@
+PyYAML
+numpy
+gym
+universe
+tabulate
+joblib
+PyPrind
