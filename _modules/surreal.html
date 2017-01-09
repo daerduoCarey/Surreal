@@ -161,15 +161,23 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">    </span>
-<span class="sd">    Put this at the top of a module.</span>
+<span class="sd">      Put this at the top of a module::</span>
 
-<span class="sd">    ::</span>
-<span class="sd">      from surreal import govnc_guard</span>
-<span class="sd">      if govnc_guard():</span>
-<span class="sd">          import go_vncdriver</span>
-<span class="sd">      import tensorflow</span>
+<span class="sd">        from surreal import govnc_guard</span>
+<span class="sd">        if govnc_guard():</span>
+<span class="sd">            import go_vncdriver</span>
+<span class="sd">        import tensorflow</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s1">&#39;go_vncdriver&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span> <span class="ow">and</span> <span class="s1">&#39;tensorflow&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span></div>
+
+
+<span class="c1"># exec(safe_tf_import)</span>
+<span class="n">safe_tf_import</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">import sys</span>
+<span class="s2">if &#39;go_vncdriver&#39; not in sys.modules and &#39;tensorflow&#39; not in sys.modules:</span>
+<span class="s2">    import go_vncdriver</span>
+<span class="s2">import tensorflow as tf</span>
+<span class="s2">&quot;&quot;&quot;</span>
 </pre></div>
 
            </div>
