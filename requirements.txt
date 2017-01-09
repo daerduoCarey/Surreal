@@ -5,3 +5,5 @@ universe
 tabulate
 joblib
 PyPrind
+opencv-python
+https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.11.0-py3-none-any.whl
