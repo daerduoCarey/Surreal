@@ -1,6 +1,9 @@
 from __future__ import print_function
 from collections import namedtuple
 import numpy as np
+from surreal import govnc_guard
+if govnc_guard():
+    import go_vncdriver
 import tensorflow as tf
 from surreal.model.simple import LSTMPolicy
 import queue

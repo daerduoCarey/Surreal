@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-import go_vncdriver
+from surreal import govnc_guard
+if govnc_guard():
+    import go_vncdriver
 import tensorflow as tf
 import argparse
 import logging

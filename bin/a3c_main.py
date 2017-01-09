@@ -1,3 +1,4 @@
+# import go_vncdriver # workaround: go_vncdriver must be imported before TF
 import os
 import argparse
 from surreal.a3c.train import a3c_tmux
