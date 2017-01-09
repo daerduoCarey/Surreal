@@ -57,8 +57,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Surreal'
-copyright = '2017, Stanford RL Group'
-author = 'Stanford RL Group'
+copyright = '2017, Stanford Reinforcement Learning Group'
+author = 'Stanford Reinforcement Learning Group'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -268,7 +268,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Surreal.tex', 'Surreal Documentation',
-     'Stanford RL Group', 'manual'),
+     'Stanford Reinforcement Learning Group', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

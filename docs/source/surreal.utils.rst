@@ -1,6 +1,14 @@
 surreal.utils package
 =====================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    surreal.utils.console
+    surreal.utils.io
+
 Submodules
 ----------
 
@@ -12,10 +20,18 @@ surreal.utils.common module
     :undoc-members:
     :show-inheritance:
 
-surreal.utils.console module
-----------------------------
+surreal.utils.debug module
+--------------------------
 
-.. automodule:: surreal.utils.console
+.. automodule:: surreal.utils.debug
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+surreal.utils.functional module
+-------------------------------
+
+.. automodule:: surreal.utils.functional
     :members:
     :undoc-members:
     :show-inheritance:
