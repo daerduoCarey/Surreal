@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.utils.console package &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="index.html"/>
+        <link rel="up" title="surreal.utils package" href="surreal.utils.html"/>
+        <link rel="next" title="surreal.utils.io package" href="surreal.utils.io.html"/>
+        <link rel="prev" title="surreal.utils package" href="surreal.utils.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">surreal</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="surreal.html">surreal package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="surreal.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="surreal.a3c.html">surreal.a3c package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="surreal.envs.html">surreal.envs package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="surreal.model.html">surreal.model package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="surreal.utils.html">surreal.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="surreal.html#module-surreal">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">surreal</a> &raquo;</li>
+        
+          <li><a href="surreal.html">surreal package</a> &raquo;</li>
+        
+          <li><a href="surreal.utils.html">surreal.utils package</a> &raquo;</li>
+        
+      <li>surreal.utils.console package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/surreal.utils.console.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="surreal-utils-console-package">
+<h1>surreal.utils.console package<a class="headerlink" href="#surreal-utils-console-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-surreal.utils.console.colorize">
+<span id="surreal-utils-console-colorize-module"></span><h2>surreal.utils.console.colorize module<a class="headerlink" href="#module-surreal.utils.console.colorize" title="Permalink to this headline">¶</a></h2>
+<p>Colored output on console.</p>
+<dl class="function">
+<dt id="surreal.utils.console.colorize.color_format">
+<code class="descclassname">surreal.utils.console.colorize.</code><code class="descname">color_format</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/colorize.html#color_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.colorize.color_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colorize a string with special formatting syntax.</p>
+<p>Syntax [color,styles,background]`string to be colorized`
+styles should be represented as single-char shorthands,
+e.g. <code class="docutils literal"><span class="pre">bil</span></code> means bold and italic and blinking text.</p>
+<div class="example admonition" id="index-0">
+<p class="first admonition-title">Example</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>This is [blue]`blue` text with [red,bu]`bold underlined red`
+This is [green,il,yellow]`green italic blinking text on yellow`
+Square bracket[yoyo][magenta,,green]`vanilla magenta text on green`
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.colorize.colorize">
+<code class="descclassname">surreal.utils.console.colorize.</code><code class="descname">colorize</code><span class="sig-paren">(</span><em>text</em>, <em>color=None</em>, <em>styles=[]</em>, <em>background=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/colorize.html#colorize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.colorize.colorize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colorize text display in console.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> (<em>str</em>) &#8211; to be colorized</li>
+<li><strong>color</strong> (<em>str</em>) &#8211; gray, red, green, yellow, blue, magenta, cyan, white</li>
+<li><strong>styles</strong> (<em>list or tuple</em>) &#8211; bold (b), dark (d), italic (i), underline (u),
+blink (l), reverse (r), hidden (h), strikethrough (s)</li>
+<li><strong>background</strong> (<em>str</em>) &#8211; gray, red, green, yellow, blue, magenta, cyan, white</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>str</em> &#8211; colorized string</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Some of the styles and colors might not display in certain terminals.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.colorize.cprint">
+<code class="descclassname">surreal.utils.console.colorize.</code><code class="descname">cprint</code><span class="sig-paren">(</span><em>text</em>, <em>color=None</em>, <em>styles=[]</em>, <em>background=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/colorize.html#cprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.colorize.cprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints colorized text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>color</strong> &#8211; same as <code class="docutils literal"><span class="pre">colorize()</span></code></li>
+<li><strong>styles</strong> &#8211; same as <code class="docutils literal"><span class="pre">colorize()</span></code></li>
+<li><strong>background</strong> &#8211; same as <code class="docutils literal"><span class="pre">colorize()</span></code></li>
+<li><strong>**kwargs</strong> &#8211; kwargs for print()</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.console.process">
+<span id="surreal-utils-console-process-module"></span><h2>surreal.utils.console.process module<a class="headerlink" href="#module-surreal.utils.console.process" title="Permalink to this headline">¶</a></h2>
+<p>Tmux and subprocess</p>
+<dl class="exception">
+<dt id="surreal.utils.console.process.SignalReceived">
+<em class="property">exception </em><code class="descclassname">surreal.utils.console.process.</code><code class="descname">SignalReceived</code><a class="reference internal" href="_modules/surreal/utils/console/process.html#SignalReceived"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.process.SignalReceived" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></p>
+<p>Raised when any signal received
+.signum: value of the signal, symbolic
+.signame: name of the signal, string</p>
+<dl class="attribute">
+<dt id="surreal.utils.console.process.SignalReceived.signame">
+<code class="descname">signame</code><em class="property"> = ''</em><a class="headerlink" href="#surreal.utils.console.process.SignalReceived.signame" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="surreal.utils.console.process.SignalReceived.signum">
+<code class="descname">signum</code><em class="property"> = -1</em><a class="headerlink" href="#surreal.utils.console.process.SignalReceived.signum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.process.bash">
+<code class="descclassname">surreal.utils.console.process.</code><code class="descname">bash</code><span class="sig-paren">(</span><em>cmd</em>, <em>env=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/process.html#bash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.process.bash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exactly simulate os.system()</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.process.kill">
+<code class="descclassname">surreal.utils.console.process.</code><code class="descname">kill</code><span class="sig-paren">(</span><em>pid</em>, <em>signal='INT'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/process.html#kill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.process.kill" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.process.new_tmux_cmd">
+<code class="descclassname">surreal.utils.console.process.</code><code class="descname">new_tmux_cmd</code><span class="sig-paren">(</span><em>session</em>, <em>name</em>, <em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/process.html#new_tmux_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.process.new_tmux_cmd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.process.nohup">
+<code class="descclassname">surreal.utils.console.process.</code><code class="descname">nohup</code><span class="sig-paren">(</span><em>cmd</em>, <em>stdout_log=None</em>, <em>stderr_log=None</em>, <em>append_out=False</em>, <em>append_err=False</em>, <em>join_out_err=False</em>, <em>verbose=True</em>, <em>dryrun=False</em>, <em>env=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/process.html#nohup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.process.nohup" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>join_out_err</strong> &#8211; True: &gt; stdout_log 2&gt;&amp;1 and ignore stderr_log</li>
+<li><strong>env</strong> &#8211; dict of {&#8216;env_var&#8217;: &#8216;env_value&#8217;}</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.process.nohup_py">
+<code class="descclassname">surreal.utils.console.process.</code><code class="descname">nohup_py</code><span class="sig-paren">(</span><em>cmd</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/process.html#nohup_py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.process.nohup_py" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.process.register_signals">
+<code class="descclassname">surreal.utils.console.process.</code><code class="descname">register_signals</code><span class="sig-paren">(</span><em>signames=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/process.html#register_signals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.process.register_signals" title="Permalink to this definition">¶</a></dt>
+<dd><p>signames is a list of supported signals: SIGINT, SIGSTOP, etc.
+if None, default to register all supported signals</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.console.prompt">
+<span id="surreal-utils-console-prompt-module"></span><h2>surreal.utils.console.prompt module<a class="headerlink" href="#module-surreal.utils.console.prompt" title="Permalink to this headline">¶</a></h2>
+<p>Miscellaneous tools</p>
+<dl class="function">
+<dt id="surreal.utils.console.prompt.input_multiple_lines">
+<code class="descclassname">surreal.utils.console.prompt.</code><code class="descname">input_multiple_lines</code><span class="sig-paren">(</span><em>quit_word</em>, <em>prompt='&gt; '</em>, <em>max_lines=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/prompt.html#input_multiple_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.prompt.input_multiple_lines" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Input multiple lines until <cite>quit_word</cite> typed or</dt>
+<dd>a max number of lines reached</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>quit_word</strong> &#8211; </li>
+<li><strong>prompt</strong> &#8211; &#8216;&gt; &#8216;</li>
+<li><strong>max_lines</strong> &#8211; if 0, no limit until quit_word is typed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List of each line, stripped of trailing and ending spaces.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.console.prompt.query_yes_no">
+<code class="descclassname">surreal.utils.console.prompt.</code><code class="descname">query_yes_no</code><span class="sig-paren">(</span><em>question</em>, <em>default='yes'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console/prompt.html#query_yes_no"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.prompt.query_yes_no" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask a yes/no question via input() and return their answer.</p>
+<p>&#8220;question&#8221; is a string that is presented to the user.
+&#8220;default&#8221; is the presumed answer if the user just hits &lt;Enter&gt;.
+It must be &#8220;yes&#8221; (the default), &#8220;no&#8221; or None (meaning
+an answer is required of the user).</p>
+<p>The &#8220;answer&#8221; return value is True for &#8220;yes&#8221; or False for &#8220;no&#8221;.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.console">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-surreal.utils.console" title="Permalink to this headline">¶</a></h2>
+<p>Console utilities</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="surreal.utils.io.html" class="btn btn-neutral float-right" title="surreal.utils.io package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="surreal.utils.html" class="btn btn-neutral" title="surreal.utils package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

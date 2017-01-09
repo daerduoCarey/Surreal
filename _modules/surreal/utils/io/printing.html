@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.utils.io.printing &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">surreal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>surreal.utils.io.printing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for surreal.utils.io.printing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Printing utils:</span>
+
+<span class="sd">- Context manager-based printing streams.</span>
+<span class="sd">- Convert data structures to pretty string representation. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span> <span class="nn">.filesys</span> <span class="k">import</span> <span class="n">f_expand</span>
+<span class="kn">from</span> <span class="nn">..common</span> <span class="k">import</span> <span class="n">include_exclude</span>
+
+<div class="viewcode-block" id="stdnull"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.stdnull">[docs]</a><span class="k">def</span> <span class="nf">stdnull</span><span class="p">():</span>
+    <span class="s2">&quot;/dev/null stream&quot;</span>
+    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="printerr"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.printerr">[docs]</a><span class="k">def</span> <span class="nf">printerr</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<span class="c1"># ================ Convert types to pretty strings ==============</span>
+<div class="viewcode-block" id="time_now_str"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.time_now_str">[docs]</a><span class="k">def</span> <span class="nf">time_now_str</span><span class="p">(</span><span class="n">fmt_str</span><span class="o">=</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1">_%H.%M.%S&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    https://docs.python.org/2/library/time.html#time.strftime</span>
+<span class="sd">    %m - month; %d - day; %y - year</span>
+<span class="sd">    %H - 24 hr; %I - 12 hr; %M - minute; %S - second; %p - AM or PM</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">fmt_str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="seconds_str"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.seconds_str">[docs]</a><span class="k">def</span> <span class="nf">seconds_str</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
+    <span class="s2">&quot;Convert seconds to str `HH:MM:SS`&quot;</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">seconds</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dict_str"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.dict_str">[docs]</a><span class="k">def</span> <span class="nf">dict_str</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> 
+             <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;=&#39;</span><span class="p">,</span>
+             <span class="n">item_sep</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span>
+             <span class="n">key_format</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+             <span class="n">value_format</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+             <span class="n">enclose</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pretty string representation of a dictionary. Works with Unicode.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      sep: &quot;key `sep` value&quot;</span>
+<span class="sd">      item_sep: separator between key-value pairs</span>
+<span class="sd">      key_format: same format string as in str.format()</span>
+<span class="sd">      value_format: same format string as in str.format()</span>
+<span class="sd">      enclose: a 2-tuple of enclosing symbols</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">enclose</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="n">itemstrs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">D</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">itemstrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">u&#39;{{:</span><span class="si">{}</span><span class="s1">}} </span><span class="si">{}</span><span class="s1"> {{:</span><span class="si">{}</span><span class="s1">}}&#39;</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key_format</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">value_format</span><span class="p">)</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">enclose</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">item_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">itemstrs</span><span class="p">)</span> <span class="o">+</span> <span class="n">enclose</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="list_str"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.list_str">[docs]</a><span class="k">def</span> <span class="nf">list_str</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> 
+             <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span>
+             <span class="n">item_format</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+             <span class="n">enclose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pretty string representation of a list or tuple. Works with Unicode.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      sep: separator between two list items</span>
+<span class="sd">      item_format: same format string as in str.format()</span>
+<span class="sd">      enclose: a 2-tuple of enclosing symbols. </span>
+<span class="sd">          default: `[]` for list and `()` for tuple.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">enclose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">enclose</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">enclose</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">enclose</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="n">item_format</span> <span class="o">=</span> <span class="s1">u&#39;{{:</span><span class="si">{}</span><span class="s1">}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item_format</span><span class="p">)</span>
+    <span class="n">itemstr</span> <span class="o">=</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">item_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">L</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">enclose</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">itemstr</span> <span class="o">+</span> <span class="n">enclose</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="attribute_str"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.attribute_str">[docs]</a><span class="k">def</span> <span class="nf">attribute_str</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mapsep</span><span class="o">=</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> 
+                  <span class="n">include_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">      obj: an object with various attrs</span>
+<span class="sd">      sep: separator for each attribute (lines)</span>
+<span class="sd">      mapsep: name `mapsep` value (e.g. x =&gt; 3)</span>
+<span class="sd">      include_filter, exclude_filter: see include_exclude()</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      pretty printed string of all attributes of the object,</span>
+<span class="sd">      sorted by alphabetical order.</span>
+<span class="sd">    </span>
+<span class="sd">    Sample usage: an object of argparse.Namespace, returned by parse_arg()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_attrs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">include_exclude</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> 
+                                       <span class="n">include_filter</span><span class="o">=</span><span class="n">include_filter</span><span class="p">,</span> 
+                                       <span class="n">exclude_filter</span><span class="o">=</span><span class="n">exclude_filter</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">mapsep</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+                     <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">all_attrs</span><span class="p">])</span></div>
+
+
+<span class="c1"># ============= Print redirections ================</span>
+<div class="viewcode-block" id="PrintRedirection"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.PrintRedirection">[docs]</a><span class="k">class</span> <span class="nc">PrintRedirection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Context manager: temporarily redirects stdout and stderr</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          stdout: if None, defaults to sys.stdout, unchanged</span>
+<span class="sd">          stderr: if None, defaults to sys.stderr, unchanged</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">stdout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="k">if</span> <span class="n">stderr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stderr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stderr</span> <span class="o">=</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_err</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_out</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_err</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stderr</span>
+        <span class="k">return</span> <span class="bp">self</span>
+            
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="c1"># restore the normal stdout and stderr</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_err</span>
+    
+<div class="viewcode-block" id="PrintRedirection.flush"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.PrintRedirection.flush">[docs]</a>    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Manually flush the replaced stdout/stderr buffers.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stderr</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="PrintToFile"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.PrintToFile">[docs]</a><span class="k">class</span> <span class="nc">PrintToFile</span><span class="p">(</span><span class="n">PrintRedirection</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print to file and save/close the handle at the end.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">err_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          out_file: file path</span>
+<span class="sd">          err_file: file path. If the same as out_file, print both stdout </span>
+<span class="sd">              and stderr to one file in order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">err_file</span> <span class="o">=</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">err_file</span>
+        <span class="k">if</span> <span class="n">out_file</span><span class="p">:</span>
+            <span class="n">out_file</span> <span class="o">=</span> <span class="n">f_expand</span><span class="p">(</span><span class="n">out_file</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">out_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_file</span><span class="p">:</span>
+            <span class="n">err_file</span> <span class="o">=</span> <span class="n">f_expand</span><span class="p">(</span><span class="n">err_file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">err_file</span> <span class="o">==</span> <span class="n">out_file</span><span class="p">:</span> <span class="c1"># redirect both stdout/err to one file</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">err_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_file</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">err_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_expand</span><span class="p">(</span><span class="n">err_file</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        
+        <span class="n">PrintRedirection</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                                  <span class="n">stdout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">out_file</span><span class="p">,</span> 
+                                  <span class="n">stderr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">err_file</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">PrintRedirection</span><span class="o">.</span><span class="n">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">out_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">err_file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">err_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PrintSuppress"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.PrintSuppress">[docs]</a><span class="k">def</span> <span class="nf">PrintSuppress</span><span class="p">(</span><span class="n">no_out</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">no_err</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">      no_out: stdout writes to sys.devnull</span>
+<span class="sd">      no_err: stderr writes to sys.devnull</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">devnull</span> <span class="k">if</span> <span class="n">no_out</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">err_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">devnull</span> <span class="k">if</span> <span class="n">no_err</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">PrintToFile</span><span class="p">(</span><span class="n">out_file</span><span class="o">=</span><span class="n">out_file</span><span class="p">,</span> <span class="n">err_file</span><span class="o">=</span><span class="n">err_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PrintString"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.PrintString">[docs]</a><span class="k">class</span> <span class="nc">PrintString</span><span class="p">(</span><span class="n">PrintRedirection</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Redirect stdout and stderr to strings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_stream</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">err_stream</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">PrintRedirection</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                                  <span class="n">stdout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">out_stream</span><span class="p">,</span> 
+                                  <span class="n">stderr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">err_stream</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="PrintString.stdout"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.PrintString.stdout">[docs]</a>    <span class="k">def</span> <span class="nf">stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Returns: stdout as one string.&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="PrintString.stderr"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.PrintString.stderr">[docs]</a>    <span class="k">def</span> <span class="nf">stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Returns: stderr as one string.&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">err_stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+        
+<div class="viewcode-block" id="PrintString.stdout_by_line"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.PrintString.stdout_by_line">[docs]</a>    <span class="k">def</span> <span class="nf">stdout_by_line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Returns: a list of stdout line by line, ignore trailing blanks&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PrintString.stderr_by_line"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.printing.PrintString.stderr_by_line">[docs]</a>    <span class="k">def</span> <span class="nf">stderr_by_line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Returns: a list of stderr line by line, ignore trailing blanks&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

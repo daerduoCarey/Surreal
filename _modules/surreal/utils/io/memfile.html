@@ -1,0 +1,858 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.utils.io.memfile &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">surreal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>surreal.utils.io.memfile</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for surreal.utils.io.memfile</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Memory-optimized file types</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">.filesys</span> <span class="k">import</span> <span class="n">f_exists</span><span class="p">,</span> <span class="n">f_expand</span><span class="p">,</span> <span class="n">f_size</span>
+<span class="kn">from</span> <span class="nn">..common</span> <span class="k">import</span> <span class="n">is_sequence</span>
+<span class="kn">from</span> <span class="nn">..functional</span> <span class="k">import</span> <span class="n">overrides</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">See `file.seek` in standard Python library</span>
+<span class="sd">- 0: seek relative to the beginning of the file.</span>
+<span class="sd">- 1: relative to the current read head.</span>
+<span class="sd">- 2: relative to the end of the file.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SEEK"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.SEEK">[docs]</a><span class="k">class</span> <span class="nc">SEEK</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">Begin</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Current</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">End</span> <span class="o">=</span> <span class="mi">22</span></div>
+
+<span class="n">STR_EOF</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="AbstractFile"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile">[docs]</a><span class="k">class</span> <span class="nc">AbstractFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract interface for file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructs and *opens* the file handle.</span>
+<span class="sd">        self.handle holds the internal file handle object.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">          file_path</span>
+<span class="sd">          mode: regular file mode str like&#39;w&#39;, &#39;r&#39;, &#39;a&#39;, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">f_expand</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_read</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">f_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">+</span> <span class="s1">&#39; does not exist.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+    
+    
+<div class="viewcode-block" id="AbstractFile.open"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          mode: if specified, override the mode in __init__</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_handle</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> 
+                           <span class="n">mode</span> <span class="k">if</span> <span class="n">mode</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    
+<div class="viewcode-block" id="AbstractFile.check_handle"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.check_handle">[docs]</a>    <span class="k">def</span> <span class="nf">check_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">should_open</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the file handle is `should_open` (bool).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">should_open</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;BinaryFile: file handle not open.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">should_open</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;BinaryFile: old file handle must be closed first.&#39;</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.write"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes obj to file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;write(obj)&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AbstractFile.write_n"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.write_n">[docs]</a>    <span class="k">def</span> <span class="nf">write_n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes a list of objs to file.</span>
+<span class="sd">        Calls self.write() multiple times.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">obj_list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">obj_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div>
+
+    
+    <span class="k">def</span> <span class="nf">_get_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        if seek_mode is None: </span>
+<span class="sd">            - position &gt;= 0: seek_mode set to SEEK.Begin</span>
+<span class="sd">            - position &lt; 0: seek_mode set to SEEK.End</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">seek_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">position</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">seek_mode</span> <span class="o">=</span> <span class="n">SEEK</span><span class="o">.</span><span class="n">Begin</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seek_mode</span> <span class="o">=</span> <span class="n">SEEK</span><span class="o">.</span><span class="n">End</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seek_mode</span> <span class="o">==</span> <span class="n">SEEK</span><span class="o">.</span><span class="n">Begin</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Out of range: seek before beginning: &#39;</span>
+                                     <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">position</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">seek_mode</span> <span class="o">==</span> <span class="n">SEEK</span><span class="o">.</span><span class="n">End</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Out of range: seek after EOF: &#39;</span>
+                                     <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">position</span><span class="p">))</span>
+            <span class="c1"># assert seek_mode in SEEK, \</span>
+            <span class="c1">#     &#39;{} is not a valid SEEK mode.&#39;.format(seek_mode)</span>
+        <span class="k">return</span> <span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span>
+    
+    
+<div class="viewcode-block" id="AbstractFile.seek"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.seek">[docs]</a>    <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Seek to a position in the file. </span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">          position: the actual byte location = position * self.size</span>
+<span class="sd">          seek_mode: see python&#39;s built-in `file.seek`. Use SEEK enum.</span>
+<span class="sd">          - 0: from the beginning of file</span>
+<span class="sd">          - 1: from current position</span>
+<span class="sd">          - 2: from the end of file</span>
+<span class="sd">          - None: infer. if position &lt; 0, set seek to SEEK.End</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_handle</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_position</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="p">))</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.tell"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.tell">[docs]</a>    <span class="k">def</span> <span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;return file position&#39;</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.read"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Advances the file pointer forward.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        - object one at a time</span>
+<span class="sd">        - self.EOF symbol</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;return obj&#39;</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.read_n"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.read_n">[docs]</a>    <span class="k">def</span> <span class="nf">read_n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Repeat `read(*args, **kwargs)` n times. Advances the file pointer forward by n.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          a list of size n. If EOF is encountered midway, truncate the list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reads</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">obj</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">EOF</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">reads</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">reads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reads</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.read_all"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.read_all">[docs]</a>    <span class="k">def</span> <span class="nf">read_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read all the way till EOF. </span>
+<span class="sd">        Calls self.iter()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">obj</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.iter"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.iter">[docs]</a>    <span class="k">def</span> <span class="nf">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns: </span>
+<span class="sd">          a generator to read through the data from the current file pos.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_handle</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">dat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="c1"># warning: don&#39;t use `if dat`: will return false if dat reads `0`</span>
+            <span class="k">if</span> <span class="n">dat</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">EOF</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="k">yield</span> <span class="n">dat</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.__iter__"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.__iter__">[docs]</a>    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enables for-loop iterator syntax. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter</span><span class="p">()</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.iter_from"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.iter_from">[docs]</a>    <span class="k">def</span> <span class="nf">iter_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Combines seek() and iter()</span>
+
+<span class="sd">        Returns: </span>
+<span class="sd">          a generator to read through the data from specified position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter</span><span class="p">()</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.peek"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.peek">[docs]</a>    <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seek_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does not change the file head.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">          position: if None, peek at the current read head.</span>
+<span class="sd">          seek_mode: see `seek()`</span>
+
+<span class="sd">        Returns: </span>
+<span class="sd">          entry at that position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
+    
+    
+<div class="viewcode-block" id="AbstractFile.__getitem__"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.__getitem__">[docs]</a>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Functionally equivalent to peek(), does not change read head.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">          position: if &lt; 0, seek_mode=SEEK.End, peek from end of file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+        
+    
+<div class="viewcode-block" id="AbstractFile.close"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="o">=</span> <span class="kc">None</span></div>
+        
+    
+<div class="viewcode-block" id="AbstractFile.is_read"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.is_read">[docs]</a>    <span class="k">def</span> <span class="nf">is_read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;If mode is `r` or `rb`&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span></div>
+    
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">EOF</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Override this method to have different EOF symbol.</span>
+<span class="sd">        EOF should be returned from `read()`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">STR_EOF</span>
+
+
+    <span class="c1"># enable context manager</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    
+<div class="viewcode-block" id="AbstractFile.__len__"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.AbstractFile.__len__">[docs]</a>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          number of entries in the file. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;return number of entries in the file&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TextFile"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.TextFile">[docs]</a><span class="k">class</span> <span class="nc">TextFile</span><span class="p">(</span><span class="n">AbstractFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read text file line by line.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="TextFile.read"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.TextFile.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span></div>
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="TextFile.read_all"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.TextFile.read_all">[docs]</a>    <span class="k">def</span> <span class="nf">read_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span></div>
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="TextFile.write"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.TextFile.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></div>
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="TextFile.tell"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.TextFile.tell">[docs]</a>    <span class="k">def</span> <span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;TextFile does not support tell(). &#39;</span>
+                                  <span class="s1">&#39;Use LineAccessFile instead. &#39;</span><span class="p">)</span></div>
+
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="TextFile.seek"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.TextFile.seek">[docs]</a>    <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;TextFile does not support seek()&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BinaryFile"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.BinaryFile">[docs]</a><span class="k">class</span> <span class="nc">BinaryFile</span><span class="p">(</span><span class="n">AbstractFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read and write binary values as if regular file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">data_fmt</span><span class="p">,</span> <span class="n">convert_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          file_path</span>
+<span class="sd">          mode: &#39;w&#39;, &#39;r&#39;, or &#39;a&#39;. Automatically append &#39;b&#39; to the mode.</span>
+<span class="sd">          data_fmt: see https://docs.python.org/2/library/struct.html</span>
+<span class="sd">            i - int; I - unsigned int; q - long long; Q - unsigned long long</span>
+<span class="sd">            f - float; d - double; s - string; c - char; ? - bool</span>
+<span class="sd">            b - signed char; B - unsigned char; h - short; H - unsigned short.</span>
+<span class="sd">            3i - tuple of 3 ints; &#39;ifb&#39; - tuple of int, float, bool</span>
+<span class="sd">          convert_type: if you write int, file.read() will return a tuple (3,)</span>
+<span class="sd">              use convert_type to return convert_type(*read) instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_fmt</span> <span class="o">=</span> <span class="n">data_fmt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">calcsize</span><span class="p">(</span><span class="n">data_fmt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">convert_type</span> <span class="o">=</span> <span class="n">convert_type</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+
+        <span class="n">AbstractFile</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="BinaryFile.open"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.BinaryFile.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          mode: if specified, override the mode in __init__</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">AbstractFile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">mode</span> <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">mode</span><span class="o">+</span><span class="s1">&#39;b&#39;</span>
+        
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="BinaryFile.write"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.BinaryFile.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_handle</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># must unpack the tuple before passing to struct.pack()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">,)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_fmt</span><span class="p">,</span> <span class="o">*</span><span class="n">obj</span><span class="p">))</span></div>
+
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="BinaryFile.read"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.BinaryFile.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">convert_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          convert_type: if specified, override the convert_type in __init__</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        - if convert_type, return convert_type(*read)</span>
+<span class="sd">        - empty string &#39;&#39; when EOF reached</span>
+<span class="sd">        - tuple from struct.unpack()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_handle</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">convert_type</span> <span class="o">=</span> <span class="n">convert_type</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_type</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dat</span> <span class="o">!=</span> <span class="n">STR_EOF</span><span class="p">:</span>
+            <span class="n">dat</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_fmt</span><span class="p">,</span> <span class="n">dat</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">convert_type</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">convert_type</span><span class="p">(</span><span class="o">*</span><span class="n">dat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dat</span> </div>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="BinaryFile.seek"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.BinaryFile.seek">[docs]</a>    <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Seek to a position in the file. </span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">          position: the actual byte location = position * self.size</span>
+<span class="sd">          seek_mode: see python&#39;s built-in `file.seek`</span>
+<span class="sd">          - 0: from the beginning of file</span>
+<span class="sd">          - 1: from current position</span>
+<span class="sd">          - 2: from the end of file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">AbstractFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">seek_mode</span><span class="p">)</span></div>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="BinaryFile.tell"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.BinaryFile.tell">[docs]</a>    <span class="k">def</span> <span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_handle</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">fpos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">fpos</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">fpos</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span></div>
+    
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          size of one binary data. == struct.calcsize()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="BinaryFile.iter"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.BinaryFile.iter">[docs]</a>    <span class="k">def</span> <span class="nf">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">convert_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          convert_type: see `self.read()`</span>
+<span class="sd">        Returns: </span>
+<span class="sd">          a generator to read through the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">AbstractFile</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">convert_type</span><span class="p">)</span></div>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="BinaryFile.__len__"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.BinaryFile.__len__">[docs]</a>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uses os.path.getsize() to infer the length. </span>
+<span class="sd">        If the file doesn&#39;t have the right format, the result will be wrong.</span>
+<span class="sd">        Time complexity: O(1)</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">          number of binary entries in the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fsize</span> <span class="o">=</span> <span class="n">f_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">fsize</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;file size is not a multiple of data size.&#39;</span>
+        <span class="k">return</span>  <span class="n">fsize</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span></div></div>
+
+
+<div class="viewcode-block" id="InMemoryFile"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.InMemoryFile">[docs]</a><span class="k">class</span> <span class="nc">InMemoryFile</span><span class="p">(</span><span class="n">AbstractFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read once as an array.</span>
+<span class="sd">    Helper class for LineAccessFile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TEXT</span> <span class="o">=</span> <span class="s1">&#39;TEXT&#39;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">data_fmt</span><span class="p">,</span> 
+                 <span class="n">block_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">convert_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          file_path</span>
+<span class="sd">          data_fmt:</span>
+<span class="sd">          - a string of binary format</span>
+<span class="sd">          - InMemoryFile.TEXT, read file as text delimited by lines.</span>
+<span class="sd">          block_size: </span>
+<span class="sd">          - if 0, read as a plain list [obj1, obj2, ...]</span>
+<span class="sd">          - if &gt; 0, read as a list of lists, [[block 1], [block 2] ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_fmt</span> <span class="o">=</span> <span class="n">data_fmt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">convert_type</span> <span class="o">=</span> <span class="n">convert_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span>
+        <span class="n">AbstractFile</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="InMemoryFile.open"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.InMemoryFile.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_handle</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_fmt</span> <span class="o">==</span> <span class="n">InMemoryFile</span><span class="o">.</span><span class="n">TEXT</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="o">=</span> <span class="n">TextFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+        <span class="c1"># deal with binary file</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle</span> <span class="o">=</span> <span class="n">BinaryFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> 
+                                     <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                                     <span class="n">data_fmt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_fmt</span><span class="p">,</span>
+                                     <span class="n">convert_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">convert_type</span><span class="p">)</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">read_n</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">block</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># flattened list of objects</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
+                
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># file position pointer</span></div>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="InMemoryFile.seek"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.InMemoryFile.seek">[docs]</a>    <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_position</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">seek_mode</span> <span class="o">==</span> <span class="n">SEEK</span><span class="o">.</span><span class="n">Begin</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="k">elif</span> <span class="n">seek_mode</span> <span class="o">==</span> <span class="n">SEEK</span><span class="o">.</span><span class="n">Current</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">+=</span> <span class="n">position</span>
+        <span class="k">elif</span> <span class="n">seek_mode</span> <span class="o">==</span> <span class="n">SEEK</span><span class="o">.</span><span class="n">End</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">+</span> <span class="n">position</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;invalid seek position: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span></div>
+        
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="InMemoryFile.tell"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.InMemoryFile.tell">[docs]</a>    <span class="k">def</span> <span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span></div>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="InMemoryFile.read"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.InMemoryFile.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">EOF</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># advance the &quot;file&quot; pointer</span>
+            <span class="k">return</span> <span class="n">obj</span></div>
+    
+
+<div class="viewcode-block" id="InMemoryFile.clear_memory"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.InMemoryFile.clear_memory">[docs]</a>    <span class="k">def</span> <span class="nf">clear_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+    
+    <span class="nd">@property</span>
+    <span class="nd">@overrides</span>
+    <span class="k">def</span> <span class="nf">EOF</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">STR_EOF</span>
+        <span class="c1"># in block mode, self.memory is a list of list.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        
+        
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="InMemoryFile.__len__"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.InMemoryFile.__len__">[docs]</a>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">)</span></div></div>
+    
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">File load mode: </span>
+<span class="sd">- 0: hold the entire file in-memory.</span>
+<span class="sd">- 1: use `seek` to access the file on-disk.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="LoadMode"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.LoadMode">[docs]</a><span class="k">class</span> <span class="nc">LoadMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">InMem</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">OnDisk</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="LineAccessFile"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.LineAccessFile">[docs]</a><span class="k">class</span> <span class="nc">LineAccessFile</span><span class="p">(</span><span class="n">AbstractFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use an auxiliary binary file to enable random access by line.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> 
+                 <span class="n">block_size</span><span class="p">,</span> 
+                 <span class="n">aux_suffix</span><span class="o">=</span><span class="s1">&#39;.line&#39;</span><span class="p">,</span>
+                 <span class="n">aux_mode</span><span class="o">=</span><span class="n">LoadMode</span><span class="o">.</span><span class="n">InMem</span><span class="p">,</span>
+                 <span class="n">aux_regenerate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          file_path</span>
+<span class="sd">          block_size: number of lines per block. Lines delimited by &#39;\n&#39;</span>
+<span class="sd">          aux_suffix: auxiliary binary line file = `file` + aux_suffix</span>
+<span class="sd">          aux_mode:</span>
+<span class="sd">            - MEM (0): read entire auxiliary line file into memory.</span>
+<span class="sd">            - DISK (1): use `seek` to read line info from the auxiliary file.</span>
+<span class="sd">          aux_regenerate: if True, generate auxiliary file even if it already exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">aux_mode</span> <span class="ow">in</span> <span class="n">LoadMode</span><span class="p">,</span> <span class="s1">&#39;invalid LoadMode&#39;</span>
+
+        <span class="n">AbstractFile</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux_path</span> <span class="o">=</span> <span class="n">f_expand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">+</span> <span class="n">aux_suffix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span> <span class="o">=</span> <span class="n">block_size</span>
+
+        <span class="k">if</span> <span class="n">aux_regenerate</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">f_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aux_path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_line_file</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">f_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aux_path</span><span class="p">),</span> <span class="s1">&#39;line file generation failed.&#39;</span>
+        
+        <span class="k">if</span> <span class="n">aux_mode</span> <span class="ow">is</span> <span class="n">LoadMode</span><span class="o">.</span><span class="n">InMem</span><span class="p">:</span>
+            <span class="c1"># read into an in-memory array (fake as a file handle)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aux_handle</span> <span class="o">=</span> <span class="n">InMemoryFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aux_path</span><span class="p">,</span>
+                                                 <span class="n">data_fmt</span><span class="o">=</span><span class="s1">&#39;Q&#39;</span><span class="p">,</span> 
+                                                 <span class="n">convert_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aux_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line_fhandle</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_line_fhandle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">BinaryFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aux_path</span><span class="p">,</span> 
+                          <span class="n">data_fmt</span><span class="o">=</span><span class="s1">&#39;Q&#39;</span><span class="p">,</span> 
+                          <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+                          <span class="n">convert_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="LineAccessFile.generate_line_file"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.LineAccessFile.generate_line_file">[docs]</a>    <span class="k">def</span> <span class="nf">generate_line_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the auxiliary line file that has position info for each block.</span>
+<span class="sd">        Regenerate even if the file already exists.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          number of blocks processed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">_line_fhandle</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">aux</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                    <span class="k">break</span> <span class="c1"># EOF reached</span>
+                <span class="c1"># write after `break` to avoid writing EOF position at last.</span>
+                <span class="k">if</span> <span class="n">l</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">aux</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+                <span class="n">l</span> <span class="o">+=</span> <span class="mi">1</span></div>
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="LineAccessFile.seek"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.LineAccessFile.seek">[docs]</a>    <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="s2">&quot;Sets the current block position.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux_handle</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">seek_mode</span><span class="p">)</span></div>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="LineAccessFile.tell"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.LineAccessFile.tell">[docs]</a>    <span class="k">def</span> <span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Returns: the current block position&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_handle</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span></div>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="LineAccessFile.read"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.LineAccessFile.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          Reads a single block at the current read head. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_handle</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_handle</span><span class="o">.</span><span class="n">EOF</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">EOF</span>
+         
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">SEEK</span><span class="o">.</span><span class="n">Begin</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block_size</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span> 
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="n">STR_EOF</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lines</span></div>
+        
+    
+    <span class="nd">@property</span>
+    <span class="nd">@overrides</span>
+    <span class="k">def</span> <span class="nf">EOF</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="LineAccessFile.close"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.LineAccessFile.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">AbstractFile</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aux_handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+    
+    
+    <span class="nd">@overrides</span>
+<div class="viewcode-block" id="LineAccessFile.__len__"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.memfile.LineAccessFile.__len__">[docs]</a>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See: BinaryFile.__len__</span>
+<span class="sd">        Time complexity: O(1), relies on the auxiliary file</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">          number of blocks in the file. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aux_handle</span><span class="p">)</span></div></div>
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

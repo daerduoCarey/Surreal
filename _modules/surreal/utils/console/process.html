@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.utils.console.process &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">surreal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>surreal.utils.console.process</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for surreal.utils.console.process</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tmux and subprocess</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">pc</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+
+<div class="viewcode-block" id="new_tmux_cmd"><a class="viewcode-back" href="../../../../surreal.utils.console.html#surreal.utils.console.process.new_tmux_cmd">[docs]</a><span class="k">def</span> <span class="nf">new_tmux_cmd</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cmd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;tmux send-keys -t </span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2"> &#39;</span><span class="si">{}</span><span class="s2">&#39; Enter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_env_str</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="s2">&quot;Helper for env dict -&gt; command line&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">env</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">env</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="nohup"><a class="viewcode-back" href="../../../../surreal.utils.console.html#surreal.utils.console.process.nohup">[docs]</a><span class="k">def</span> <span class="nf">nohup</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> 
+          <span class="n">stdout_log</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+          <span class="n">stderr_log</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+          <span class="n">append_out</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+          <span class="n">append_err</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+          <span class="n">join_out_err</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+          <span class="n">dryrun</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+          <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">      join_out_err: True: &gt; stdout_log 2&gt;&amp;1 and ignore stderr_log</span>
+<span class="sd">      env: dict of {&#39;env_var&#39;: &#39;env_value&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">stdout_log</span><span class="p">:</span>
+        <span class="n">stdout_log</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&gt;&gt; &#39;</span> <span class="k">if</span> <span class="n">append_out</span> <span class="k">else</span> <span class="s1">&#39;&gt; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">stdout_log</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stdout_log</span> <span class="o">=</span> <span class="s1">&#39;&gt; /dev/null&#39;</span> 
+        
+    <span class="k">if</span> <span class="n">stderr_log</span><span class="p">:</span>
+        <span class="n">stderr_log</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;2&gt;&gt; &#39;</span> <span class="k">if</span> <span class="n">append_err</span> <span class="k">else</span> <span class="s1">&#39;2&gt; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">stderr_log</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">join_out_err</span><span class="p">:</span>
+            <span class="n">stderr_log</span> <span class="o">=</span> <span class="s1">&#39;2&gt;&amp;1&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stderr_log</span> <span class="o">=</span> <span class="s1">&#39;2&gt; /dev/null&#39;</span>
+        
+    <span class="k">if</span> <span class="n">dryrun</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dry run:&#39;</span><span class="p">)</span>
+    <span class="c1"># environment variables for this command</span>
+    <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> nohup </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> &amp;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_env_str</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> 
+                                        <span class="n">cmd</span><span class="p">,</span> 
+                                        <span class="n">stdout_log</span><span class="p">,</span> 
+                                        <span class="n">stderr_log</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="o">+</span> <span class="s1">&#39; echo $!&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="c1"># don&#39;t actually run anything</span>
+    <span class="k">if</span> <span class="n">dryrun</span><span class="p">:</span> <span class="k">return</span>
+    <span class="c1"># dollar-bang gets the PID of the last backgrounded process</span>
+    <span class="k">return</span> <span class="n">pc</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="nohup_py"><a class="viewcode-back" href="../../../../surreal.utils.console.html#surreal.utils.console.process.nohup_py">[docs]</a><span class="k">def</span> <span class="nf">nohup_py</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">nohup</span><span class="p">(</span><span class="s1">&#39;python -u </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmd</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bash"><a class="viewcode-back" href="../../../../surreal.utils.console.html#surreal.utils.console.process.bash">[docs]</a><span class="k">def</span> <span class="nf">bash</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="s2">&quot;Exactly simulate os.system()&quot;</span>
+    <span class="k">return</span> <span class="n">pc</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_env_str</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">cmd</span><span class="p">),</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="kill"><a class="viewcode-back" href="../../../../surreal.utils.console.html#surreal.utils.console.process.kill">[docs]</a><span class="k">def</span> <span class="nf">kill</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">=</span><span class="s1">&#39;INT&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">pid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pid</span><span class="p">:</span>
+            <span class="n">kill</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">pid</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+        <span class="n">pc</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s1">&#39;kill&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="o">+</span><span class="n">signal</span><span class="p">,</span> <span class="n">pid</span><span class="p">])</span></div>
+        
+        
+<div class="viewcode-block" id="SignalReceived"><a class="viewcode-back" href="../../../../surreal.utils.console.html#surreal.utils.console.process.SignalReceived">[docs]</a><span class="k">class</span> <span class="nc">SignalReceived</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when any signal received</span>
+<span class="sd">    .signum: value of the signal, symbolic</span>
+<span class="sd">    .signame: name of the signal, string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">signum</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">signame</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="register_signals"><a class="viewcode-back" href="../../../../surreal.utils.console.html#surreal.utils.console.process.register_signals">[docs]</a><span class="k">def</span> <span class="nf">register_signals</span><span class="p">(</span><span class="n">signames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    signames is a list of supported signals: SIGINT, SIGSTOP, etc.</span>
+<span class="sd">    if None, default to register all supported signals</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_signames</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;SIG&#39;</span><span class="p">)</span>
+                                     <span class="c1"># not sure why ...</span>
+                                     <span class="ow">and</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;SIGC&#39;</span><span class="p">)</span>
+                                     <span class="c1"># OS cannot catch these two</span>
+                                     <span class="ow">and</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SIGKILL&#39;</span><span class="p">,</span> <span class="s1">&#39;SIGSTOP&#39;</span><span class="p">]</span>
+                                     <span class="ow">and</span> <span class="s1">&#39;_&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">),</span>
+                          <span class="nb">dir</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span>
+    <span class="n">signum_to_name</span> <span class="o">=</span> <span class="p">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">sig</span><span class="p">):</span> <span class="n">sig</span> <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">all_signames</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">signames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">signames</span> <span class="o">=</span> <span class="n">all_signames</span>
+
+    <span class="k">def</span> <span class="nf">_sig_handler</span><span class="p">(</span><span class="n">signum</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="n">signame</span> <span class="o">=</span> <span class="n">signum_to_name</span><span class="p">[</span><span class="n">signum</span><span class="p">]</span>
+        <span class="n">exc</span> <span class="o">=</span> <span class="n">SignalReceived</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> [</span><span class="si">{}</span><span class="s1">] received&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">signame</span><span class="p">,</span> <span class="n">signum</span><span class="p">))</span>
+        <span class="n">exc</span><span class="o">.</span><span class="n">signum</span> <span class="o">=</span> <span class="n">signum</span>
+        <span class="n">exc</span><span class="o">.</span><span class="n">signame</span> <span class="o">=</span> <span class="n">signame</span>
+        <span class="n">exc</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span>
+        <span class="k">raise</span> <span class="n">exc</span>
+            
+    <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">signames</span><span class="p">:</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">sig</span><span class="p">),</span> <span class="n">_sig_handler</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

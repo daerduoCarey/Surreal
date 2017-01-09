@@ -1,0 +1,493 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.utils.io.logger &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">surreal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>surreal.utils.io.logger</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for surreal.utils.io.logger</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="k">import</span> <span class="n">DEBUG</span><span class="p">,</span> <span class="n">INFO</span><span class="p">,</span> <span class="n">WARNING</span><span class="p">,</span> <span class="n">ERROR</span><span class="p">,</span> <span class="n">CRITICAL</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Define more verbosity levels. The higher level number gives more verbosity.</span>
+<span class="sd">Usage: log.log(&lt;one_of_levels_below, .....)</span>
+<span class="sd">    or log.log1(), log2() ...</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">INFO0</span> <span class="o">=</span> <span class="n">INFO</span>  <span class="c1"># default, least verbose</span>
+<span class="n">INFO1</span> <span class="o">=</span> <span class="n">INFO</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">INFO2</span> <span class="o">=</span> <span class="n">INFO</span> <span class="o">-</span> <span class="mi">2</span>
+<span class="n">INFO3</span> <span class="o">=</span> <span class="n">INFO</span> <span class="o">-</span> <span class="mi">3</span>
+<span class="n">INFO4</span> <span class="o">=</span> <span class="n">INFO</span> <span class="o">-</span> <span class="mi">4</span>
+<span class="n">INFO5</span> <span class="o">=</span> <span class="n">INFO</span> <span class="o">-</span> <span class="mi">5</span>
+
+<span class="c1"># hack the built-in getLevelName function to have nice names for INFO1-5</span>
+<span class="n">_level_names</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">CRITICAL</span> <span class="p">:</span> <span class="s1">&#39;CRITICAL&#39;</span><span class="p">,</span>
+    <span class="n">ERROR</span> <span class="p">:</span> <span class="s1">&#39;ERROR&#39;</span><span class="p">,</span>
+    <span class="n">WARNING</span> <span class="p">:</span> <span class="s1">&#39;WARNING&#39;</span><span class="p">,</span>
+    <span class="n">INFO</span> <span class="p">:</span> <span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
+    <span class="n">DEBUG</span> <span class="p">:</span> <span class="s1">&#39;DEBUG&#39;</span><span class="p">,</span>
+    <span class="n">INFO1</span> <span class="p">:</span> <span class="s1">&#39;INFO1&#39;</span><span class="p">,</span>
+    <span class="n">INFO2</span> <span class="p">:</span> <span class="s1">&#39;INFO2&#39;</span><span class="p">,</span>
+    <span class="n">INFO3</span> <span class="p">:</span> <span class="s1">&#39;INFO3&#39;</span><span class="p">,</span>
+    <span class="n">INFO4</span> <span class="p">:</span> <span class="s1">&#39;INFO4&#39;</span><span class="p">,</span>
+    <span class="n">INFO5</span> <span class="p">:</span> <span class="s1">&#39;INFO5&#39;</span>
+<span class="p">}</span>
+
+
+<span class="c1"># hack the standard lib function</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">level</span> <span class="p">:</span> <span class="n">_level_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="arg_verbosity"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.arg_verbosity">[docs]</a><span class="k">def</span> <span class="nf">arg_verbosity</span><span class="p">(</span><span class="n">parsed_arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get logging verbosity level from command line arg, e.g. ``-v`` or ``-vvv`` </span>
+<span class="sd">    parsed_arg must have ``verbose`` keyword, and optionally ``debug`` flag</span>
+<span class="sd">    if --debug, set to DEBUG level</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">parsed_arg</span><span class="p">,</span> <span class="s1">&#39;verbose&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;parsed_arg does not have `verbosity` flag.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">parsed_arg</span><span class="p">,</span> <span class="s1">&#39;debug&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">parsed_arg</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span> <span class="o">-</span> <span class="n">parsed_arg</span><span class="o">.</span><span class="n">verbose</span></div>
+
+
+<div class="viewcode-block" id="LoggerFormatAdapter"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.LoggerFormatAdapter">[docs]</a><span class="k">class</span> <span class="nc">LoggerFormatAdapter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    logger = LoggerFormatAdapter(logger)</span>
+<span class="sd">    fully supports positional/keyword new formatter string syntax</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">    </span>
+<span class="sd">    ::</span>
+<span class="sd">        logger.info(&quot;Float {1:&gt;7.3f} and int {0} with {banana} and {apple:.6f}&quot;, </span>
+<span class="sd">                    66, 3.141592, apple=7**.5, banana=&#39;str&#39;)</span>
+<span class="sd">        # if the first arg isn&#39;t a format string, treat as if print statement</span>
+<span class="sd">        # you can specify a `sep=` arg under this case. `sep` defaults to space</span>
+<span class="sd">        logger.info({3:&#39;apple&#39;, 4:&#39;banana&#39;}, 4.5, &#39;asdf&#39;)</span>
+<span class="sd">        logger.info(&#39;I am not a format string&#39;, 66, {&#39;key&#39;:&#39;value&#39;}, sep=&#39;, &#39;)</span>
+<span class="sd">    </span>
+<span class="sd">    Custom verbosity level. The higher the more strings printed. </span>
+<span class="sd">    log.info1(), .info2() ... info5(). </span>
+<span class="sd">    corresponding levels: INFO1 to INFO5</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="n">CLS</span> <span class="o">=</span> <span class="n">LoggerFormatAdapter</span> <span class="c1"># convenient alias</span>
+        <span class="c1"># generate these methods dynamically</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;warning&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;critical&#39;</span><span class="p">]:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">CLS</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">CLS</span><span class="o">.</span><span class="n">__gen_log_methods</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="c1"># generate verbosity methods info1(), info2() ... info5() dynamically</span>
+        <span class="c1"># the higher level, the more strings printed</span>
+        <span class="k">for</span> <span class="n">level_n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">CLS</span><span class="p">,</span> <span class="s1">&#39;info</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">level_n</span><span class="p">),</span>
+                    <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span> <span class="o">-</span> <span class="n">level_n</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="LoggerFormatAdapter.unwrap"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.LoggerFormatAdapter.unwrap">[docs]</a>    <span class="k">def</span> <span class="nf">unwrap</span><span class="p">(</span><span class="n">logger</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If it&#39;s LoggerFormatAdapter, get internal. Otherwise do nothing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">LoggerFormatAdapter</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">logger</span><span class="o">.</span><span class="n">logger</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">logger</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__gen_log_methods</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+        <span class="s2">&quot;Meta function that generates log.debug(), .info(), .error(), etc.&quot;</span>
+        <span class="k">def</span> <span class="nf">_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="c1"># e.g. logging.DEBUG</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logging</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">level</span><span class="p">):</span>
+                <span class="n">msg</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_log</span>
+    
+    
+    <span class="k">def</span> <span class="nf">__process_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;{&#39;</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">and</span> <span class="s1">&#39;}&#39;</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+            <span class="n">fmt_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;level&#39;</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="s1">&#39;exc_info&#39;</span><span class="p">,</span> <span class="s1">&#39;extra&#39;</span><span class="p">]:</span>
+                    <span class="n">fmt_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                    <span class="c1"># must remove unsupported keyword for internal args</span>
+                    <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">fmt_kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># if `msg` isn&#39;t a format string, then treat it like the first arg to print</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">msg</span><span class="p">,)</span> <span class="o">+</span> <span class="n">args</span>
+            <span class="c1"># if &#39;sep&#39; is provided, we will use the custum separator instead</span>
+            <span class="k">if</span> <span class="s1">&#39;sep&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">sep</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;sep&#39;</span><span class="p">]</span>
+                <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;sep&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+            <span class="c1"># e.g. &quot;{}, {}, {}&quot; if sep = &quot;, &quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">u&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">msg</span><span class="p">,</span> <span class="n">kwargs</span>
+
+
+<div class="viewcode-block" id="LoggerFormatAdapter.exception"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.LoggerFormatAdapter.exception">[docs]</a>    <span class="k">def</span> <span class="nf">exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Logs a message with level ERROR on this logger. </span>
+<span class="sd">        Exception info is always added to the logging message. </span>
+<span class="sd">        This method should only be called from an exception handler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">):</span>
+            <span class="n">msg</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;exc_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="LoggerFormatAdapter.log"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.LoggerFormatAdapter.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log with user-defined level, e.g. INFO_V0 to INFO_V5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">level</span><span class="p">):</span>
+            <span class="n">msg</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="LoggerFormatAdapter.section"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.LoggerFormatAdapter.section">[docs]</a>    <span class="k">def</span> <span class="nf">section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">INFO</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display a section segment line</span>
+<span class="sd">        Args:</span>
+<span class="sd">          msg: to be displayed in the middle of the sep line</span>
+<span class="sd">          level: defaults to INFO</span>
+<span class="sd">          sep: symbol to be repeated for a long segment line</span>
+<span class="sd">          repeat: &#39;sep&#39; * repeat, the length of the segment string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">level</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> 
+                            <span class="s1">u&#39;</span><span class="si">{0}{msg}{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sep</span> <span class="o">*</span> <span class="n">repeat</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">))</span></div>
+        
+
+<div class="viewcode-block" id="LoggerFormatAdapter.setLevel"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.LoggerFormatAdapter.setLevel">[docs]</a>    <span class="k">def</span> <span class="nf">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="configure_logger"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.configure_logger">[docs]</a><span class="k">def</span> <span class="nf">configure_logger</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> 
+                     <span class="n">level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                     <span class="n">log_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">print_level</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;hm&#39;</span><span class="p">,</span>
+                     <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mutator function. Supports both plain and LoggerFormatAdapter loggers. </span>
+<span class="sd">    Args:</span>
+<span class="sd">      level: None to retain the original level of the logger</span>
+<span class="sd">      log_file: None to print to console only</span>
+<span class="sd">      overwrite: if False, append to the log log_file, otherwise overwrite it</span>
+<span class="sd">      print_level: if True, display `INFO&gt; ` before the message</span>
+<span class="sd">      time_format:</span>
+<span class="sd">        - `full`: %m/%d %H:%M:%S</span>
+<span class="sd">        - `hms`: %H:%M:%S</span>
+<span class="sd">        - `hm`: %H:%M</span>
+<span class="sd">        - if contains &#39;%&#39;, will be interpreted as a format string</span>
+<span class="sd">        - None</span>
+<span class="sd">      stream:</span>
+<span class="sd">        - defaults to sys.stderr</span>
+<span class="sd">        - None: do not print to any stream</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFormatAdapter</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="n">level</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+
+    <span class="n">levelname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%(levelname)s</span><span class="s1">&gt; &#39;</span> <span class="k">if</span> <span class="n">print_level</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">time_format</span><span class="p">:</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="n">levelname</span> <span class="o">+</span> <span class="s1">u&#39;</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> &#39;</span><span class="o">+</span><span class="n">levelname</span><span class="o">+</span><span class="s1">u&#39;</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+                                      <span class="n">datefmt</span><span class="o">=</span><span class="p">(</span><span class="n">time_format</span> 
+                                               <span class="k">if</span> <span class="s1">&#39;%&#39;</span> <span class="ow">in</span> <span class="n">time_format</span>
+                                               <span class="k">else</span> <span class="p">{</span><span class="s1">&#39;full&#39;</span><span class="p">:</span><span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">,</span> 
+                                                     <span class="s1">&#39;hms&#39;</span><span class="p">:</span> <span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">,</span> 
+                                                     <span class="s1">&#39;hm&#39;</span><span class="p">:</span> <span class="s1">&#39;%H:%M&#39;</span><span class="p">}</span>
+                                                     <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">time_format</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">console_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+        <span class="n">console_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">log_file</span><span class="p">:</span>
+        <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span> <span class="k">if</span> <span class="n">overwrite</span> <span class="k">else</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+        <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LoggerManager"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.LoggerManager">[docs]</a><span class="k">class</span> <span class="nc">LoggerManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    log = LoggerManager().get_logger(&#39;name&#39;) to ensure that the same </span>
+<span class="sd">    logger is used across modules. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_loggers</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_default_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Singleton class cannot be instantiated&#39;</span><span class="p">)</span>
+    
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="LoggerManager.get_logger"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.LoggerManager.get_logger">[docs]</a>    <span class="k">def</span> <span class="nf">get_logger</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">apply_format_adapter</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If name already exists, get the existing singleton logger</span>
+<span class="sd">        If doesn&#39;t, create a new basic logger with no extra config. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          apply_format_adapter: wrap the basic logger with LoggerFormatAdapter</span>
+<span class="sd">            to enable new style formatter string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LoggerManager</span><span class="o">.</span><span class="n">_loggers</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">LoggerManager</span><span class="o">.</span><span class="n">_default_handler</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">apply_format_adapter</span><span class="p">:</span>
+                <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFormatAdapter</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+            <span class="n">LoggerManager</span><span class="o">.</span><span class="n">_loggers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">logger</span>
+            
+        <span class="k">return</span> <span class="n">LoggerManager</span><span class="o">.</span><span class="n">_loggers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="LoggerManager.configure"><a class="viewcode-back" href="../../../../surreal.utils.io.html#surreal.utils.io.logger.LoggerManager.configure">[docs]</a>    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">config_args</span><span class="p">,</span> <span class="o">**</span><span class="n">config_kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">          name:</span>
+<span class="sd">            - str: find the associated logger with the str name</span>
+<span class="sd">            - logger instance: if exist in LoggerManager, directly configure it</span>
+<span class="sd">          *config_args, **config_kwargs:</span>
+<span class="sd">            identical to configure_logger() function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LoggerManager</span><span class="o">.</span><span class="n">_loggers</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> logger not created yet.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="c1"># remove the old handler</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerManager</span><span class="o">.</span><span class="n">_loggers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LoggerManager</span><span class="o">.</span><span class="n">_loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;logger instance not found.&#39;</span><span class="p">)</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">name</span>
+                
+        <span class="p">(</span><span class="n">LoggerFormatAdapter</span><span class="o">.</span><span class="n">unwrap</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+             <span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">LoggerManager</span><span class="o">.</span><span class="n">_default_handler</span><span class="p">))</span>
+        <span class="n">configure_logger</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="o">*</span><span class="n">config_args</span><span class="p">,</span> <span class="o">**</span><span class="n">config_kwargs</span><span class="p">)</span></div></div>
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

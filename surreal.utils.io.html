@@ -1,0 +1,1262 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.utils.io package &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="index.html"/>
+        <link rel="up" title="surreal.utils package" href="surreal.utils.html"/>
+        <link rel="prev" title="surreal.utils.console package" href="surreal.utils.console.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">surreal</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="surreal.html">surreal package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="surreal.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="surreal.a3c.html">surreal.a3c package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="surreal.envs.html">surreal.envs package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="surreal.model.html">surreal.model package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="surreal.utils.html">surreal.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="surreal.html#module-surreal">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">surreal</a> &raquo;</li>
+        
+          <li><a href="surreal.html">surreal package</a> &raquo;</li>
+        
+          <li><a href="surreal.utils.html">surreal.utils package</a> &raquo;</li>
+        
+      <li>surreal.utils.io package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/surreal.utils.io.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="surreal-utils-io-package">
+<h1>surreal.utils.io package<a class="headerlink" href="#surreal-utils-io-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-surreal.utils.io.filesys">
+<span id="surreal-utils-io-filesys-module"></span><h2>surreal.utils.io.filesys module<a class="headerlink" href="#module-surreal.utils.io.filesys" title="Permalink to this headline">¶</a></h2>
+<p>File system utils.</p>
+<dl class="function">
+<dt id="surreal.utils.io.filesys.f_add_ext">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">f_add_ext</code><span class="sig-paren">(</span><em>fpath</em>, <em>ext</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#f_add_ext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.f_add_ext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append an extension if not already there
+:param ext: will add a preceding <cite>.</cite> if doesn&#8217;t exist</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.f_append_before_ext">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">f_append_before_ext</code><span class="sig-paren">(</span><em>fpath</em>, <em>suffix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#f_append_before_ext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.f_append_before_ext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a suffix to file name and retain its extension</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.f_copy">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">f_copy</code><span class="sig-paren">(</span><em>fsrc</em>, <em>fdst</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#f_copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.f_copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>If exist, remove. Supports both dir and file. Supports glob wildcard.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.f_join_expand">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">f_join_expand</code><span class="sig-paren">(</span><em>*fpaths</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#f_join_expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.f_join_expand" title="Permalink to this definition">¶</a></dt>
+<dd><p>join file paths and expand special symbols like <cite>~</cite> for home dir</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.f_mkdir">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">f_mkdir</code><span class="sig-paren">(</span><em>fpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#f_mkdir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.f_mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>If exist, do nothing.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.f_remove">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">f_remove</code><span class="sig-paren">(</span><em>fpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#f_remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.f_remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>If exist, remove. Supports both dir and file. Supports glob wildcard.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.f_size">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">f_size</code><span class="sig-paren">(</span><em>fpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#f_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.f_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.f_time">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">f_time</code><span class="sig-paren">(</span><em>fpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#f_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.f_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>File modification time</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.host_id">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">host_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#host_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.host_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: first part of hostname up to &#8216;.&#8217;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.host_name">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">host_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#host_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.host_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get host name, alias with <code class="docutils literal"><span class="pre">socket.gethostname()</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.is_txt">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">is_txt</code><span class="sig-paren">(</span><em>fpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#is_txt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.is_txt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if file path is a text file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.owner_name">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">owner_name</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#owner_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.owner_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: file owner name, unix only</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.parent_dir">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">parent_dir</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#parent_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.parent_dir" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>location</strong> &#8211; current directory or file</td>
+</tr>
+</tbody>
+</table>
+<p>Returns: parent directory absolute path</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.script_dir">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">script_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#script_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.script_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: the dir of current script</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.filesys.utf_open">
+<code class="descclassname">surreal.utils.io.filesys.</code><code class="descname">utf_open</code><span class="sig-paren">(</span><em>fname</em>, <em>mode</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/filesys.html#utf_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.filesys.utf_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper for codecs.open</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.io.logger">
+<span id="surreal-utils-io-logger-module"></span><h2>surreal.utils.io.logger module<a class="headerlink" href="#module-surreal.utils.io.logger" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="surreal.utils.io.logger.LoggerFormatAdapter">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.logger.</code><code class="descname">LoggerFormatAdapter</code><span class="sig-paren">(</span><em>logger</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#LoggerFormatAdapter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.LoggerFormatAdapter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>logger = LoggerFormatAdapter(logger)
+fully supports positional/keyword new formatter string syntax</p>
+<p>Example:</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first docutils">
+<dt>logger.info(&#8220;Float {1:&gt;7.3f} and int {0} with {banana} and {apple:.6f}&#8221;,</dt>
+<dd>66, 3.141592, apple=7**.5, banana=&#8217;str&#8217;)</dd>
+</dl>
+<p class="last"># if the first arg isn&#8217;t a format string, treat as if print statement
+# you can specify a <cite>sep=</cite> arg under this case. <cite>sep</cite> defaults to space
+logger.info({3:&#8217;apple&#8217;, 4:&#8217;banana&#8217;}, 4.5, &#8216;asdf&#8217;)
+logger.info(&#8216;I am not a format string&#8217;, 66, {&#8216;key&#8217;:&#8217;value&#8217;}, sep=&#8217;, &#8216;)</p>
+</dd>
+</dl>
+<p>Custom verbosity level. The higher the more strings printed.
+log.info1(), .info2() ... info5().
+corresponding levels: INFO1 to INFO5</p>
+<dl class="method">
+<dt id="surreal.utils.io.logger.LoggerFormatAdapter.exception">
+<code class="descname">exception</code><span class="sig-paren">(</span><em>msg</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#LoggerFormatAdapter.exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.LoggerFormatAdapter.exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs a message with level ERROR on this logger.
+Exception info is always added to the logging message.
+This method should only be called from an exception handler.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.logger.LoggerFormatAdapter.log">
+<code class="descname">log</code><span class="sig-paren">(</span><em>level</em>, <em>msg</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#LoggerFormatAdapter.log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.LoggerFormatAdapter.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log with user-defined level, e.g. INFO_V0 to INFO_V5</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.logger.LoggerFormatAdapter.section">
+<code class="descname">section</code><span class="sig-paren">(</span><em>msg=None</em>, <em>level=20</em>, <em>sep='='</em>, <em>repeat=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#LoggerFormatAdapter.section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.LoggerFormatAdapter.section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display a section segment line
+:param msg: to be displayed in the middle of the sep line
+:param level: defaults to INFO
+:param sep: symbol to be repeated for a long segment line
+:param repeat: &#8216;sep&#8217; * repeat, the length of the segment string</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.logger.LoggerFormatAdapter.setLevel">
+<code class="descname">setLevel</code><span class="sig-paren">(</span><em>level</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#LoggerFormatAdapter.setLevel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.LoggerFormatAdapter.setLevel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="surreal.utils.io.logger.LoggerFormatAdapter.unwrap">
+<em class="property">static </em><code class="descname">unwrap</code><span class="sig-paren">(</span><em>logger</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#LoggerFormatAdapter.unwrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.LoggerFormatAdapter.unwrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>If it&#8217;s LoggerFormatAdapter, get internal. Otherwise do nothing.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.io.logger.LoggerManager">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.logger.</code><code class="descname">LoggerManager</code><a class="reference internal" href="_modules/surreal/utils/io/logger.html#LoggerManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.LoggerManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>log = LoggerManager().get_logger(&#8216;name&#8217;) to ensure that the same
+logger is used across modules.</p>
+<dl class="staticmethod">
+<dt id="surreal.utils.io.logger.LoggerManager.configure">
+<em class="property">static </em><code class="descname">configure</code><span class="sig-paren">(</span><em>name</em>, <em>*config_args</em>, <em>**config_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#LoggerManager.configure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.LoggerManager.configure" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; <ul>
+<li>str: find the associated logger with the str name</li>
+<li>logger instance: if exist in LoggerManager, directly configure it</li>
+</ul>
+</li>
+<li><strong>**config_kwargs</strong> (<em>*config_args,</em>) &#8211; <p>identical to configure_logger() function</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="surreal.utils.io.logger.LoggerManager.get_logger">
+<em class="property">static </em><code class="descname">get_logger</code><span class="sig-paren">(</span><em>name</em>, <em>apply_format_adapter=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#LoggerManager.get_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.LoggerManager.get_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>If name already exists, get the existing singleton logger
+If doesn&#8217;t, create a new basic logger with no extra config.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>apply_format_adapter</strong> &#8211; wrap the basic logger with LoggerFormatAdapter
+to enable new style formatter string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.logger.arg_verbosity">
+<code class="descclassname">surreal.utils.io.logger.</code><code class="descname">arg_verbosity</code><span class="sig-paren">(</span><em>parsed_arg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#arg_verbosity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.arg_verbosity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get logging verbosity level from command line arg, e.g. <code class="docutils literal"><span class="pre">-v</span></code> or <code class="docutils literal"><span class="pre">-vvv</span></code>
+parsed_arg must have <code class="docutils literal"><span class="pre">verbose</span></code> keyword, and optionally <code class="docutils literal"><span class="pre">debug</span></code> flag
+if &#8211;debug, set to DEBUG level</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.logger.configure_logger">
+<code class="descclassname">surreal.utils.io.logger.</code><code class="descname">configure_logger</code><span class="sig-paren">(</span><em>logger</em>, <em>level=None</em>, <em>log_file=None</em>, <em>overwrite=False</em>, <em>print_level=False</em>, <em>time_format='hm'</em>, <em>stream=&lt;_io.TextIOWrapper name='&lt;stderr&gt;' mode='w' encoding='UTF-8'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/logger.html#configure_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.logger.configure_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mutator function. Supports both plain and LoggerFormatAdapter loggers.
+:param level: None to retain the original level of the logger
+:param log_file: None to print to console only
+:param overwrite: if False, append to the log log_file, otherwise overwrite it
+:param print_level: if True, display <a href="#id3"><span class="problematic" id="id4">`</span></a>INFO&gt; ` before the message
+:param time_format:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>full</cite>: %m/%d %H:%M:%S</li>
+<li><cite>hms</cite>: %H:%M:%S</li>
+<li><cite>hm</cite>: %H:%M</li>
+<li>if contains &#8216;%&#8217;, will be interpreted as a format string</li>
+<li>None</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> &#8211; <ul class="simple">
+<li>defaults to sys.stderr</li>
+<li>None: do not print to any stream</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.io.memfile">
+<span id="surreal-utils-io-memfile-module"></span><h2>surreal.utils.io.memfile module<a class="headerlink" href="#module-surreal.utils.io.memfile" title="Permalink to this headline">¶</a></h2>
+<p>Memory-optimized file types</p>
+<dl class="class">
+<dt id="surreal.utils.io.memfile.AbstractFile">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.memfile.</code><code class="descname">AbstractFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>mode</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Abstract interface for file.</p>
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.AbstractFile.EOF">
+<code class="descname">EOF</code><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.EOF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override this method to have different EOF symbol.
+EOF should be returned from <cite>read()</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.__getitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Functionally equivalent to peek(), does not change read head.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; if &lt; 0, seek_mode=SEEK.End, peek from end of file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.__iter__">
+<code class="descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables for-loop iterator syntax.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.__len__">
+<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of entries in the file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.check_handle">
+<code class="descname">check_handle</code><span class="sig-paren">(</span><em>should_open</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.check_handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.check_handle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the file handle is <cite>should_open</cite> (bool).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.is_read">
+<code class="descname">is_read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.is_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.is_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>If mode is <cite>r</cite> or <cite>rb</cite></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.iter">
+<code class="descname">iter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.iter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.iter" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a generator to read through the data from the current file pos.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.iter_from">
+<code class="descname">iter_from</code><span class="sig-paren">(</span><em>position</em>, <em>seek_mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.iter_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.iter_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines seek() and iter()</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a generator to read through the data from specified position.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.open">
+<code class="descname">open</code><span class="sig-paren">(</span><em>mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.open" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; if specified, override the mode in __init__</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.peek">
+<code class="descname">peek</code><span class="sig-paren">(</span><em>position=None</em>, <em>seek_mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.peek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.peek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does not change the file head.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>position</strong> &#8211; if None, peek at the current read head.</li>
+<li><strong>seek_mode</strong> &#8211; see <cite>seek()</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">entry at that position.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Advances the file pointer forward.</p>
+<p>Returns:
+- object one at a time
+- self.EOF symbol</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.read_all">
+<code class="descname">read_all</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.read_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.read_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all the way till EOF.
+Calls self.iter()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.read_n">
+<code class="descname">read_n</code><span class="sig-paren">(</span><em>n</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.read_n"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.read_n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Repeat <cite>read(*args, **kwargs)</cite> n times. Advances the file pointer forward by n.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of size n. If EOF is encountered midway, truncate the list.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.seek">
+<code class="descname">seek</code><span class="sig-paren">(</span><em>position</em>, <em>seek_mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.seek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seek to a position in the file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> &#8211; the actual byte location = position * self.size</li>
+<li><strong>seek_mode</strong> &#8211; see python&#8217;s built-in <cite>file.seek</cite>. Use SEEK enum.</li>
+<li><strong>0</strong> (<em>-</em>) &#8211; from the beginning of file</li>
+<li><strong>1</strong> (<em>-</em>) &#8211; from current position</li>
+<li><strong>2</strong> (<em>-</em>) &#8211; from the end of file</li>
+<li><strong>None</strong> (<em>-</em>) &#8211; infer. if position &lt; 0, set seek to SEEK.End</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.tell">
+<code class="descname">tell</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.tell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.tell" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes obj to file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.AbstractFile.write_n">
+<code class="descname">write_n</code><span class="sig-paren">(</span><em>obj_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#AbstractFile.write_n"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.AbstractFile.write_n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a list of objs to file.
+Calls self.write() multiple times.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.io.memfile.BinaryFile">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.memfile.</code><code class="descname">BinaryFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>mode</em>, <em>data_fmt</em>, <em>convert_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#BinaryFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.BinaryFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#surreal.utils.io.memfile.AbstractFile" title="surreal.utils.io.memfile.AbstractFile"><code class="xref py py-class docutils literal"><span class="pre">surreal.utils.io.memfile.AbstractFile</span></code></a></p>
+<p>Read and write binary values as if regular file.</p>
+<dl class="method">
+<dt id="surreal.utils.io.memfile.BinaryFile.__len__">
+<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#BinaryFile.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.BinaryFile.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses os.path.getsize() to infer the length.
+If the file doesn&#8217;t have the right format, the result will be wrong.
+Time complexity: O(1)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of binary entries in the file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.BinaryFile.iter">
+<code class="descname">iter</code><span class="sig-paren">(</span><em>convert_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#BinaryFile.iter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.BinaryFile.iter" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>convert_type</strong> &#8211; see <cite>self.read()</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a generator to read through the data.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.BinaryFile.open">
+<code class="descname">open</code><span class="sig-paren">(</span><em>mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#BinaryFile.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.BinaryFile.open" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; if specified, override the mode in __init__</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.BinaryFile.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>convert_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#BinaryFile.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.BinaryFile.read" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>convert_type</strong> &#8211; if specified, override the convert_type in __init__</td>
+</tr>
+</tbody>
+</table>
+<p>Returns:
+- if convert_type, return convert_type(<a href="#id5"><span class="problematic" id="id6">*</span></a>read)
+- empty string &#8216;&#8217; when EOF reached
+- tuple from struct.unpack()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.BinaryFile.seek">
+<code class="descname">seek</code><span class="sig-paren">(</span><em>position</em>, <em>seek_mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#BinaryFile.seek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.BinaryFile.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seek to a position in the file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> &#8211; the actual byte location = position * self.size</li>
+<li><strong>seek_mode</strong> &#8211; see python&#8217;s built-in <cite>file.seek</cite></li>
+<li><strong>0</strong> (<em>-</em>) &#8211; from the beginning of file</li>
+<li><strong>1</strong> (<em>-</em>) &#8211; from current position</li>
+<li><strong>2</strong> (<em>-</em>) &#8211; from the end of file</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.BinaryFile.size">
+<code class="descname">size</code><a class="headerlink" href="#surreal.utils.io.memfile.BinaryFile.size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Returns</em> &#8211; size of one binary data. == struct.calcsize()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.BinaryFile.tell">
+<code class="descname">tell</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#BinaryFile.tell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.BinaryFile.tell" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.BinaryFile.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#BinaryFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.BinaryFile.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes obj to file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.io.memfile.InMemoryFile">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.memfile.</code><code class="descname">InMemoryFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>data_fmt</em>, <em>block_size=0</em>, <em>convert_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#InMemoryFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.InMemoryFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#surreal.utils.io.memfile.AbstractFile" title="surreal.utils.io.memfile.AbstractFile"><code class="xref py py-class docutils literal"><span class="pre">surreal.utils.io.memfile.AbstractFile</span></code></a></p>
+<p>Read once as an array.
+Helper class for LineAccessFile.</p>
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.InMemoryFile.EOF">
+<code class="descname">EOF</code><a class="headerlink" href="#surreal.utils.io.memfile.InMemoryFile.EOF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override this method to have different EOF symbol.
+EOF should be returned from <cite>read()</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.InMemoryFile.TEXT">
+<code class="descname">TEXT</code><em class="property"> = 'TEXT'</em><a class="headerlink" href="#surreal.utils.io.memfile.InMemoryFile.TEXT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.InMemoryFile.__len__">
+<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#InMemoryFile.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.InMemoryFile.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of entries in the file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.InMemoryFile.clear_memory">
+<code class="descname">clear_memory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#InMemoryFile.clear_memory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.InMemoryFile.clear_memory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.InMemoryFile.open">
+<code class="descname">open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#InMemoryFile.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.InMemoryFile.open" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; if specified, override the mode in __init__</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.InMemoryFile.read">
+<code class="descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#InMemoryFile.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.InMemoryFile.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Advances the file pointer forward.</p>
+<p>Returns:
+- object one at a time
+- self.EOF symbol</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.InMemoryFile.seek">
+<code class="descname">seek</code><span class="sig-paren">(</span><em>position</em>, <em>seek_mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#InMemoryFile.seek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.InMemoryFile.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seek to a position in the file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> &#8211; the actual byte location = position * self.size</li>
+<li><strong>seek_mode</strong> &#8211; see python&#8217;s built-in <cite>file.seek</cite>. Use SEEK enum.</li>
+<li><strong>0</strong> (<em>-</em>) &#8211; from the beginning of file</li>
+<li><strong>1</strong> (<em>-</em>) &#8211; from current position</li>
+<li><strong>2</strong> (<em>-</em>) &#8211; from the end of file</li>
+<li><strong>None</strong> (<em>-</em>) &#8211; infer. if position &lt; 0, set seek to SEEK.End</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.InMemoryFile.tell">
+<code class="descname">tell</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#InMemoryFile.tell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.InMemoryFile.tell" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.io.memfile.LineAccessFile">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.memfile.</code><code class="descname">LineAccessFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>block_size</em>, <em>aux_suffix='.line'</em>, <em>aux_mode=&lt;LoadMode.InMem: 0&gt;</em>, <em>aux_regenerate=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#LineAccessFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.LineAccessFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#surreal.utils.io.memfile.AbstractFile" title="surreal.utils.io.memfile.AbstractFile"><code class="xref py py-class docutils literal"><span class="pre">surreal.utils.io.memfile.AbstractFile</span></code></a></p>
+<p>Use an auxiliary binary file to enable random access by line.</p>
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.LineAccessFile.EOF">
+<code class="descname">EOF</code><a class="headerlink" href="#surreal.utils.io.memfile.LineAccessFile.EOF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override this method to have different EOF symbol.
+EOF should be returned from <cite>read()</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.LineAccessFile.__len__">
+<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#LineAccessFile.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.LineAccessFile.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><p>See: BinaryFile.__len__
+Time complexity: O(1), relies on the auxiliary file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of blocks in the file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.LineAccessFile.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#LineAccessFile.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.LineAccessFile.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.LineAccessFile.generate_line_file">
+<code class="descname">generate_line_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#LineAccessFile.generate_line_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.LineAccessFile.generate_line_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the auxiliary line file that has position info for each block.
+Regenerate even if the file already exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of blocks processed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.LineAccessFile.read">
+<code class="descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#LineAccessFile.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.LineAccessFile.read" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Reads a single block at the current read head.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.LineAccessFile.seek">
+<code class="descname">seek</code><span class="sig-paren">(</span><em>position</em>, <em>seek_mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#LineAccessFile.seek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.LineAccessFile.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the current block position.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.LineAccessFile.tell">
+<code class="descname">tell</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#LineAccessFile.tell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.LineAccessFile.tell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: the current block position</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.io.memfile.LoadMode">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.memfile.</code><code class="descname">LoadMode</code><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#LoadMode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.LoadMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.LoadMode.InMem">
+<code class="descname">InMem</code><em class="property"> = &lt;LoadMode.InMem: 0&gt;</em><a class="headerlink" href="#surreal.utils.io.memfile.LoadMode.InMem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.LoadMode.OnDisk">
+<code class="descname">OnDisk</code><em class="property"> = &lt;LoadMode.OnDisk: 1&gt;</em><a class="headerlink" href="#surreal.utils.io.memfile.LoadMode.OnDisk" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.io.memfile.SEEK">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.memfile.</code><code class="descname">SEEK</code><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#SEEK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.SEEK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.SEEK.Begin">
+<code class="descname">Begin</code><em class="property"> = &lt;SEEK.Begin: 0&gt;</em><a class="headerlink" href="#surreal.utils.io.memfile.SEEK.Begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.SEEK.Current">
+<code class="descname">Current</code><em class="property"> = &lt;SEEK.Current: 1&gt;</em><a class="headerlink" href="#surreal.utils.io.memfile.SEEK.Current" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="surreal.utils.io.memfile.SEEK.End">
+<code class="descname">End</code><em class="property"> = &lt;SEEK.End: 22&gt;</em><a class="headerlink" href="#surreal.utils.io.memfile.SEEK.End" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.io.memfile.TextFile">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.memfile.</code><code class="descname">TextFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>mode</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#TextFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.TextFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#surreal.utils.io.memfile.AbstractFile" title="surreal.utils.io.memfile.AbstractFile"><code class="xref py py-class docutils literal"><span class="pre">surreal.utils.io.memfile.AbstractFile</span></code></a></p>
+<p>Read text file line by line.</p>
+<dl class="method">
+<dt id="surreal.utils.io.memfile.TextFile.read">
+<code class="descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#TextFile.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.TextFile.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Advances the file pointer forward.</p>
+<p>Returns:
+- object one at a time
+- self.EOF symbol</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.TextFile.read_all">
+<code class="descname">read_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#TextFile.read_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.TextFile.read_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all the way till EOF.
+Calls self.iter()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.TextFile.seek">
+<code class="descname">seek</code><span class="sig-paren">(</span><em>position</em>, <em>seek_mode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#TextFile.seek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.TextFile.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seek to a position in the file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> &#8211; the actual byte location = position * self.size</li>
+<li><strong>seek_mode</strong> &#8211; see python&#8217;s built-in <cite>file.seek</cite>. Use SEEK enum.</li>
+<li><strong>0</strong> (<em>-</em>) &#8211; from the beginning of file</li>
+<li><strong>1</strong> (<em>-</em>) &#8211; from current position</li>
+<li><strong>2</strong> (<em>-</em>) &#8211; from the end of file</li>
+<li><strong>None</strong> (<em>-</em>) &#8211; infer. if position &lt; 0, set seek to SEEK.End</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.TextFile.tell">
+<code class="descname">tell</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#TextFile.tell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.TextFile.tell" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.memfile.TextFile.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/memfile.html#TextFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.memfile.TextFile.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes obj to file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.io.printing">
+<span id="surreal-utils-io-printing-module"></span><h2>surreal.utils.io.printing module<a class="headerlink" href="#module-surreal.utils.io.printing" title="Permalink to this headline">¶</a></h2>
+<p>Printing utils:</p>
+<ul class="simple">
+<li>Context manager-based printing streams.</li>
+<li>Convert data structures to pretty string representation.</li>
+</ul>
+<dl class="class">
+<dt id="surreal.utils.io.printing.PrintRedirection">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.printing.</code><code class="descname">PrintRedirection</code><span class="sig-paren">(</span><em>stdout=None</em>, <em>stderr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#PrintRedirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.PrintRedirection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Context manager: temporarily redirects stdout and stderr</p>
+<dl class="method">
+<dt id="surreal.utils.io.printing.PrintRedirection.flush">
+<code class="descname">flush</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#PrintRedirection.flush"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.PrintRedirection.flush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually flush the replaced stdout/stderr buffers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.io.printing.PrintString">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.printing.</code><code class="descname">PrintString</code><a class="reference internal" href="_modules/surreal/utils/io/printing.html#PrintString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.PrintString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#surreal.utils.io.printing.PrintRedirection" title="surreal.utils.io.printing.PrintRedirection"><code class="xref py py-class docutils literal"><span class="pre">surreal.utils.io.printing.PrintRedirection</span></code></a></p>
+<p>Redirect stdout and stderr to strings.</p>
+<dl class="method">
+<dt id="surreal.utils.io.printing.PrintString.stderr">
+<code class="descname">stderr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#PrintString.stderr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.PrintString.stderr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: stderr as one string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.printing.PrintString.stderr_by_line">
+<code class="descname">stderr_by_line</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#PrintString.stderr_by_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.PrintString.stderr_by_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: a list of stderr line by line, ignore trailing blanks</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.printing.PrintString.stdout">
+<code class="descname">stdout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#PrintString.stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.PrintString.stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: stdout as one string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.printing.PrintString.stdout_by_line">
+<code class="descname">stdout_by_line</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#PrintString.stdout_by_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.PrintString.stdout_by_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: a list of stdout line by line, ignore trailing blanks</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.printing.PrintSuppress">
+<code class="descclassname">surreal.utils.io.printing.</code><code class="descname">PrintSuppress</code><span class="sig-paren">(</span><em>no_out=True</em>, <em>no_err=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#PrintSuppress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.PrintSuppress" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>no_out</strong> &#8211; stdout writes to sys.devnull</li>
+<li><strong>no_err</strong> &#8211; stderr writes to sys.devnull</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.io.printing.PrintToFile">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.printing.</code><code class="descname">PrintToFile</code><span class="sig-paren">(</span><em>out_file=None</em>, <em>err_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#PrintToFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.PrintToFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#surreal.utils.io.printing.PrintRedirection" title="surreal.utils.io.printing.PrintRedirection"><code class="xref py py-class docutils literal"><span class="pre">surreal.utils.io.printing.PrintRedirection</span></code></a></p>
+<p>Print to file and save/close the handle at the end.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.printing.attribute_str">
+<code class="descclassname">surreal.utils.io.printing.</code><code class="descname">attribute_str</code><span class="sig-paren">(</span><em>obj</em>, <em>sep='</em>, <em>\n'</em>, <em>mapsep='='</em>, <em>include_filter=None</em>, <em>exclude_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#attribute_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.attribute_str" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obj</strong> &#8211; an object with various attrs</li>
+<li><strong>sep</strong> &#8211; separator for each attribute (lines)</li>
+<li><strong>mapsep</strong> &#8211; name <cite>mapsep</cite> value (e.g. x =&gt; 3)</li>
+<li><strong>exclude_filter</strong> (<em>include_filter,</em>) &#8211; see include_exclude()</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pretty printed string of all attributes of the object,
+sorted by alphabetical order.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Sample usage: an object of argparse.Namespace, returned by parse_arg()</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.printing.dict_str">
+<code class="descclassname">surreal.utils.io.printing.</code><code class="descname">dict_str</code><span class="sig-paren">(</span><em>D</em>, <em>sep='='</em>, <em>item_sep='</em>, <em>'</em>, <em>key_format=''</em>, <em>value_format=''</em>, <em>enclose=('{'</em>, <em>'}')</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#dict_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.dict_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretty string representation of a dictionary. Works with Unicode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sep</strong> &#8211; &#8220;key <cite>sep</cite> value&#8221;</li>
+<li><strong>item_sep</strong> &#8211; separator between key-value pairs</li>
+<li><strong>key_format</strong> &#8211; same format string as in str.format()</li>
+<li><strong>value_format</strong> &#8211; same format string as in str.format()</li>
+<li><strong>enclose</strong> &#8211; a 2-tuple of enclosing symbols</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.printing.list_str">
+<code class="descclassname">surreal.utils.io.printing.</code><code class="descname">list_str</code><span class="sig-paren">(</span><em>L</em>, <em>sep='</em>, <em>'</em>, <em>item_format=''</em>, <em>enclose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#list_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.list_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretty string representation of a list or tuple. Works with Unicode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sep</strong> &#8211; separator between two list items</li>
+<li><strong>item_format</strong> &#8211; same format string as in str.format()</li>
+<li><strong>enclose</strong> &#8211; a 2-tuple of enclosing symbols.
+default: <cite>[]</cite> for list and <cite>()</cite> for tuple.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.printing.printerr">
+<code class="descclassname">surreal.utils.io.printing.</code><code class="descname">printerr</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#printerr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.printerr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.printing.seconds_str">
+<code class="descclassname">surreal.utils.io.printing.</code><code class="descname">seconds_str</code><span class="sig-paren">(</span><em>seconds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#seconds_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.seconds_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert seconds to str <cite>HH:MM:SS</cite></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.printing.stdnull">
+<code class="descclassname">surreal.utils.io.printing.</code><code class="descname">stdnull</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#stdnull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.stdnull" title="Permalink to this definition">¶</a></dt>
+<dd><p>/dev/null stream</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.printing.time_now_str">
+<code class="descclassname">surreal.utils.io.printing.</code><code class="descname">time_now_str</code><span class="sig-paren">(</span><em>fmt_str='%m-%d_%H.%M.%S'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/printing.html#time_now_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.printing.time_now_str" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="https://docs.python.org/2/library/time.html#time.strftime">https://docs.python.org/2/library/time.html#time.strftime</a>
+%m - month; %d - day; %y - year
+%H - 24 hr; %I - 12 hr; %M - minute; %S - second; %p - AM or PM</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.io.serialize">
+<span id="surreal-utils-io-serialize-module"></span><h2>surreal.utils.io.serialize module<a class="headerlink" href="#module-surreal.utils.io.serialize" title="Permalink to this headline">¶</a></h2>
+<p>Data and config serialization.</p>
+<dl class="class">
+<dt id="surreal.utils.io.serialize.JsonWriter">
+<em class="property">class </em><code class="descclassname">surreal.utils.io.serialize.</code><code class="descname">JsonWriter</code><span class="sig-paren">(</span><em>json_file</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/serialize.html#JsonWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.serialize.JsonWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="surreal.utils.html#surreal.utils.common.AttributeDict" title="surreal.utils.common.AttributeDict"><code class="xref py py-class docutils literal"><span class="pre">surreal.utils.common.AttributeDict</span></code></a></p>
+<p>Load and write json files like an AttributeDict</p>
+<dl class="method">
+<dt id="surreal.utils.io.serialize.JsonWriter.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/serialize.html#JsonWriter.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.serialize.JsonWriter.save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.io.serialize.JsonWriter.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/serialize.html#JsonWriter.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.serialize.JsonWriter.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.serialize.json_load">
+<code class="descclassname">surreal.utils.io.serialize.</code><code class="descname">json_load</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/serialize.html#json_load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.serialize.json_load" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.serialize.json_parse">
+<code class="descclassname">surreal.utils.io.serialize.</code><code class="descname">json_parse</code><span class="sig-paren">(</span><em>s</em>, <em>encoding=None</em>, <em>cls=None</em>, <em>object_hook=None</em>, <em>parse_float=None</em>, <em>parse_int=None</em>, <em>parse_constant=None</em>, <em>object_pairs_hook=None</em>, <em>**kw</em><span class="sig-paren">)</span><a class="headerlink" href="#surreal.utils.io.serialize.json_parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>json_str: dict -&gt; string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.io.serialize.json_save">
+<code class="descclassname">surreal.utils.io.serialize.</code><code class="descname">json_save</code><span class="sig-paren">(</span><em>filepath</em>, <em>dat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/io/serialize.html#json_save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.io.serialize.json_save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.io">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-surreal.utils.io" title="Permalink to this headline">¶</a></h2>
+<p>IO utils.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="surreal.utils.console.html" class="btn btn-neutral" title="surreal.utils.console package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

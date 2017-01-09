@@ -32,7 +32,8 @@
   
     <link rel="top" title="Surreal 0.0.1 documentation" href="index.html"/>
         <link rel="up" title="surreal package" href="surreal.html"/>
-        <link rel="prev" title="surreal package" href="surreal.html"/> 
+        <link rel="next" title="surreal.utils.console package" href="surreal.utils.console.html"/>
+        <link rel="prev" title="surreal.model package" href="surreal.model.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -86,6 +87,9 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">surreal</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="surreal.html">surreal package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="surreal.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="surreal.a3c.html">surreal.a3c package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="surreal.envs.html">surreal.envs package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="surreal.model.html">surreal.model package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">surreal.utils package</a></li>
 </ul>
 </li>
@@ -163,74 +167,482 @@
             
   <div class="section" id="surreal-utils-package">
 <h1>surreal.utils package<a class="headerlink" href="#surreal-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="surreal.utils.console.html">surreal.utils.console package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.console.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.console.html#module-surreal.utils.console.colorize">surreal.utils.console.colorize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.console.html#module-surreal.utils.console.process">surreal.utils.console.process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.console.html#module-surreal.utils.console.prompt">surreal.utils.console.prompt module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.console.html#module-surreal.utils.console">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="surreal.utils.io.html">surreal.utils.io package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.io.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.io.html#module-surreal.utils.io.filesys">surreal.utils.io.filesys module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.io.html#module-surreal.utils.io.logger">surreal.utils.io.logger module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.io.html#module-surreal.utils.io.memfile">surreal.utils.io.memfile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.io.html#module-surreal.utils.io.printing">surreal.utils.io.printing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.io.html#module-surreal.utils.io.serialize">surreal.utils.io.serialize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surreal.utils.io.html#module-surreal.utils.io">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-surreal.utils.common">
 <span id="surreal-utils-common-module"></span><h2>surreal.utils.common module<a class="headerlink" href="#module-surreal.utils.common" title="Permalink to this headline">¶</a></h2>
-<p>Miscellaneous utility functions</p>
+<p>Common utility functions</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">need more cleanup</p>
 </div>
-<div class="section" id="module-surreal.utils.console">
-<span id="surreal-utils-console-module"></span><h2>surreal.utils.console module<a class="headerlink" href="#module-surreal.utils.console" title="Permalink to this headline">¶</a></h2>
-<p>Console utilities</p>
-<dl class="function">
-<dt id="surreal.utils.console.color_format">
-<code class="descclassname">surreal.utils.console.</code><code class="descname">color_format</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console.html#color_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.color_format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Colorize a string with special formatting syntax.</p>
-<p>Syntax [color,styles,background]`string to be colorized`
-styles should be represented as single-char shorthands,
-e.g. <code class="docutils literal"><span class="pre">bil</span></code> means bold and italic and blinking text.</p>
-<div class="example admonition" id="index-0">
-<p class="first admonition-title">Example</p>
-<div class="last highlight-default"><div class="highlight"><pre><span></span>This is [blue]`blue` text with [red,bu]`bold underlined red`
-This is [green,il,yellow]`green italic blinking text on yellow`
-Square bracket[yoyo][magenta,,green]`vanilla magenta text on green`
-</pre></div>
-</div>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="surreal.utils.console.colorize">
-<code class="descclassname">surreal.utils.console.</code><code class="descname">colorize</code><span class="sig-paren">(</span><em>text</em>, <em>color=None</em>, <em>styles=[]</em>, <em>background=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console.html#colorize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.colorize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Colorize text display in console.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>text</strong> (<em>str</em>) &#8211; to be colorized</li>
-<li><strong>color</strong> (<em>str</em>) &#8211; gray, red, green, yellow, blue, magenta, cyan, white</li>
-<li><strong>styles</strong> (<em>list or tuple</em>) &#8211; bold (b), dark (d), italic (i), underline (u),
-blink (l), reverse (r), hidden (h), strikethrough (s)</li>
-<li><strong>background</strong> (<em>str</em>) &#8211; gray, red, green, yellow, blue, magenta, cyan, white</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>str</em> &#8211; colorized string</p>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Some of the styles and colors might not display in certain terminals.</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="surreal.utils.console.cprint">
-<code class="descclassname">surreal.utils.console.</code><code class="descname">cprint</code><span class="sig-paren">(</span><em>text</em>, <em>color=None</em>, <em>styles=[]</em>, <em>background=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console.html#cprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.cprint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prints colorized text.</p>
+<dl class="class">
+<dt id="surreal.utils.common.ArgParser">
+<em class="property">class </em><code class="descclassname">surreal.utils.common.</code><code class="descname">ArgParser</code><span class="sig-paren">(</span><em>*arg_infos</em>, <em>**config_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#ArgParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.ArgParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>example
+ArgParser = ArgParser(</p>
+<blockquote>
+<div>[(&#8216;b&#8217;, &#8216;bar&#8217;), 23, &#8216;will be int, float will error&#8217;],
+[&#8216;foo&#8217;, [&#8216;opt1&#8217;, &#8216;opt2&#8217;, &#8216;opt3&#8217;], &#8216;arg choices&#8217;],
+[(&#8216;a&#8217;, &#8216;app&#8217;, &#8216;apple&#8217;), 34.5, &#8216;myarg.app to get value&#8217;],
+[&#8216;dud&#8217;, None, &#8216;&#8211;dud is a required string&#8217;],
+[(&#8216;u&#8217;, &#8216;ununun&#8217;), False, &#8216;store_true to ununun&#8217;],
+[&#8216;gug&#8217;, (None, float), &#8216;&#8211;gug is a required float&#8217;],
+[(&#8216;p&#8217;, &#8216;pollo&#8217;), (44, float), &#8216;myarg.pollo saved as float&#8217;],
+[&#8216;evy&#8217;, ArgParser.Nargs([1,2,3]), &#8216;variable number of args&#8217;]
+description=&#8217;This is my hello world program&#8217;,
+epilogue=&#8217;goodbye zai jian sayonala&#8217;)</div></blockquote>
+<p>myarg = ArgParser.parse()</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>color</strong> &#8211; same as <code class="docutils literal"><span class="pre">colorize()</span></code></li>
-<li><strong>styles</strong> &#8211; same as <code class="docutils literal"><span class="pre">colorize()</span></code></li>
-<li><strong>background</strong> &#8211; same as <code class="docutils literal"><span class="pre">colorize()</span></code></li>
-<li><strong>**kwargs</strong> &#8211; kwargs for print()</li>
+<li><strong>must be a list of 3 specifiers</strong> (<em>*arg_infos</em>) &#8211; [name or (names,),
+default or (default, type) or [list of choices] or ArgParser.Nargs,
+help_string]</li>
+<li><strong>**config_kwargs</strong> &#8211; <ul>
+<li>any kwargs that can be used in argparse.ArgumentParser constructor</li>
+<li>e.g. description=, epilog=</li>
+<li>config_file TODO</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The following options are pre-configured
+&#8211;verbosity, or -vvv (number of v&#8217;s indicate the level of verbosity)
+&#8211;debug: turn on debugging mode
+Any option that has underscore in it automatically supports hyphen, and
+vice versa. E.g. <cite>step_size</cite> supports both <cite>&#8211;step_size</cite> and <cite>&#8211;step-size</cite></p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Remember to add a comma after each [...], to prevent
+weird error like <cite>TypeError: list indices must be integers, not tuple</cite></p>
+</div>
+<dl class="class">
+<dt id="surreal.utils.common.ArgParser.Narg">
+<em class="property">class </em><code class="descname">Narg</code><span class="sig-paren">(</span><em>default</em>, <em>nargs='*'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#ArgParser.Narg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.ArgParser.Narg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Variadic number of args for an option.
+See <cite>nargs=</cite> option in parser.add_argument()
+:param default: a list of default Nargs. If None, this option will be required
+:param nargs: &lt;N&gt;, &#8216;?&#8217;, &#8216;+&#8217;, &#8216;*&#8217;, will be passed to <cite>add_argument()</cite></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.common.ArgParser.add">
+<code class="descclassname">ArgParser.</code><code class="descname">add</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#ArgParser.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.ArgParser.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.common.ArgParser.parse">
+<code class="descclassname">ArgParser.</code><code class="descname">parse</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#ArgParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.ArgParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="surreal.utils.common.ArgumentError">
+<em class="property">exception </em><code class="descclassname">surreal.utils.common.</code><code class="descname">ArgumentError</code><a class="reference internal" href="_modules/surreal/utils/common.html#ArgumentError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.ArgumentError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code></p>
+<p>Raise if an argument to a function is invalid.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.common.AttributeDict">
+<em class="property">class </em><code class="descclassname">surreal.utils.common.</code><code class="descname">AttributeDict</code><a class="reference internal" href="_modules/surreal/utils/common.html#AttributeDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.AttributeDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">dict</span></code></p>
+<p>Set AttributeDict.OVERRIDE = True to allow overriding original dict methods.
+- True: <cite>a.keys = 42; print a.keys</cite> returns 42
+- False: <cite>a.keys = 42; print a.keys</cite> returns &lt;function keys&gt;</p>
+<p>vars() will return the (hacked) internal dictionary
+Always use dict() to convert if you want to manipulate it as a regular dict</p>
+<dl class="staticmethod">
+<dt id="surreal.utils.common.AttributeDict.set_override">
+<em class="property">static </em><code class="descname">set_override</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#AttributeDict.set_override"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.AttributeDict.set_override" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.common.Emailer">
+<em class="property">class </em><code class="descclassname">surreal.utils.common.</code><code class="descname">Emailer</code><span class="sig-paren">(</span><em>sender_name</em>, <em>sender_email</em>, <em>recv_email</em>, <em>passwd</em>, <em>smtp_addr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#Emailer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.Emailer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="surreal.utils.common.Emailer.send">
+<code class="descname">send</code><span class="sig-paren">(</span><em>subject</em>, <em>textbody</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#Emailer.send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.Emailer.send" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.common.Emailer.send_multiple">
+<code class="descname">send_multiple</code><span class="sig-paren">(</span><em>*messages</em>, <em>*</em>, <em>dryrun=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#Emailer.send_multiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.Emailer.send_multiple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send multiple emails.
+:param messages: Each msg is a tuple (subject, bodytext)
+:param dry_run=True to print the msg out without actually sending it.:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="surreal.utils.common.Emailer.set_debug">
+<code class="descname">set_debug</code><span class="sig-paren">(</span><em>debug</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#Emailer.set_debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.Emailer.set_debug" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="surreal.utils.common.PrefixProperty">
+<em class="property">class </em><code class="descclassname">surreal.utils.common.</code><code class="descname">PrefixProperty</code><span class="sig-paren">(</span><em>attr_names</em>, <em>prefix='_'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#PrefixProperty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.PrefixProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Decorator for class with prefixed properties
+internally, the class will have self.&lt;prefix&gt;varname
+externally, a read-only property will be created for self.varname
+takes care of &#8216;__&#8217; name mangling</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.SET_ASSERT">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">SET_ASSERT</code><span class="sig-paren">(</span><em>self</em>, <em>gs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#SET_ASSERT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.SET_ASSERT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inside a test method, call
+SET_ASSERT(self, globals())</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.SET_DOC">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">SET_DOC</code><span class="sig-paren">(</span><em>cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#SET_DOC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.SET_DOC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call SET_DOC(cls) in <cite>def setUpClass</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.ceildiv">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">ceildiv</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#ceildiv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.ceildiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ceiling division, equivalent to math.ceil(1.0*a/b) but much faster.
+ceildiv(19, 7) == 3
+ceildiv(21, 7) == 3
+ceildiv(22, 7) == 4</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.cum_sum">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">cum_sum</code><span class="sig-paren">(</span><em>seq</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#cum_sum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.cum_sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cumulative sum (include 0)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.deepcopy_cls">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">deepcopy_cls</code><span class="sig-paren">(</span><em>cls</em>, <em>new_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#deepcopy_cls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.deepcopy_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deep copy a class
+:param cls:
+:param new_name: if None, defaults to cls.__name__ + &#8216;Copy&#8217;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.enlist">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">enlist</code><span class="sig-paren">(</span><em>obj</em>, <em>N=1</em>, <em>check=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#enlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.enlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Useful for repeating default option multiple times
+:param check: if True, check len(obj) == N</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">If obj is a list, return after checking
+Otherwise, repeat it into N-element list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.enum">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">enum</code><span class="sig-paren">(</span><em>*sequential</em>, <em>**named</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#enum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.enum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Numbers = enum(&#8216;ZERO&#8217;, &#8216;ONE&#8217;, &#8216;TWO&#8217;)
+Numbers.to_str(Numbers.ZERO) -&gt; &#8216;ZERO&#8217;
+Numbers.to_enum(&#8216;ZERO&#8217;) -&gt; Numbers.ZERO
+Numbers.size == 3
+for n in Numbers():</p>
+<blockquote>
+<div># 1, 2, 3</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.errorsafe">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">errorsafe</code><span class="sig-paren">(</span><em>safe_handler</em>, <em>exclude</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#errorsafe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.errorsafe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safe-handle all errors except for those explicitly excluded
+:param safe_handler: function that takes e and does safe handling</p>
+<blockquote>
+<div>if None, do nothing</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>excluded</strong> &#8211; dict mapping ExceptionType to function that handles e of that type</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.errorsafe_mode">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">errorsafe_mode</code><span class="sig-paren">(</span><em>safe_handle_mode='traceback'</em>, <em>exclude_excs=None</em>, <em>exclude_handle_mode='exit'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#errorsafe_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.errorsafe_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safe-handle all errors except for those explicitly excluded</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>safe_handler_mode</strong> &#8211; </li>
+<li><strong>'traceback'</strong> (<em>-</em>) &#8211; print raised exception&#8217;s full traceback</li>
+<li><strong>'print</strong> (<em>-</em>) &#8211; {format-str-with-err}&#8217;: print formatted error message
+e.g. &#8216;print:oh no {err}!&#8217;</li>
+<li><strong>'pass'</strong> (<em>-</em>) &#8211; do nothing</li>
+<li><strong>excluded_excs</strong> &#8211; list of excluded ExceptionType(s)</li>
+<li><strong>exclude_handle_mode</strong> &#8211; </li>
+<li><strong>'exit'</strong> (<em>-</em>) &#8211; sys.exit(1) terminate the program</li>
+<li><strong>'print</strong> &#8211; {format-str-with-err}&#8217;: print formatted error message and exit
+e.g. &#8216;print+exit:oh no {err}!&#8217;</li>
+<li><strong>'raise'</strong> (<em>-</em>) &#8211; raise the exception as-is</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">context manager.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.flatten2d">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">flatten2d</code><span class="sig-paren">(</span><em>list2d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#flatten2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.flatten2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.hasattrs">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">hasattrs</code><span class="sig-paren">(</span><em>obj</em>, <em>attrs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#hasattrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.hasattrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multi-attr version of the built-in <cite>hasattr()</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">If object has all the attrs specified in the second arg.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.import_parent_dir">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">import_parent_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#import_parent_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.import_parent_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import scripts from parent directory.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.include_exclude">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">include_exclude</code><span class="sig-paren">(</span><em>array</em>, <em>include_filter=None</em>, <em>exclude_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#include_exclude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.include_exclude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Include an element if:
+1. include_filter is None
+2. include_filter is a list and contains the element
+3. include_filter is a lambda and returns True on the element
+AND then exclude an element if:
+1. exclude_filter is not None
+2. exclude_filter is a list and contains the element
+3. exclude_filter is a lambda and returns True on the element</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.inspect_classes">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">inspect_classes</code><span class="sig-paren">(</span><em>module</em>, <em>include_import=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#inspect_classes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.inspect_classes" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>module</strong> &#8211; either one of the following</li>
+<li><strong>string name of the module.</strong> (<em>-</em>) &#8211; </li>
+<li><strong>module variable itself.</strong> (<em>-</em>) &#8211; </li>
+<li><strong>include_import</strong> &#8211; if False, only list classes being defined in this module
+and exclude any imported class.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list of classes (excluding or including imported ones)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.is_div">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">is_div</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#is_div"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.is_div" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: bool - does <cite>a</cite> divide <cite>b</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.is_iterable">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">is_iterable</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#is_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.is_iterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: True if obj is iterable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.is_list_len">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">is_list_len</code><span class="sig-paren">(</span><em>obj</em>, <em>length</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#is_list_len"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.is_list_len" title="Permalink to this definition">¶</a></dt>
+<dd><p>For argument sanity check: assert if the arg is a list/tuple of <cite>len</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.is_python3">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">is_python3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#is_python3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.is_python3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.is_sequence">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">is_sequence</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#is_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.is_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if the sequence is a collections.Sequence and not a string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.is_str">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">is_str</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#is_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.is_str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.list_dim">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">list_dim</code><span class="sig-paren">(</span><em>lis</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#list_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.list_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return: dimensions of deep nested sequences. Only consider the
+dim of the first element. Strings are not sequences.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.max_at">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">max_at</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#max_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.max_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: (max, max_i)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.merge_attr_dicts">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">merge_attr_dicts</code><span class="sig-paren">(</span><em>*dicts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#merge_attr_dicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.merge_attr_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: merged AttributeDict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.merge_dicts">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">merge_dicts</code><span class="sig-paren">(</span><em>*dicts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#merge_dicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.merge_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given any number of dicts, shallow copy and merge into a new dict,
+precedence goes to key value pairs in latter dicts.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.min_at">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">min_at</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#min_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.min_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: (min, min_i)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.pack_args">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">pack_args</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#pack_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.pack_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process <cite>*args</cite> variable-length positional args
+Enable to function to accept either unpacked or packed args</p>
+<dl class="docutils">
+<dt>def f1(<a href="#id1"><span class="problematic" id="id2">*</span></a>args):</dt>
+<dd>args = pack_args(args)</dd>
+</dl>
+<p>Now f1 can be used in all the following ways:
+- f1(a, b, c)
+- f1([a, b, c])
+- f1(<a href="#id3"><span class="problematic" id="id4">*</span></a>[a, b, c])
+- f1([a,b,c],[a2,b2,c2]) -&gt; will raise error</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.parse_int_list">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">parse_int_list</code><span class="sig-paren">(</span><em>ints</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#parse_int_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.parse_int_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>For command line int list parsing
+syntax:
+- <cite>1-5</cite> =&gt; [1,2,3,4,5] inclusive
+- <cite>3-10^5,9</cite> =&gt; [3,4,6,7,8,10]  3-10 excluding 5 and 9.
+- <cite>3-12^5-8</cite> =&gt; [3,4,9,10,11,12]  3-12 excluding 5-8.
+- <cite>2,4,7</cite> =&gt; [2,4,7]
+- <cite>0</cite> =&gt; [0]</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.partial_kwarg">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">partial_kwarg</code><span class="sig-paren">(</span><em>func</em>, <em>**apply_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#partial_kwarg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.partial_kwarg" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a function has the specified kwargs, apply to it.
+Otherwise ignore the kwarg.
+If the function itself accepts variable keyword args (<a href="#id5"><span class="problematic" id="id6">**</span></a>keywords), always
+apply all of <a href="#id7"><span class="problematic" id="id8">**</span></a>apply_kwargs to func.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">partially applied function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.pop_head">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">pop_head</code><span class="sig-paren">(</span><em>array</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#pop_head"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.pop_head" title="Permalink to this definition">¶</a></dt>
+<dd><p>pop n items from the head of the list. Input will be modified.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.pop_tail">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">pop_tail</code><span class="sig-paren">(</span><em>array</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#pop_tail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.pop_tail" title="Permalink to this definition">¶</a></dt>
+<dd><p>pop n items from the tail of the list. Input will be modified.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.rand_choice">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">rand_choice</code><span class="sig-paren">(</span><em>*choices</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#rand_choice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.rand_choice" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>choices</strong> &#8211; randomly return an element from the list</li>
+<li><strong>be either packed or unpacked</strong> (<em>can</em>) &#8211; </li>
 </ul>
 </td>
 </tr>
@@ -239,14 +651,327 @@ blink (l), reverse (r), hidden (h), strikethrough (s)</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="surreal.utils.console.query_yes_no">
-<code class="descclassname">surreal.utils.console.</code><code class="descname">query_yes_no</code><span class="sig-paren">(</span><em>question</em>, <em>default='yes'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/console.html#query_yes_no"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.console.query_yes_no" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ask a yes/no question via input() and return their answer.</p>
-<p>&#8220;question&#8221; is a string that is presented to the user.
-&#8220;default&#8221; is the presumed answer if the user just hits &lt;Enter&gt;.
-It must be &#8220;yes&#8221; (the default), &#8220;no&#8221; or None (meaning
-an answer is required of the user).</p>
-<p>The &#8220;answer&#8221; return value is True for &#8220;yes&#8221; or False for &#8220;no&#8221;.</p>
+<dt id="surreal.utils.common.reverse_dict">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">reverse_dict</code><span class="sig-paren">(</span><em>dic</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#reverse_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.reverse_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert {key: value} to {value: key}</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.rint">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">rint</code><span class="sig-paren">(</span><em>*N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#rint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.rint" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>One arg N:</dt>
+<dd>Random int from [0, N] inclusive</dd>
+<dt>Two args N_low, N_high:</dt>
+<dd>Random int from [N_low, N_high] inclusive</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.shuffled_indices">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">shuffled_indices</code><span class="sig-paren">(</span><em>N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#shuffled_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.shuffled_indices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.sum_pow">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">sum_pow</code><span class="sig-paren">(</span><em>p</em>, <em>N_begin</em>, <em>N_end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#sum_pow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.sum_pow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Power summation, N inclusive.
+sum_{n=N_begin}^{N_end} p^n</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.common.transfer_attrs">
+<code class="descclassname">surreal.utils.common.</code><code class="descname">transfer_attrs</code><span class="sig-paren">(</span><em>from_obj</em>, <em>to_obj</em>, <em>include_filter=None</em>, <em>exclude_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/common.html#transfer_attrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.common.transfer_attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>from_obj and to_obj can be dict.
+If not dict, will ONLY transfer attrs in <cite>vars()</cite>, i.e. __dict__
+Transfer an attribute if:
+1. include_filter is None
+2. include_filter is a list and contains the attr
+3. include_filter is a lambda and returns True on the attr
+AND then exclude an attribute if:
+1. exclude_filter is not None
+2. exclude_filter is a list and contains the attr
+3. exclude_filter is a lambda and returns True on the attr
+Note that any attr that startswith &#8216;_&#8217; is automatically ignored</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.debug">
+<span id="surreal-utils-debug-module"></span><h2>surreal.utils.debug module<a class="headerlink" href="#module-surreal.utils.debug" title="Permalink to this headline">¶</a></h2>
+<p>Debugging utils.</p>
+<dl class="function">
+<dt id="surreal.utils.debug.dprint">
+<code class="descclassname">surreal.utils.debug.</code><code class="descname">dprint</code><span class="sig-paren">(</span><em>*varnames</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/debug.html#dprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.debug.dprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>debug-print</p>
+<p>Auto-find local variable&#8217;s name and print its value.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.debug.halt">
+<code class="descclassname">surreal.utils.debug.</code><code class="descname">halt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/debug.html#halt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.debug.halt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.debug.noop_context">
+<code class="descclassname">surreal.utils.debug.</code><code class="descname">noop_context</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/debug.html#noop_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.debug.noop_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>For debugging purposes.
+Placeholder context manager that does nothing.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.debug.pp">
+<code class="descclassname">surreal.utils.debug.</code><code class="descname">pp</code><span class="sig-paren">(</span><em>*objs</em>, <em>*</em>, <em>h=''</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/debug.html#pp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.debug.pp" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>*objs</strong> &#8211; objects to be pretty-printed</li>
+<li><strong>h</strong> &#8211; header string</li>
+<li><strong>**kwargs</strong> &#8211; other kwargs to pass on to <code class="docutils literal"><span class="pre">pprint()</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.debug.stop">
+<code class="descclassname">surreal.utils.debug.</code><code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/debug.html#stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.debug.stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.debug.timecode">
+<code class="descclassname">surreal.utils.debug.</code><code class="descname">timecode</code><span class="sig-paren">(</span><em>statement</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/debug.html#timecode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.debug.timecode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as timeit.timeit, except that the statement can contain any variable
+in the outer scope. Suppress warning.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-surreal.utils.functional">
+<span id="surreal-utils-functional-module"></span><h2>surreal.utils.functional module<a class="headerlink" href="#module-surreal.utils.functional" title="Permalink to this headline">¶</a></h2>
+<p>Decorators, higher-order functionals, functools module extensions.</p>
+<dl class="function">
+<dt id="surreal.utils.functional.apply_map">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">apply_map</code><span class="sig-paren">(</span><em>func</em>, <em>seq</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#apply_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.apply_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.chain_and">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">chain_and</code><span class="sig-paren">(</span><em>*predicates</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#chain_and"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.chain_and" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*predicates</strong> &#8211; a list of lambdas that take one arg and return bool</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a lambda predicate that is true iff all predicates are true.
+employs short-circuit logic. Internally, use a generator instead of
+list comprehension to enable short-circuit.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.chain_or">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">chain_or</code><span class="sig-paren">(</span><em>*predicates</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#chain_or"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.chain_or" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*predicates</strong> &#8211; a list of lambdas that take one arg and return bool</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a lambda predicate that is true if at least one of the predicates are true</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.circular_iterable">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">circular_iterable</code><span class="sig-paren">(</span><em>cls</em>, <em>cycles=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#circular_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.circular_iterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to make a class cyclic iterable with for-loop.
+Compatible with both python 2 and 3.
+Meta-wrap style.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cls</strong> &#8211; must define __iter__() (returns a generator or has <cite>yield</cite> statement)</li>
+<li><strong>cycles</strong> &#8211; </li>
+<li><strong>0</strong> (<em>-</em>) &#8211; infinitely iterable</li>
+<li><strong>N</strong> (<em>-</em>) &#8211; repeat a specific number of times</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.compose">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">compose</code><span class="sig-paren">(</span><em>*functions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#compose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.compose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compose multiple functions
+compose(f, g, h)(x) &lt;=&gt; f(g(h(x)))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.deprecated">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">deprecated</code><span class="sig-paren">(</span><em>func</em>, <em>msg=''</em>, <em>action='warning'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#deprecated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.deprecated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function/class decorator: designate deprecation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>msg</strong> &#8211; string message.</li>
+<li><strong>action</strong> &#8211; string mode</li>
+<li><strong>'warning'</strong> (<em>-</em>) &#8211; (default) prints <cite>msg</cite> to stderr</li>
+<li><strong>'noop'</strong> (<em>-</em>) &#8211; do nothing</li>
+<li><strong>'raise'</strong> (<em>-</em>) &#8211; raise DeprecatedError(<cite>msg</cite>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.experimental">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">experimental</code><span class="sig-paren">(</span><em>func</em>, <em>msg=''</em>, <em>action='warning'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#experimental"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.experimental" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function/class decorator: warn user of experimental feature.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>msg</strong> &#8211; string message</li>
+<li><strong>action</strong> &#8211; string mode</li>
+<li><strong>'warning'</strong> (<em>-</em>) &#8211; (default) prints <cite>msg</cite> to stderr</li>
+<li><strong>'noop'</strong> (<em>-</em>) &#8211; do nothing</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.get_base_classes">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">get_base_classes</code><span class="sig-paren">(</span><em>frame</em>, <em>namespace</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#get_base_classes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.get_base_classes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inside a new class definition, the class itself has not been defined yet.
+We need to hack python code object to obtain its base classes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>frame</strong> &#8211; sys._getframe(N) to obtain the most outer frame</li>
+<li><strong>namespace</strong> &#8211; XX.__globals__</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of base classes for the current enclosing class.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.lru_cache">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">lru_cache</code><span class="sig-paren">(</span><em>func</em>, <em>maxsize=128</em>, <em>typed=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#lru_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.lru_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can be used with or without parenthesis. See <cite>meta_wrap</cite>&#8216;s effect.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.meta_wrap">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">meta_wrap</code><span class="sig-paren">(</span><em>decor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#meta_wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.meta_wrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>a decorator decorator, allowing the wrapped decorator to be used as:
+&#64;decorator(<a href="#id9"><span class="problematic" id="id10">*</span></a>args, <a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs)
+def callable()</p>
+<blockquote>
+<div>&#8211; or &#8211;</div></blockquote>
+<p>&#64;decorator  # without parenthesis, args and kwargs will use default
+def callable()</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>decor</strong> &#8211; a decorator whose first argument is a callable (function or class
+to be decorated), and the rest of the arguments can be omitted as default.
+decor(f, ... the other arguments must have default values)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">decor can NOT be a function that receives a single, callable argument.
+See stackoverflow: <a class="reference external" href="http://goo.gl/UEYbDB">http://goo.gl/UEYbDB</a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.next_iterable">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">next_iterable</code><span class="sig-paren">(</span><em>cls</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#next_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.next_iterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to make a class iterable with <cite>next()</cite> given <cite>__iter__()</cite>
+Compatible with both python 2 and 3.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cls</strong> &#8211; must define __iter__() (returns a generator or has <cite>yield</cite> statement)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.noop_decorator">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">noop_decorator</code><span class="sig-paren">(</span><em>func</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#noop_decorator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.noop_decorator" title="Permalink to this definition">¶</a></dt>
+<dd><p>For debugging purposes.
+A decorator that does nothing. Compatible with <cite>meta_wrap</cite> style.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.utils.functional.overrides">
+<code class="descclassname">surreal.utils.functional.</code><code class="descname">overrides</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/utils/functional.html#overrides"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.utils.functional.overrides" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class member method decorator. Mimics the Java <cite>&#64;Override</cite> syntax.
+Used primarily for error checking in inheritance hierarchy.
+The decorator code is executed while loading class. Using this method
+should have minimal runtime performance implications.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">method itself, with possibly added docstring from superclass.</td>
+</tr>
+</tbody>
+</table>
+<p>There are two usage syntax:
+1. &#64;overrides  # by itself, no parentheses.</p>
+<blockquote>
+<div>check if the method overrides any of its base classes.</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>&#64;overrides(BaseClass)
+check if the method overrides a specific base class.</li>
+</ol>
+<dl class="docutils">
+<dt>class A:</dt>
+<dd>def f1(): pass</dd>
+<dt>class B(A):</dt>
+<dd>&#64;overrides
+def f1(): pass</dd>
+<dt>class C(B):</dt>
+<dd>&#64;overrides(A)
+def f1(): pass</dd>
+<dt>class D:</dt>
+<dd>&#64;overrides(C)  # raises exception at class definition time.
+def f1(): pass</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -263,8 +988,10 @@ an answer is required of the user).</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="surreal.utils.console.html" class="btn btn-neutral float-right" title="surreal.utils.console package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="surreal.html" class="btn btn-neutral" title="surreal package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="surreal.model.html" class="btn btn-neutral" title="surreal.model package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -273,7 +1000,7 @@ an answer is required of the user).</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Stanford RL Group.
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
 
     </p>
   </div>

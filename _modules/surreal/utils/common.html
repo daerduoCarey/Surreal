@@ -1,0 +1,1109 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.utils.common &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">surreal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>surreal.utils.common</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for surreal.utils.common</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Common utility functions</span>
+
+<span class="sd">TODO:</span>
+<span class="sd">  need more cleanup</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
+
+
+<span class="n">NaN</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+<span class="n">Inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="is_python3"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.is_python3">[docs]</a><span class="k">def</span> <span class="nf">is_python3</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span> <span class="o">&gt;=</span> <span class="mi">3</span></div>
+
+
+<span class="k">if</span> <span class="n">is_python3</span><span class="p">():</span>
+    <span class="n">long</span> <span class="o">=</span> <span class="nb">int</span>
+    <span class="n">iteritems</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">items</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">iteritems</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">iteritems</span>
+
+
+<div class="viewcode-block" id="import_parent_dir"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.import_parent_dir">[docs]</a><span class="k">def</span> <span class="nf">import_parent_dir</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Import scripts from parent directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="merge_dicts"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.merge_dicts">[docs]</a><span class="k">def</span> <span class="nf">merge_dicts</span><span class="p">(</span><span class="o">*</span><span class="n">dicts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given any number of dicts, shallow copy and merge into a new dict,</span>
+<span class="sd">    precedence goes to key value pairs in latter dicts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">dic</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dic</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="merge_attr_dicts"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.merge_attr_dicts">[docs]</a><span class="k">def</span> <span class="nf">merge_attr_dicts</span><span class="p">(</span><span class="o">*</span><span class="n">dicts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns: merged AttributeDict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">AttributeDict</span><span class="p">(</span><span class="n">merge_dicts</span><span class="p">(</span><span class="o">*</span><span class="n">dicts</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="reverse_dict"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.reverse_dict">[docs]</a><span class="k">def</span> <span class="nf">reverse_dict</span><span class="p">(</span><span class="n">dic</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert {key: value} to {value: key}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">dic</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="pop_head"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.pop_head">[docs]</a><span class="k">def</span> <span class="nf">pop_head</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    pop n items from the head of the list. Input will be modified.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="n">array</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">array</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">ans</span></div>
+
+
+<div class="viewcode-block" id="pop_tail"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.pop_tail">[docs]</a><span class="k">def</span> <span class="nf">pop_tail</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    pop n items from the tail of the list. Input will be modified.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="o">-</span><span class="n">n</span><span class="p">:]</span>
+    <span class="k">del</span> <span class="n">array</span><span class="p">[</span><span class="o">-</span><span class="n">n</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">ans</span></div>
+
+
+<div class="viewcode-block" id="list_dim"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.list_dim">[docs]</a><span class="k">def</span> <span class="nf">list_dim</span><span class="p">(</span><span class="n">lis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return: dimensions of deep nested sequences. Only consider the </span>
+<span class="sd">    dim of the first element. Strings are not sequences. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">lis</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lis</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">inner_dims</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">inner_dims</span> <span class="o">=</span> <span class="n">list_dim</span><span class="p">(</span><span class="n">lis</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">lis</span><span class="p">)]</span> <span class="o">+</span> <span class="n">inner_dims</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="parse_int_list"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.parse_int_list">[docs]</a><span class="k">def</span> <span class="nf">parse_int_list</span><span class="p">(</span><span class="n">ints</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For command line int list parsing</span>
+<span class="sd">    syntax: </span>
+<span class="sd">    - `1-5` =&gt; [1,2,3,4,5] inclusive</span>
+<span class="sd">    - `3-10^5,9` =&gt; [3,4,6,7,8,10]  3-10 excluding 5 and 9. </span>
+<span class="sd">    - `3-12^5-8` =&gt; [3,4,9,10,11,12]  3-12 excluding 5-8. </span>
+<span class="sd">    - `2,4,7` =&gt; [2,4,7]</span>
+<span class="sd">    - `0` =&gt; [0]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ints</span> <span class="o">=</span> <span class="n">ints</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s1">&#39;^&#39;</span> <span class="ow">in</span> <span class="n">ints</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">,</span> <span class="n">ints</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="s1">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">parse_int_list</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                           <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">parse_int_list</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]))))</span>
+    <span class="k">elif</span> <span class="s1">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">ints</span><span class="p">:</span>
+        <span class="n">ints</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">ints</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ints</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">ints</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ints</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">ints</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="enlist"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.enlist">[docs]</a><span class="k">def</span> <span class="nf">enlist</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Useful for repeating default option multiple times</span>
+<span class="sd">    Args:</span>
+<span class="sd">      check: if True, check len(obj) == N</span>
+<span class="sd">    Returns:</span>
+<span class="sd">      If obj is a list, return after checking</span>
+<span class="sd">      Otherwise, repeat it into N-element list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">check</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">!=</span> <span class="n">N</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s1">&#39;length != </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">obj</span><span class="p">]</span> <span class="o">*</span> <span class="n">N</span></div>
+
+
+<div class="viewcode-block" id="cum_sum"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.cum_sum">[docs]</a><span class="k">def</span> <span class="nf">cum_sum</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cumulative sum (include 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cumult</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">n</span>
+        <span class="n">cumult</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cumult</span></div>
+<span class="c1">#     return [sum(seq[:i]) for i in range(len(seq) + 1)]</span>
+    
+
+<div class="viewcode-block" id="include_exclude"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.include_exclude">[docs]</a><span class="k">def</span> <span class="nf">include_exclude</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">include_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Include an element if:</span>
+<span class="sd">    1. include_filter is None</span>
+<span class="sd">    2. include_filter is a list and contains the element</span>
+<span class="sd">    3. include_filter is a lambda and returns True on the element</span>
+<span class="sd">    AND then exclude an element if:</span>
+<span class="sd">    1. exclude_filter is not None</span>
+<span class="sd">    2. exclude_filter is a list and contains the element</span>
+<span class="sd">    3. exclude_filter is a lambda and returns True on the element</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">array</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">include_filter</span> <span class="ow">is</span> <span class="kc">None</span> 
+                 <span class="ow">or</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">include_filter</span><span class="p">)</span> 
+                    <span class="ow">and</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">include_filter</span> 
+                 <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="n">include_filter</span><span class="p">)</span> 
+                    <span class="ow">and</span> <span class="n">include_filter</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">exclude_filter</span> <span class="ow">is</span> <span class="kc">None</span>
+                 <span class="ow">or</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">exclude_filter</span><span class="p">)</span> 
+                    <span class="ow">and</span> <span class="ow">not</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">exclude_filter</span> 
+                 <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="n">exclude_filter</span><span class="p">)</span> 
+                    <span class="ow">and</span> <span class="ow">not</span> <span class="n">exclude_filter</span><span class="p">(</span><span class="n">a</span><span class="p">))):</span>
+            <span class="n">ans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ans</span></div>
+
+
+<div class="viewcode-block" id="min_at"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.min_at">[docs]</a><span class="k">def</span> <span class="nf">min_at</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+    <span class="s2">&quot;Returns: (min, min_i)&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="max_at"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.max_at">[docs]</a><span class="k">def</span> <span class="nf">max_at</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+    <span class="s2">&quot;Returns: (max, max_i)&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sum_pow"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.sum_pow">[docs]</a><span class="k">def</span> <span class="nf">sum_pow</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">N_begin</span><span class="p">,</span> <span class="n">N_end</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Power summation, N inclusive.</span>
+<span class="sd">    \sum_{n=N_begin}^{N_end} p^n</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">p</span><span class="o">**</span><span class="p">(</span><span class="n">N_end</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">p</span><span class="o">**</span><span class="n">N_begin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ceildiv"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.ceildiv">[docs]</a><span class="k">def</span> <span class="nf">ceildiv</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ceiling division, equivalent to math.ceil(1.0*a/b) but much faster.</span>
+<span class="sd">    ceildiv(19, 7) == 3</span>
+<span class="sd">    ceildiv(21, 7) == 3</span>
+<span class="sd">    ceildiv(22, 7) == 4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">a</span> <span class="o">//</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_div"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.is_div">[docs]</a><span class="k">def</span> <span class="nf">is_div</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="s2">&quot; Returns: bool - does `a` divide `b`. &quot;</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">%</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="rand_choice"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.rand_choice">[docs]</a><span class="k">def</span> <span class="nf">rand_choice</span><span class="p">(</span><span class="o">*</span><span class="n">choices</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">      choices: randomly return an element from the list</span>
+<span class="sd">      can be either packed or unpacked</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">choices</span> <span class="o">=</span> <span class="n">pack_args</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s1">&#39;must have at least one choice&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">choices</span><span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="rint"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.rint">[docs]</a><span class="k">def</span> <span class="nf">rint</span><span class="p">(</span><span class="o">*</span><span class="n">N</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One arg N:</span>
+<span class="sd">        Random int from [0, N] inclusive</span>
+<span class="sd">    Two args N_low, N_high:</span>
+<span class="sd">        Random int from [N_low, N_high] inclusive</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">pack_args</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">*</span><span class="n">N</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="shuffled_indices"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.shuffled_indices">[docs]</a><span class="k">def</span> <span class="nf">shuffled_indices</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">indices</span></div>
+
+
+<div class="viewcode-block" id="flatten2d"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.flatten2d">[docs]</a><span class="k">def</span> <span class="nf">flatten2d</span><span class="p">(</span><span class="n">list2d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">list2d</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="pack_args"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.pack_args">[docs]</a><span class="k">def</span> <span class="nf">pack_args</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process `*args` variable-length positional args</span>
+<span class="sd">    Enable to function to accept either unpacked or packed args</span>
+<span class="sd">    </span>
+<span class="sd">    def f1(*args):</span>
+<span class="sd">        args = pack_args(args)</span>
+<span class="sd">    </span>
+<span class="sd">    Now f1 can be used in all the following ways: </span>
+<span class="sd">    - f1(a, b, c)</span>
+<span class="sd">    - f1([a, b, c])</span>
+<span class="sd">    - f1(*[a, b, c])</span>
+<span class="sd">    - f1([a,b,c],[a2,b2,c2]) -&gt; will raise error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;only 1 iterable allowed in varargs&#39;</span>
+        <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">args</span></div>
+
+<span class="c1"># ======================== ArgParser ========================</span>
+<span class="k">class</span> <span class="nc">_SingleMetavarFormatter</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">):</span>
+    <span class="s2">&quot;Helper for better metavar display in ArgParser&quot;</span>
+    <span class="k">def</span> <span class="nf">_format_action_invocation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">action</span><span class="o">.</span><span class="n">option_strings</span><span class="p">:</span>
+            <span class="n">metavar</span><span class="p">,</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metavar_formatter</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">)(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">metavar</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># if the Optional doesn&#39;t take a value, format is `-s, --long`</span>
+            <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">nargs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">option_strings</span><span class="p">)</span>
+            <span class="c1"># if the Optional takes a value, format is:</span>
+            <span class="c1">#    -s &lt;METAVAR&gt;, --long</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                <span class="n">args_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_args</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+                <span class="c1">## THIS IS THE PART REPLACED</span>
+                <span class="c1"># for option_string in action.option_strings:</span>
+                    <span class="c1"># parts.append(&#39;%s %s&#39; % (option_string, args_string))</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">option_strings</span><span class="p">)</span>
+                <span class="c1"># treat nargs different</span>
+                <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">nargs</span> <span class="ow">and</span> <span class="n">action</span><span class="o">.</span><span class="n">default</span><span class="p">:</span>
+                        <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39; default=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+                <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">args_string</span>
+            <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        
+<div class="viewcode-block" id="ArgParser"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.ArgParser">[docs]</a><span class="k">class</span> <span class="nc">ArgParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    example</span>
+<span class="sd">    ArgParser = ArgParser(</span>
+<span class="sd">                   [(&#39;b&#39;, &#39;bar&#39;), 23, &#39;will be int, float will error&#39;],</span>
+<span class="sd">                   [&#39;foo&#39;, [&#39;opt1&#39;, &#39;opt2&#39;, &#39;opt3&#39;], &#39;arg choices&#39;],</span>
+<span class="sd">                   [(&#39;a&#39;, &#39;app&#39;, &#39;apple&#39;), 34.5, &#39;myarg.app to get value&#39;],</span>
+<span class="sd">                   [&#39;dud&#39;, None, &#39;--dud is a required string&#39;],</span>
+<span class="sd">                   [(&#39;u&#39;, &#39;ununun&#39;), False, &#39;store_true to ununun&#39;],</span>
+<span class="sd">                   [&#39;gug&#39;, (None, float), &#39;--gug is a required float&#39;],</span>
+<span class="sd">                   [(&#39;p&#39;, &#39;pollo&#39;), (44, float), &#39;myarg.pollo saved as float&#39;],</span>
+<span class="sd">                   [&#39;evy&#39;, ArgParser.Nargs([1,2,3]), &#39;variable number of args&#39;]</span>
+<span class="sd">                   description=&#39;This is my hello world program&#39;,</span>
+<span class="sd">                   epilogue=&#39;goodbye zai jian sayonala&#39;)</span>
+<span class="sd">    myarg = ArgParser.parse()</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      *arg_infos must be a list of 3 specifiers:</span>
+<span class="sd">            [name or (names,), </span>
+<span class="sd">            default or (default, type) or [list of choices] or ArgParser.Nargs, </span>
+<span class="sd">            help_string]</span>
+<span class="sd">      **config_kwargs</span>
+<span class="sd">        - any kwargs that can be used in argparse.ArgumentParser constructor</span>
+<span class="sd">        - e.g. description=, epilog=</span>
+<span class="sd">        - config_file TODO </span>
+<span class="sd">    </span>
+<span class="sd">    Note: </span>
+<span class="sd">      The following options are pre-configured</span>
+<span class="sd">      --verbosity, or -vvv (number of v&#39;s indicate the level of verbosity)</span>
+<span class="sd">      --debug: turn on debugging mode</span>
+<span class="sd">      Any option that has underscore in it automatically supports hyphen, and </span>
+<span class="sd">      vice versa. E.g. `step_size` supports both `--step_size` and `--step-size`</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">      Remember to add a comma after each [...], to prevent</span>
+<span class="sd">      weird error like `TypeError: list indices must be integers, not tuple`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ArgParser.Narg"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.ArgParser.Narg">[docs]</a>    <span class="k">class</span> <span class="nc">Narg</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Variadic number of args for an option. </span>
+<span class="sd">        See `nargs=` option in parser.add_argument()</span>
+<span class="sd">        Args:</span>
+<span class="sd">          default: a list of default Nargs. If None, this option will be required</span>
+<span class="sd">          nargs: &lt;N&gt;, &#39;?&#39;, &#39;+&#39;, &#39;*&#39;, will be passed to `add_argument()`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">default</span><span class="p">:</span> <span class="c1"># emtpy list or None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">str</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nargs</span> <span class="o">=</span> <span class="n">nargs</span></div>
+            
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg_infos</span><span class="p">,</span> <span class="o">**</span><span class="n">config_kwargs</span><span class="p">):</span>
+        <span class="n">config_kwargs</span><span class="p">[</span><span class="s1">&#39;formatter_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_SingleMetavarFormatter</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="o">**</span><span class="n">config_kwargs</span><span class="p">)</span>
+        <span class="n">required_args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39;required named arguments&#39;</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">arg_infos</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    Each arg must have 3 specifiers in a list:</span>
+<span class="s2">                    [name or (names,), default or (default, type), help_string,</span>
+<span class="s2">                    &lt;optional dict of extra **kwargs for parser.add_argument()]</span>
+<span class="s2">                    &quot;&quot;&quot;</span><span class="p">)</span>
+            <span class="c1"># item 1, either a string or a tuple of optional strings</span>
+            <span class="c1"># &#39;-&#39; and &#39;--&#39; will be automatically prefixed</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">):</span>
+                    <span class="c1"># only one char, that&#39;s a shorthand</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span>
+                    <span class="c1"># support both hyphen and underscore</span>
+                    <span class="n">name_added</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">if</span> <span class="s1">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">name_added</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s1">&#39;_&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">name_added</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+
+                    <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">name_added</span><span class="p">:</span>
+                        <span class="n">name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name_added</span><span class="p">)</span>
+
+            <span class="c1"># item 2, default value. </span>
+            <span class="c1"># if None, set required to True. </span>
+            <span class="c1"># if a boolean, use action=&#39;store_true&#39;</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+                <span class="n">values</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">values</span> <span class="c1"># let this fall through the `if` below</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="c1"># list of choices</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;must have at least 2 choices&#39;</span>
+                <span class="n">dtype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">dtype</span> <span class="k">else</span> <span class="n">dtype</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;choices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">ArgParser</span><span class="o">.</span><span class="n">Narg</span><span class="p">):</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">default</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">dtype</span><span class="p">:</span>
+                    <span class="n">dtype</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">dtype</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;nargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">nargs</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="n">values</span>
+                <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">dtype</span> <span class="o">=</span> <span class="nb">str</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dtype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+
+            <span class="c1"># metavar: display --foo &lt;float=0.05&gt; in help string</span>
+            <span class="k">if</span> <span class="s1">&#39;choices&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">choices</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;choices&#39;</span><span class="p">]</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;metavar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> 
+                               <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">choices</span><span class="p">))</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">choices</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="s1">&#39;nargs&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="c1"># better formatting handled in _SingleMetavarFormatter</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;metavar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;metavar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&lt;</span><span class="si">{}{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> 
+                                      <span class="s1">&#39;=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">default</span><span class="p">)</span> <span class="k">if</span> <span class="n">default</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dtype</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;required&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;store_true&#39;</span> <span class="c1"># switch on the boolean flag</span>
+                <span class="c1"># store_true cannot co-exist with type or metavar</span>
+                <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;metavar&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;store&#39;</span> <span class="c1"># normal behavior</span>
+            <span class="c1"># item 3, help string</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;help&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            
+            <span class="c1"># last optional info is a dict that will update kwargs</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
+                <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            
+            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;required&#39;</span><span class="p">]:</span>
+                <span class="n">required_args</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># add verbosity count</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--verbose&#39;</span><span class="p">,</span> <span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Can repeat, e.g. -vvv for level 3 verbosity&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--debug&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Turn on debugging mode. &#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+    
+        
+<div class="viewcode-block" id="ArgParser.add"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.ArgParser.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="ArgParser.parse"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.ArgParser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+    
+    
+<span class="c1"># =================== Meta programming and inflection ===================</span>
+<span class="s2">&quot;Test if a variable is a class type&quot;</span>
+<span class="n">is_class</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span>
+<span class="n">is_function</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span>
+
+
+<div class="viewcode-block" id="is_sequence"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.is_sequence">[docs]</a><span class="k">def</span> <span class="nf">is_sequence</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns:</span>
+<span class="sd">      True if the sequence is a collections.Sequence and not a string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="is_list_len"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.is_list_len">[docs]</a><span class="k">def</span> <span class="nf">is_list_len</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For argument sanity check: assert if the arg is a list/tuple of `len`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">==</span> <span class="n">length</span></div>
+
+
+<div class="viewcode-block" id="is_iterable"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.is_iterable">[docs]</a><span class="k">def</span> <span class="nf">is_iterable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns: True if obj is iterable. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_str"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.is_str">[docs]</a><span class="k">def</span> <span class="nf">is_str</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="hasattrs"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.hasattrs">[docs]</a><span class="k">def</span> <span class="nf">hasattrs</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multi-attr version of the built-in `hasattr()`</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">      If object has all the attrs specified in the second arg.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="transfer_attrs"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.transfer_attrs">[docs]</a><span class="k">def</span> <span class="nf">transfer_attrs</span><span class="p">(</span><span class="n">from_obj</span><span class="p">,</span> <span class="n">to_obj</span><span class="p">,</span> 
+                  <span class="n">include_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">exclude_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    from_obj and to_obj can be dict. </span>
+<span class="sd">    If not dict, will ONLY transfer attrs in `vars()`, i.e. __dict__ </span>
+<span class="sd">    Transfer an attribute if:</span>
+<span class="sd">    1. include_filter is None</span>
+<span class="sd">    2. include_filter is a list and contains the attr</span>
+<span class="sd">    3. include_filter is a lambda and returns True on the attr</span>
+<span class="sd">    AND then exclude an attribute if:</span>
+<span class="sd">    1. exclude_filter is not None</span>
+<span class="sd">    2. exclude_filter is a list and contains the attr</span>
+<span class="sd">    3. exclude_filter is a lambda and returns True on the attr</span>
+<span class="sd">    Note that any attr that startswith &#39;_&#39; is automatically ignored</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">from_obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">all_attrs</span> <span class="o">=</span> <span class="n">from_obj</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">_get_attr</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">__getitem__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">all_attrs</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">from_obj</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">_get_attr</span> <span class="o">=</span> <span class="nb">getattr</span> <span class="c1"># use built-in</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">to_obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">_set_attr</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">__setitem__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_set_attr</span> <span class="o">=</span> <span class="nb">setattr</span> <span class="c1"># use built-in</span>
+
+    <span class="n">all_attrs</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">attr</span><span class="p">:</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">),</span> <span class="n">all_attrs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">include_exclude</span><span class="p">(</span><span class="n">all_attrs</span><span class="p">,</span>
+                                <span class="n">include_filter</span><span class="o">=</span><span class="n">include_filter</span><span class="p">,</span>
+                                <span class="n">exclude_filter</span><span class="o">=</span><span class="n">exclude_filter</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_set_attr</span><span class="p">(</span><span class="n">to_obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">_get_attr</span><span class="p">(</span><span class="n">from_obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Attr&#39;</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+<span class="c1"># No need for this in python 3</span>
+<div class="viewcode-block" id="enum"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.enum">[docs]</a><span class="k">def</span> <span class="nf">enum</span><span class="p">(</span><span class="o">*</span><span class="n">sequential</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Numbers = enum(&#39;ZERO&#39;, &#39;ONE&#39;, &#39;TWO&#39;)</span>
+<span class="sd">    Numbers.to_str(Numbers.ZERO) -&gt; &#39;ZERO&#39;</span>
+<span class="sd">    Numbers.to_enum(&#39;ZERO&#39;) -&gt; Numbers.ZERO</span>
+<span class="sd">    Numbers.size == 3</span>
+<span class="sd">    for n in Numbers():</span>
+<span class="sd">       # 1, 2, 3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">enum_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">sequential</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sequential</span><span class="p">))),</span> <span class="o">**</span><span class="n">named</span><span class="p">)</span>
+    <span class="n">rev_dict</span> <span class="o">=</span> <span class="n">reverse_dict</span><span class="p">(</span><span class="n">enum_dict</span><span class="p">)</span>
+    <span class="n">enum_class</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s1">&#39;Enum&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="n">enum_dict</span><span class="p">)</span>
+    <span class="n">enum_class</span><span class="o">.</span><span class="n">to_str</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="n">rev_dict</span><span class="p">[</span><span class="n">value</span><span class="p">])</span>
+    <span class="n">enum_class</span><span class="o">.</span><span class="n">to_enum</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">enum_dict</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+    <span class="n">enum_class</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">enum_dict</span><span class="p">)</span>
+    <span class="n">enum_class</span><span class="o">.</span><span class="n">__iter__</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enum_dict</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">enum_class</span></div>
+
+
+<div class="viewcode-block" id="AttributeDict"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.AttributeDict">[docs]</a><span class="k">class</span> <span class="nc">AttributeDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set AttributeDict.OVERRIDE = True to allow overriding original dict methods.</span>
+<span class="sd">    - True: `a.keys = 42; print a.keys` returns 42</span>
+<span class="sd">    - False: `a.keys = 42; print a.keys` returns &lt;function keys&gt;</span>
+<span class="sd">    </span>
+<span class="sd">    vars() will return the (hacked) internal dictionary</span>
+<span class="sd">    Always use dict() to convert if you want to manipulate it as a regular dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__getattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">__getitem__</span>
+    <span class="n">__setattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">__setitem__</span>
+    <span class="n">__delattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">__delitem__</span>
+    <span class="n">__OVERRIDE</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="k">def</span> <span class="nf">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="c1"># hack to enable vars()</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="c1"># if method overidden, return the overidden value </span>
+        <span class="k">elif</span> <span class="n">AttributeDict</span><span class="o">.</span><span class="n">__OVERRIDE</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="AttributeDict.set_override"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.AttributeDict.set_override">[docs]</a>    <span class="k">def</span> <span class="nf">set_override</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+        <span class="n">AttributeDict</span><span class="o">.</span><span class="n">__OVERRIDE</span> <span class="o">=</span> <span class="n">o</span></div></div>
+
+
+<div class="viewcode-block" id="PrefixProperty"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.PrefixProperty">[docs]</a><span class="k">class</span> <span class="nc">PrefixProperty</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator for class with prefixed properties</span>
+<span class="sd">    internally, the class will have self.&lt;prefix&gt;varname</span>
+<span class="sd">    externally, a read-only property will be created for self.varname</span>
+<span class="sd">    takes care of &#39;__&#39; name mangling</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_names</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attr_names</span> <span class="o">=</span> <span class="n">attr_names</span>
+        <span class="c1"># take care of name mangling</span>
+        <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;__&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">cls_self</span> <span class="p">:</span> 
+                           <span class="s1">&#39;_</span><span class="si">{}</span><span class="s1">__&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls_self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">cls_self</span><span class="p">:</span> <span class="n">prefix</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">is_class</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_names</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> 
+                    <span class="c1"># `attr=attr` hack to avoid closure, </span>
+                    <span class="c1"># otherwise &#39;attr&#39; value will be changed as the loop goes</span>
+                    <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="n">cls_self</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="n">attr</span><span class="p">:</span> 
+                             <span class="nb">getattr</span><span class="p">(</span><span class="n">cls_self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">(</span><span class="n">cls_self</span><span class="p">)</span> <span class="o">+</span> <span class="n">attr</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">cls</span></div>
+
+
+<div class="viewcode-block" id="inspect_classes"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.inspect_classes">[docs]</a><span class="k">def</span> <span class="nf">inspect_classes</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">include_import</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">      module: either one of the following</span>
+<span class="sd">      - string name of the module.</span>
+<span class="sd">      - module variable itself.</span>
+<span class="sd">      include_import: if False, only list classes being defined in this module </span>
+<span class="sd">          and exclude any imported class. </span>
+<span class="sd">      </span>
+<span class="sd">    Returns: </span>
+<span class="sd">      list of classes (excluding or including imported ones)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_str</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s1">&#39;module `</span><span class="si">{}</span><span class="s1">` does not exist.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module</span><span class="p">))</span>
+    <span class="n">cls_info</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">include_import</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">cls_info</span><span class="p">]</span>
+    
+    <span class="n">module</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">cls_info</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">module</span> <span class="o">==</span> <span class="n">cls</span><span class="o">.</span><span class="n">__module__</span>
+            <span class="c1"># module is part of the long path &quot;xxx.xxx.module.class&quot;</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">module</span><span class="p">)</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">__module__</span><span class="p">):</span>
+            <span class="n">ans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ans</span></div>
+
+
+<div class="viewcode-block" id="deepcopy_cls"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.deepcopy_cls">[docs]</a><span class="k">def</span> <span class="nf">deepcopy_cls</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">new_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deep copy a class</span>
+<span class="sd">    Args:</span>
+<span class="sd">      cls: </span>
+<span class="sd">      new_name: if None, defaults to cls.__name__ + &#39;Copy&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">is_class</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_name</span> <span class="k">if</span> <span class="n">new_name</span> <span class="k">else</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s1">&#39;Copy&#39;</span><span class="p">,</span> 
+                <span class="n">cls</span><span class="o">.</span><span class="n">__bases__</span><span class="p">,</span> 
+                <span class="nb">dict</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__dict__</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="partial_kwarg"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.partial_kwarg">[docs]</a><span class="k">def</span> <span class="nf">partial_kwarg</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">apply_kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If a function has the specified kwargs, apply to it. </span>
+<span class="sd">    Otherwise ignore the kwarg.</span>
+<span class="sd">    If the function itself accepts variable keyword args (**keywords), always </span>
+<span class="sd">    apply all of **apply_kwargs to func. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">      partially applied function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">varargs</span> <span class="ow">in</span> <span class="n">apply_kwargs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span><span class="s1">&#39;*varargs `</span><span class="si">{}</span><span class="s1">` cannot appear in **apply_kwargs&#39;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">varargs</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">varkw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">apply_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">apply_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> 
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">apply_kwargs</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">args</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">apply_kwargs</span><span class="p">)</span></div>
+
+
+<span class="c1"># ==================== Exceptions handling ====================</span>
+<div class="viewcode-block" id="ArgumentError"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.ArgumentError">[docs]</a><span class="k">class</span> <span class="nc">ArgumentError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raise if an argument to a function is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="nd">@contextmanager</span>
+<div class="viewcode-block" id="errorsafe"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.errorsafe">[docs]</a><span class="k">def</span> <span class="nf">errorsafe</span><span class="p">(</span><span class="n">safe_handler</span><span class="p">,</span> <span class="n">exclude</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Safe-handle all errors except for those explicitly excluded</span>
+<span class="sd">    Args:</span>
+<span class="sd">      safe_handler: function that takes e and does safe handling</span>
+<span class="sd">        if None, do nothing</span>
+<span class="sd">      excluded: dict mapping ExceptionType to function that handles e of that type</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">excluded_excs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">exclude</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span>
+    <span class="k">except</span> <span class="n">excluded_excs</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">exclude</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)](</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">safe_handler</span><span class="p">:</span>
+            <span class="n">safe_handler</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="errorsafe_mode"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.errorsafe_mode">[docs]</a><span class="k">def</span> <span class="nf">errorsafe_mode</span><span class="p">(</span><span class="n">safe_handle_mode</span><span class="o">=</span><span class="s1">&#39;traceback&#39;</span><span class="p">,</span> 
+                   <span class="n">exclude_excs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                   <span class="n">exclude_handle_mode</span><span class="o">=</span><span class="s1">&#39;exit&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Safe-handle all errors except for those explicitly excluded</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">      safe_handler_mode: </span>
+<span class="sd">      - &#39;traceback&#39;: print raised exception&#39;s full traceback</span>
+<span class="sd">      - &#39;print:{format-str-with-err}&#39;: print formatted error message</span>
+<span class="sd">            e.g. &#39;print:oh no {err}!&#39;</span>
+<span class="sd">      - &#39;pass&#39;: do nothing</span>
+<span class="sd">      excluded_excs: list of excluded ExceptionType(s)</span>
+<span class="sd">      exclude_handle_mode: </span>
+<span class="sd">      - &#39;exit&#39;: sys.exit(1) terminate the program</span>
+<span class="sd">      - &#39;print:{format-str-with-err}&#39;: print formatted error message and exit</span>
+<span class="sd">            e.g. &#39;print+exit:oh no {err}!&#39;</span>
+<span class="sd">      - &#39;raise&#39;: raise the exception as-is</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">      context manager.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">_errmsg_format</span><span class="p">(</span><span class="n">mode</span><span class="p">):</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="n">mode</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;print:&#39;</span><span class="p">):]</span>
+        <span class="k">if</span> <span class="n">errmsg</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">errmsg</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># empty string</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{err}</span><span class="s1">&#39;</span>
+    
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">safe_handle_mode</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;traceback&#39;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">safe_handler</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">mode</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;print&#39;</span><span class="p">):</span>
+        <span class="n">errmsg_safe</span> <span class="o">=</span> <span class="n">_errmsg_format</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">safe_handler</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">errmsg_safe</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;pass&#39;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">safe_handler</span><span class="p">(</span><span class="n">e</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Safe handler mode </span><span class="si">{}</span><span class="s1"> is not implemented&#39;</span>
+                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="n">exclude_excs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">exclude_excs</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">exclude_handle_mode</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;exit&#39;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">exc_handler</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;print&#39;</span><span class="p">):</span>
+        <span class="c1"># MUST have a different name than above errmsg_safe, otherwise closure bug</span>
+        <span class="n">errmsg_exc</span> <span class="o">=</span> <span class="n">_errmsg_format</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">exc_handler</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">errmsg_exc</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;raise&#39;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">exc_handler</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Excluded handler mode </span><span class="si">{}</span><span class="s1"> is not implemented&#39;</span>
+                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">errorsafe</span><span class="p">(</span><span class="n">safe_handler</span><span class="o">=</span><span class="n">safe_handler</span><span class="p">,</span> 
+                     <span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="n">exc</span> <span class="p">:</span> <span class="n">exc_handler</span> <span class="k">for</span> <span class="n">exc</span> <span class="ow">in</span> <span class="n">exclude_excs</span><span class="p">})</span></div>
+
+
+<span class="c1"># =================== Simple Email ===================</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">import</span> <span class="nn">email.mime.text</span>
+<span class="kn">import</span> <span class="nn">email.utils</span>
+
+<div class="viewcode-block" id="Emailer"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.Emailer">[docs]</a><span class="k">class</span> <span class="nc">Emailer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender_name</span><span class="p">,</span> 
+                 <span class="n">sender_email</span><span class="p">,</span> 
+                 <span class="n">recv_email</span><span class="p">,</span> 
+                 <span class="n">passwd</span><span class="p">,</span>
+                 <span class="n">smtp_addr</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sender_name</span> <span class="o">=</span> <span class="n">sender_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sender_email</span> <span class="o">=</span> <span class="n">sender_email</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recv_email</span> <span class="o">=</span> <span class="n">recv_email</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">passwd</span> <span class="o">=</span> <span class="n">passwd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smtp_addr</span> <span class="o">=</span> <span class="n">smtp_addr</span>
+        
+        <span class="c1"># under debug mode, doesn&#39;t send any email</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    
+<div class="viewcode-block" id="Emailer.set_debug"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.Emailer.set_debug">[docs]</a>    <span class="k">def</span> <span class="nf">set_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span> <span class="o">=</span> <span class="n">debug</span></div>
+    
+
+<div class="viewcode-block" id="Emailer.send_multiple"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.Emailer.send_multiple">[docs]</a>    <span class="k">def</span> <span class="nf">send_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">messages</span><span class="p">,</span> <span class="n">dryrun</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Send multiple emails.</span>
+<span class="sd">        Args:</span>
+<span class="sd">          messages: Each msg is a tuple (subject, bodytext)</span>
+<span class="sd">          dry_run=True to print the msg out without actually sending it. </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smtp_addr</span><span class="p">,</span> <span class="mi">587</span><span class="p">)</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender_email</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">passwd</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">msgtuple</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">msgtuple</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">tuple</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">msgtuple</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">ArgumentError</span><span class="p">(</span>
+                        <span class="s2">&quot;Each message must be a tuple (subject, bodytext)&quot;</span><span class="p">)</span>
+                
+                <span class="n">subject</span><span class="p">,</span> <span class="n">textbody</span> <span class="o">=</span> <span class="n">msgtuple</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">mime</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">textbody</span><span class="p">)</span>
+                
+                <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
+                <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">formataddr</span><span class="p">(</span>
+                                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sender_email</span><span class="p">))</span>
+                <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recv_email</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">()</span>
+                
+                <span class="k">if</span> <span class="n">dryrun</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;======== [Emailer dry run msg] ========&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;======== [end msg] ========</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender_email</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">recv_email</span><span class="p">],</span> <span class="n">msg</span><span class="p">)</span>
+
+            <span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[Emailer error]:&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Emailer.send"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.Emailer.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">textbody</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_multiple</span><span class="p">((</span><span class="n">subject</span><span class="p">,</span> <span class="n">textbody</span><span class="p">))</span></div></div>
+        
+        
+<span class="c1"># ==================== Unittest ====================</span>
+<div class="viewcode-block" id="SET_DOC"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.SET_DOC">[docs]</a><span class="k">def</span> <span class="nf">SET_DOC</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Call SET_DOC(cls) in `def setUpClass`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">shortDescription</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_testMethodDoc</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span> <span class="k">return</span> <span class="n">doc</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;&gt;&gt;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">doc</span>
+    <span class="c1"># override unittest.TestCase.shortDescription</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">shortDescription</span> <span class="o">=</span> <span class="n">shortDescription</span></div>
+
+
+<div class="viewcode-block" id="SET_ASSERT"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.common.SET_ASSERT">[docs]</a><span class="k">def</span> <span class="nf">SET_ASSERT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inside a test method, call </span>
+<span class="sd">    SET_ASSERT(self, globals())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;EQ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;NEQ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertNotEqual</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;FEQ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;LT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertLess</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;LEQ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertLessEqual</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;GT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertGreater</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;GEQ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertGreaterEqual</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;ITEM_EQ&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span>
+    
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;TRUE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;FALSE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;NONE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;NOT_NONE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;IN&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;NOT_IN&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;NOT_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIsInstance</span>
+    <span class="n">gs</span><span class="p">[</span><span class="s1">&#39;RAISE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

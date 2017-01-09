@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.utils.debug &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">surreal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>surreal.utils.debug</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for surreal.utils.debug</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Debugging utils.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">timeit</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">.io.printing</span> <span class="k">import</span> <span class="n">PrintSuppress</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="s2">&quot;Inject REPL() at any place in your code to start interactive debugging&quot;</span>
+    <span class="kn">from</span> <span class="nn">IPython</span> <span class="k">import</span> <span class="n">embed</span> <span class="k">as</span> <span class="n">REPL</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;IPython not found. Use a less powerful REPL instead.&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">code</span>
+    <span class="k">def</span> <span class="nf">REPL</span><span class="p">():</span>
+        <span class="c1"># collect all variables outside this scope</span>
+        <span class="n">local</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># set stack context to 0 to avoid the slow loading of source file</span>
+        <span class="k">for</span> <span class="n">sinfo</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">local</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">f_globals</span><span class="p">)</span>
+            <span class="n">local</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">f_locals</span><span class="p">)</span>
+        <span class="n">code</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="n">local</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="timecode"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.debug.timecode">[docs]</a><span class="k">def</span> <span class="nf">timecode</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Same as timeit.timeit, except that the statement can contain any variable </span>
+<span class="sd">    in the outer scope. Suppress warning.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">PrintSuppress</span><span class="p">(</span><span class="n">no_out</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_err</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">timeit</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> 
+                             <span class="n">setup</span><span class="o">=</span><span class="s1">&#39;from __main__ import *&#39;</span><span class="p">,</span> 
+                             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pp"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.debug.pp">[docs]</a><span class="k">def</span> <span class="nf">pp</span><span class="p">(</span><span class="o">*</span><span class="n">objs</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">      *objs: objects to be pretty-printed</span>
+<span class="sd">      h: header string</span>
+<span class="sd">      **kwargs: other kwargs to pass on to ``pprint()``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">h</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objs</span><span class="p">:</span>
+        <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">h</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">42</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="dprint"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.debug.dprint">[docs]</a><span class="k">def</span> <span class="nf">dprint</span><span class="p">(</span><span class="o">*</span><span class="n">varnames</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;debug-print</span>
+
+<span class="sd">    Auto-find local variable&#39;s name and print its value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">record</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">frame</span><span class="o">=</span><span class="n">record</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">varnames</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;==&gt;&#39;</span><span class="p">,</span> <span class="nb">eval</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">frame</span><span class="o">.</span><span class="n">f_globals</span><span class="p">,</span><span class="n">frame</span><span class="o">.</span><span class="n">f_locals</span><span class="p">))</span></div>
+
+
+<span class="nd">@contextmanager</span>
+<div class="viewcode-block" id="noop_context"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.debug.noop_context">[docs]</a><span class="k">def</span> <span class="nf">noop_context</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For debugging purposes. </span>
+<span class="sd">    Placeholder context manager that does nothing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">yield</span></div>
+    
+    
+<div class="viewcode-block" id="halt"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.debug.halt">[docs]</a><span class="k">def</span> <span class="nf">halt</span><span class="p">():</span>
+    <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;enter to continue ... &#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="stop"><a class="viewcode-back" href="../../../surreal.utils.html#surreal.utils.debug.stop">[docs]</a><span class="k">def</span> <span class="nf">stop</span><span class="p">():</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
