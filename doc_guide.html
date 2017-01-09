@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Surreal Code Documentation Guide &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="index.html"/>
+        <link rel="next" title="surreal" href="modules.html"/>
+        <link rel="prev" title="Welcome to Surreal’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><em>Surreal</em> Code Documentation Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sphinx-guide">Sphinx guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#doc-standards">Doc Standards</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#doc-strings">Doc Strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functions-and-methods">Functions and Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#args"><code class="docutils literal"><span class="pre">Args</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#returns-or-yields-for-generators"><code class="docutils literal"><span class="pre">Returns</span></code> (or <code class="docutils literal"><span class="pre">Yields</span></code> for generators)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#raises"><code class="docutils literal"><span class="pre">Raises</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#block-and-inline-comments">Block and Inline Comments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">surreal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li><em>Surreal</em> Code Documentation Guide</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/doc_guide.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="surreal-code-documentation-guide">
+<h1><em>Surreal</em> Code Documentation Guide<a class="headerlink" href="#surreal-code-documentation-guide" title="Permalink to this headline">¶</a></h1>
+<p>Documentation for functions and classes should follow the rules listed
+below. They are taken from <a class="reference external" href="https://google.github.io/styleguide/pyguide.html">Google Style
+Guide</a> and slightly
+modified.</p>
+<div class="section" id="sphinx-guide">
+<h2>Sphinx guide<a class="headerlink" href="#sphinx-guide" title="Permalink to this headline">¶</a></h2>
+<p>Please refer to
+<a class="reference external" href="https://github.com/LinxiFan/Sphinx-theme">Sphinx-theme</a> for more
+details.</p>
+<p>Demos of the new Sphinx themes can be viewed here:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://linxifan.github.io/Sphinx-demo/">Stanford custom theme</a>
+based on Stanford web color palette.</li>
+<li><a class="reference external" href="https://linxifan.github.io/Neo-RTD-theme-demo/">Neo RTD theme</a>.</li>
+</ul>
+<p>The doc webpages are generated with an enhanced <a class="reference external" href="https://github.com/LinxiFan/sphinxcontrib-napolean">napolean
+extension</a>.</p>
+<p>Run the included <code class="docutils literal"><span class="pre">./sphinx.sh</span></code> script:</p>
+<div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="o">./</span><span class="n">sphinx</span><span class="o">.</span><span class="n">sh</span> <span class="o">&lt;</span><span class="n">command</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">args</span><span class="o">...&gt;</span>
+<span class="n">start</span><span class="p">:</span>      <span class="n">automate</span> <span class="s2">&quot;sphinx-quickstart&quot;</span> <span class="n">command</span>
+    <span class="n">args</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">project_name</span><span class="o">&gt;</span> <span class="s2">&quot;&lt;authors&gt;&quot;</span> <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span>
+<span class="n">extra</span><span class="p">:</span>      <span class="n">append</span> <span class="n">extra</span> <span class="n">config</span> <span class="n">code</span> <span class="n">to</span> <span class="n">the</span> <span class="n">end</span> <span class="n">of</span> <span class="s2">&quot;docs/source/conf.py&quot;</span>
+<span class="n">p</span><span class="o">|</span><span class="n">py</span><span class="p">:</span>       <span class="n">regenerate</span> <span class="n">pydocs</span>
+    <span class="n">args</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">package_name</span><span class="o">&gt;</span>
+<span class="n">b</span><span class="o">|</span><span class="n">build</span><span class="p">:</span>    <span class="n">clean</span> <span class="ow">and</span> <span class="n">rebuild</span> <span class="n">html</span>
+<span class="n">c</span><span class="o">|</span><span class="n">commit</span><span class="p">:</span>   <span class="n">commit</span> <span class="n">generated</span> <span class="n">html</span> <span class="n">to</span> <span class="s2">&quot;gh-pages&quot;</span> <span class="n">branch</span>
+<span class="n">push</span><span class="p">:</span>       <span class="n">push</span> <span class="s2">&quot;gh-pages&quot;</span> <span class="n">branch</span> <span class="n">to</span> <span class="n">remote</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="doc-standards">
+<h2>Doc Standards<a class="headerlink" href="#doc-standards" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="doc-strings">
+<h3>Doc Strings<a class="headerlink" href="#doc-strings" title="Permalink to this headline">¶</a></h3>
+<p>Python has a unique commenting style using doc strings. A doc string is
+a string that is the first statement in a package, module, class or
+function. These strings can be extracted automatically through the
+<code class="docutils literal"><span class="pre">__doc__</span></code> member of the object and are used by pydoc. (Try running
+pydoc on your module to see how it looks.)</p>
+<p>We always use the three double-quote <code class="docutils literal"><span class="pre">&quot;&quot;&quot;</span></code> format for doc strings (per
+PEP 257). A doc string should be organized as a summary line (one
+physical line) terminated by a period, question mark, or exclamation
+point, followed by a blank line, followed by the rest of the doc string
+starting at the same cursor position as the first quote of the first
+line.</p>
+</div>
+<div class="section" id="functions-and-methods">
+<h3>Functions and Methods<a class="headerlink" href="#functions-and-methods" title="Permalink to this headline">¶</a></h3>
+<p>As used in this section &#8220;function&#8221; applies to methods, function, and
+generators.</p>
+<p>A function must have a docstring, unless it meets all of the following
+criteria:</p>
+<ul class="simple">
+<li>not externally visible</li>
+<li>very short</li>
+<li>obvious</li>
+</ul>
+<p>A docstring should give enough information to write a call to the
+function without reading the function&#8217;s code. A docstring should
+describe the function&#8217;s calling syntax and its semantics, not its
+implementation. For tricky code, comments alongside the code are more
+appropriate than using docstrings.</p>
+<p>Certain aspects of a function should be documented in special sections,
+listed below. Each section begins with a heading line, which ends with a
+colon. Sections should be indented two spaces, except for the heading.</p>
+<div class="section" id="args">
+<h4><code class="docutils literal"><span class="pre">Args</span></code><a class="headerlink" href="#args" title="Permalink to this headline">¶</a></h4>
+<p>List each parameter by name. A description should follow the name, and
+be separated by a colon and a space. If the description is too long to
+fit on a single 80-character line, use a hanging indent of <strong>2 spaces</strong>.</p>
+<p>The description should mention required type(s) and the meaning of the
+argument.</p>
+<p>If a function accepts <code class="docutils literal"><span class="pre">*foo</span></code> (variable length argument lists) and/or
+<code class="docutils literal"><span class="pre">**bar</span></code> (arbitrary keyword arguments), they should be listed as
+<code class="docutils literal"><span class="pre">*foo</span></code> and <code class="docutils literal"><span class="pre">**bar</span></code>.</p>
+</div>
+<div class="section" id="returns-or-yields-for-generators">
+<h4><code class="docutils literal"><span class="pre">Returns</span></code> (or <code class="docutils literal"><span class="pre">Yields</span></code> for generators)<a class="headerlink" href="#returns-or-yields-for-generators" title="Permalink to this headline">¶</a></h4>
+<p>Describe the type and semantics of the return value. If the function
+only returns None, this section is not required.</p>
+</div>
+<div class="section" id="raises">
+<h4><code class="docutils literal"><span class="pre">Raises</span></code><a class="headerlink" href="#raises" title="Permalink to this headline">¶</a></h4>
+<p>List all exceptions that are relevant to the interface.</p>
+</div>
+<div class="section" id="example">
+<h4>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fetch_bigtable_rows</span><span class="p">(</span><span class="n">big_table</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">other_silly_variable</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fetches rows from a Bigtable.</span>
+<span class="sd">    Retrieves rows pertaining to the given keys from the Table instance</span>
+<span class="sd">    represented by big_table.  Silly things may happen if</span>
+<span class="sd">    other_silly_variable is not None.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      big_table: An open Bigtable Table instance.</span>
+<span class="sd">      keys: A sequence of strings representing the key of each table row</span>
+<span class="sd">        to fetch.</span>
+<span class="sd">      other_silly_variable: Another optional variable, that has a much</span>
+<span class="sd">        longer name than the other args, and which does nothing.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      A dict mapping keys to the corresponding table row data</span>
+<span class="sd">      fetched. Each row is represented as a tuple of strings. For</span>
+<span class="sd">      example:</span>
+
+<span class="sd">      {&#39;Serak&#39;: (&#39;Rigel VII&#39;, &#39;Preparer&#39;),</span>
+<span class="sd">       &#39;Zim&#39;: (&#39;Irk&#39;, &#39;Invader&#39;),</span>
+<span class="sd">       &#39;Lrrr&#39;: (&#39;Omicron Persei 8&#39;, &#39;Emperor&#39;)}</span>
+
+<span class="sd">      If a key from the keys argument is missing from the dictionary,</span>
+<span class="sd">      then that row was not found in the table.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      IOError: An error occurred accessing the bigtable.Table object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<p>Classes should have a doc string below the class definition describing
+the class. If your class has public attributes, they should be
+documented here in an Attributes section and follow the same formatting
+as a function&#8217;s <code class="docutils literal"><span class="pre">Args</span></code> section.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SampleClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Summary of class here.</span>
+
+<span class="sd">    Longer class information....</span>
+<span class="sd">    Longer class information....</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        likes_spam: A boolean indicating if we like SPAM or not.</span>
+<span class="sd">        eggs: An integer count of the eggs we have laid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likes_spam</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits SampleClass with blah.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">likes_spam</span> <span class="o">=</span> <span class="n">likes_spam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eggs</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">public_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs operation blah.&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="block-and-inline-comments">
+<h3>Block and Inline Comments<a class="headerlink" href="#block-and-inline-comments" title="Permalink to this headline">¶</a></h3>
+<p>The final place to have comments is in tricky parts of the code. If
+you&#8217;re going to have to explain it at the next code review, you should
+comment it now. Complicated operations get a few lines of comments
+before the operations commence. Non-obvious ones get comments at the end
+of the line.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="c1"># We use a weighted dictionary search to find out where i is in</span>
+<span class="c1"># the array.  We extrapolate position based on the largest num</span>
+<span class="c1"># in the array and the array size and then do binary search to</span>
+<span class="c1"># get the exact number.</span>
+
+<span class="k">if</span> <span class="n">i</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>        <span class="c1"># true iff i is a power of 2</span>
+</pre></div>
+</div>
+<p>To improve legibility, these comments should be at least 2 spaces away
+from the code.</p>
+<p>On the other hand, never describe the code. Assume the person reading
+the code knows Python (though not what you&#8217;re trying to do) better than
+you do.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="surreal" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to Surreal’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

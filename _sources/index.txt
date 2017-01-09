@@ -11,6 +11,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   doc_guide
+
+.. toctree::
+   :maxdepth: 5
+
    modules
 
 

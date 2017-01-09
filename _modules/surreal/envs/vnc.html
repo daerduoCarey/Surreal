@@ -1,0 +1,472 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>surreal.envs.vnc &mdash; Surreal 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Surreal 0.0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="surreal" href="../../surreal.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Surreal
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_guide.html"><em>Surreal</em> Code Documentation Guide</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">surreal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Surreal</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../surreal.html">surreal</a> &raquo;</li>
+        
+      <li>surreal.envs.vnc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for surreal.envs.vnc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">gym.spaces.box</span> <span class="k">import</span> <span class="n">Box</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">from</span> <span class="nn">gym</span> <span class="k">import</span> <span class="n">spaces</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">universe</span>
+<span class="kn">from</span> <span class="nn">universe</span> <span class="k">import</span> <span class="n">vectorized</span>
+<span class="kn">from</span> <span class="nn">universe.wrappers</span> <span class="k">import</span> <span class="n">BlockingReset</span><span class="p">,</span> <span class="n">GymCoreAction</span><span class="p">,</span> <span class="n">EpisodeID</span><span class="p">,</span> <span class="n">Unvectorize</span><span class="p">,</span> <span class="n">Vectorize</span><span class="p">,</span> <span class="n">Vision</span><span class="p">,</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">universe</span> <span class="k">import</span> <span class="n">spaces</span> <span class="k">as</span> <span class="n">vnc_spaces</span>
+<span class="kn">from</span> <span class="nn">universe.spaces.vnc_event</span> <span class="k">import</span> <span class="n">keycode</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">universe</span><span class="o">.</span><span class="n">configure_logging</span><span class="p">()</span>
+
+<div class="viewcode-block" id="create_env"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.create_env">[docs]</a><span class="k">def</span> <span class="nf">create_env</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">remotes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spec</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;flashgames&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">create_flash_env</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">remotes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">spec</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;atari&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">spec</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vnc&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">create_vncatari_env</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">remotes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Assume atari.</span>
+        <span class="k">assert</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env_id</span>  <span class="c1"># universe environments have dots in names.</span>
+        <span class="k">return</span> <span class="n">create_atari_env</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="create_flash_env"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.create_flash_env">[docs]</a><span class="k">def</span> <span class="nf">create_flash_env</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">remotes</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">Vision</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">BlockingReset</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="n">reg</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">runtime_spec</span><span class="p">(</span><span class="s1">&#39;flashgames&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">server_registry</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">env_id</span><span class="p">][</span><span class="s2">&quot;height&quot;</span><span class="p">]</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">env_id</span><span class="p">][</span><span class="s2">&quot;width&quot;</span><span class="p">]</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">CropScreen</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">FlashRescale</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="s1">&#39;up&#39;</span><span class="p">,</span> <span class="s1">&#39;down&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DiscreteToFixedKeysVNCActions</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">EpisodeID</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DiagnosticsInfo</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">Unvectorize</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">fps</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">remotes</span><span class="o">=</span><span class="n">remotes</span><span class="p">,</span> <span class="n">start_timeout</span><span class="o">=</span><span class="mi">15</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="n">client_id</span><span class="o">=</span><span class="n">client_id</span><span class="p">,</span>
+                  <span class="n">vnc_driver</span><span class="o">=</span><span class="s1">&#39;go&#39;</span><span class="p">,</span> <span class="n">vnc_kwargs</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;encoding&#39;</span><span class="p">:</span> <span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="s1">&#39;compress_level&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">&#39;fine_quality_level&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;subsample_level&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">env</span></div>
+
+<div class="viewcode-block" id="create_vncatari_env"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.create_vncatari_env">[docs]</a><span class="k">def</span> <span class="nf">create_vncatari_env</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">remotes</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">Vision</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">BlockingReset</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">GymCoreAction</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">AtariRescale42x42</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">EpisodeID</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DiagnosticsInfo</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">Unvectorize</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Connecting to remotes: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">remotes</span><span class="p">)</span>
+    <span class="n">fps</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;video.frames_per_second&#39;</span><span class="p">]</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">remotes</span><span class="o">=</span><span class="n">remotes</span><span class="p">,</span> <span class="n">start_timeout</span><span class="o">=</span><span class="mi">15</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="n">fps</span><span class="p">,</span> <span class="n">client_id</span><span class="o">=</span><span class="n">client_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">env</span></div>
+
+<div class="viewcode-block" id="create_atari_env"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.create_atari_env">[docs]</a><span class="k">def</span> <span class="nf">create_atari_env</span><span class="p">(</span><span class="n">env_id</span><span class="p">):</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_id</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">Vectorize</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">AtariRescale42x42</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DiagnosticsInfo</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">Unvectorize</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">env</span></div>
+
+<div class="viewcode-block" id="DiagnosticsInfo"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.DiagnosticsInfo">[docs]</a><span class="k">def</span> <span class="nf">DiagnosticsInfo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">vectorized</span><span class="o">.</span><span class="n">VectorizeFilter</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">DiagnosticsInfoI</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DiagnosticsInfoI"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.DiagnosticsInfoI">[docs]</a><span class="k">class</span> <span class="nc">DiagnosticsInfoI</span><span class="p">(</span><span class="n">vectorized</span><span class="o">.</span><span class="n">Filter</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_interval</span><span class="o">=</span><span class="mi">503</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DiagnosticsInfoI</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_local_t</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_interval</span> <span class="o">=</span> <span class="n">log_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_length</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_rewards</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_vnc_updates</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_after_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Resetting environment&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_length</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_rewards</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">observation</span>
+
+    <span class="k">def</span> <span class="nf">_after_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="n">to_log</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_local_t</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats.vnc.updates.n&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_vnc_updates</span> <span class="o">+=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats.vnc.updates.n&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_t</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cur_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">cur_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_time</span>
+            <span class="n">fps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_interval</span> <span class="o">/</span> <span class="n">elapsed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_time</span> <span class="o">=</span> <span class="n">cur_time</span>
+            <span class="n">cur_episode_id</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vectorized.episode_id&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/fps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fps</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_id</span> <span class="o">==</span> <span class="n">cur_episode_id</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/fps_within_episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fps</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_id</span> <span class="o">=</span> <span class="n">cur_episode_id</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats.gauges.diagnostics.lag.action&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/action_lag_lb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.gauges.diagnostics.lag.action&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/action_lag_ub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.gauges.diagnostics.lag.action&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reward.count&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/reward_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;reward.count&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats.gauges.diagnostics.clock_skew&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/clock_skew_lb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.gauges.diagnostics.clock_skew&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/clock_skew_ub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.gauges.diagnostics.clock_skew&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats.gauges.diagnostics.lag.observation&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/observation_lag_lb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.gauges.diagnostics.lag.observation&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/observation_lag_ub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.gauges.diagnostics.lag.observation&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats.vnc.updates.n&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/vnc_updates_n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.vnc.updates.n&quot;</span><span class="p">]</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/vnc_updates_n_ps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_vnc_updates</span> <span class="o">/</span> <span class="n">elapsed</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_num_vnc_updates</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats.vnc.updates.bytes&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/vnc_updates_bytes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.vnc.updates.bytes&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats.vnc.updates.pixels&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/vnc_updates_pixels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.vnc.updates.pixels&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats.vnc.updates.rectangles&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/vnc_updates_rectangles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;stats.vnc.updates.rectangles&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;env_status.state_id&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;diagnostics/env_state_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;env_status.state_id&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">reward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+            <span class="k">if</span> <span class="n">observation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_episode_length</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Episode terminating: episode_reward=</span><span class="si">%s</span><span class="s1"> episode_length=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_length</span><span class="p">)</span>
+            <span class="n">total_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_time</span>
+            <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;global/episode_reward&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_reward</span>
+            <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;global/episode_length&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_length</span>
+            <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;global/episode_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_time</span>
+            <span class="n">to_log</span><span class="p">[</span><span class="s2">&quot;global/reward_per_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_reward</span> <span class="o">/</span> <span class="n">total_time</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode_length</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_rewards</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">to_log</span></div>
+
+<span class="k">def</span> <span class="nf">_process_frame42</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="mi">34</span><span class="p">:</span><span class="mi">34</span><span class="o">+</span><span class="mi">160</span><span class="p">,</span> <span class="p">:</span><span class="mi">160</span><span class="p">]</span>
+    <span class="c1"># Resize by half, then down to 42x42 (essentially mipmapping). If</span>
+    <span class="c1"># we resize directly we lose pixels that, when mapped to 42x42,</span>
+    <span class="c1"># aren&#39;t close enough to the pixel boundary.</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">80</span><span class="p">))</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="mi">42</span><span class="p">))</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">frame</span> <span class="o">*=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">)</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">[</span><span class="mi">42</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">frame</span>
+
+<div class="viewcode-block" id="AtariRescale42x42"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.AtariRescale42x42">[docs]</a><span class="k">class</span> <span class="nc">AtariRescale42x42</span><span class="p">(</span><span class="n">vectorized</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AtariRescale42x42</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">42</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation_n</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">_process_frame42</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span> <span class="k">for</span> <span class="n">observation</span> <span class="ow">in</span> <span class="n">observation_n</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="FixedKeyState"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.FixedKeyState">[docs]</a><span class="k">class</span> <span class="nc">FixedKeyState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">keycode</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_down_keysyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+<div class="viewcode-block" id="FixedKeyState.apply_vnc_actions"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.FixedKeyState.apply_vnc_actions">[docs]</a>    <span class="k">def</span> <span class="nf">apply_vnc_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vnc_actions</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">vnc_actions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">vnc_spaces</span><span class="o">.</span><span class="n">KeyEvent</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">down</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_down_keysyms</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_down_keysyms</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FixedKeyState.to_index"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.FixedKeyState.to_index">[docs]</a>    <span class="k">def</span> <span class="nf">to_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">action_n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_down_keysyms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">:</span>
+                <span class="c1"># If multiple keys are pressed, just use the first one</span>
+                <span class="n">action_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">action_n</span></div></div>
+
+<div class="viewcode-block" id="DiscreteToFixedKeysVNCActions"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.DiscreteToFixedKeysVNCActions">[docs]</a><span class="k">class</span> <span class="nc">DiscreteToFixedKeysVNCActions</span><span class="p">(</span><span class="n">vectorized</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DiscreteToFixedKeysVNCActions</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generate_actions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_state</span> <span class="o">=</span> <span class="n">FixedKeyState</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_generate_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">:</span>
+            <span class="n">cur_action</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">cur_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">:</span>
+                <span class="n">cur_action</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vnc_spaces</span><span class="o">.</span><span class="n">KeyEvent</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="n">cur_key</span><span class="p">,</span> <span class="n">down</span><span class="o">=</span><span class="n">cur_key</span> <span class="o">==</span> <span class="n">key</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_action</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_n</span><span class="p">):</span>
+        <span class="c1"># Each action might be a length-1 np.array. Cast to int to</span>
+        <span class="c1"># avoid warnings.</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_actions</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">action</span><span class="p">)]</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">action_n</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CropScreen"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.CropScreen">[docs]</a><span class="k">class</span> <span class="nc">CropScreen</span><span class="p">(</span><span class="n">vectorized</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Crops out a [height]x[width] area starting from (top,left) &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CropScreen</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="n">top</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">left</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation_n</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ob</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">ob</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">observation_n</span><span class="p">]</span></div>
+
+<span class="k">def</span> <span class="nf">_process_frame_flash</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">frame</span> <span class="o">*=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">)</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">frame</span>
+
+<div class="viewcode-block" id="FlashRescale"><a class="viewcode-back" href="../../../surreal.envs.html#surreal.envs.vnc.FlashRescale">[docs]</a><span class="k">class</span> <span class="nc">FlashRescale</span><span class="p">(</span><span class="n">vectorized</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FlashRescale</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation_n</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">_process_frame_flash</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span> <span class="k">for</span> <span class="n">observation</span> <span class="ow">in</span> <span class="n">observation_n</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Stanford Reinforcement Learning Group.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: ''
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

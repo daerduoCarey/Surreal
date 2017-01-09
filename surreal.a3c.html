@@ -83,7 +83,10 @@
           
             
             
-                <ul class="current">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="doc_guide.html"><em>Surreal</em> Code Documentation Guide</a></li>
+</ul>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">surreal</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="surreal.html">surreal package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="surreal.html#subpackages">Subpackages</a><ul class="current">
@@ -322,8 +325,36 @@ runner appends the policy to the queue.</p>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="surreal-a3c-worker-module">
-<h2>surreal.a3c.worker module<a class="headerlink" href="#surreal-a3c-worker-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-surreal.a3c.worker">
+<span id="surreal-a3c-worker-module"></span><h2>surreal.a3c.worker module<a class="headerlink" href="#module-surreal.a3c.worker" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="surreal.a3c.worker.FastSaver">
+<em class="property">class </em><code class="descclassname">surreal.a3c.worker.</code><code class="descname">FastSaver</code><span class="sig-paren">(</span><em>var_list=None</em>, <em>reshape=False</em>, <em>sharded=False</em>, <em>max_to_keep=5</em>, <em>keep_checkpoint_every_n_hours=10000.0</em>, <em>name=None</em>, <em>restore_sequentially=False</em>, <em>saver_def=None</em>, <em>builder=None</em>, <em>defer_build=False</em>, <em>allow_empty=False</em>, <em>write_version=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/a3c/worker.html#FastSaver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.a3c.worker.FastSaver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tensorflow.python.training.saver.Saver</span></code></p>
+<dl class="method">
+<dt id="surreal.a3c.worker.FastSaver.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>sess</em>, <em>save_path</em>, <em>global_step=None</em>, <em>latest_filename=None</em>, <em>meta_graph_suffix='meta'</em>, <em>write_meta_graph=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/a3c/worker.html#FastSaver.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.a3c.worker.FastSaver.save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.a3c.worker.cluster_spec">
+<code class="descclassname">surreal.a3c.worker.</code><code class="descname">cluster_spec</code><span class="sig-paren">(</span><em>num_workers</em>, <em>num_ps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/a3c/worker.html#cluster_spec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.a3c.worker.cluster_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>More tensorflow setup for data parallelism</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.a3c.worker.main">
+<code class="descclassname">surreal.a3c.worker.</code><code class="descname">main</code><span class="sig-paren">(</span><em>_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/a3c/worker.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.a3c.worker.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setting up Tensorflow for data parallel work</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surreal.a3c.worker.run">
+<code class="descclassname">surreal.a3c.worker.</code><code class="descname">run</code><span class="sig-paren">(</span><em>args</em>, <em>server</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/surreal/a3c/worker.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surreal.a3c.worker.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-surreal.a3c">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-surreal.a3c" title="Permalink to this headline">¶</a></h2>

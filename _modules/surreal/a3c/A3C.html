@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="Surreal 0.0.1 documentation" href="../../../index.html"/>
-        <link rel="up" title="Module code" href="../../index.html"/> 
+        <link rel="up" title="surreal" href="../../surreal.html"/> 
 
   
   <script src="../../../_static/js/modernizr.min.js"></script>
@@ -82,6 +82,9 @@
             
             
                 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_guide.html"><em>Surreal</em> Code Documentation Guide</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">surreal</a></li>
 </ul>
 
@@ -129,6 +132,8 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
+          <li><a href="../../surreal.html">surreal</a> &raquo;</li>
+        
       <li>surreal.a3c.A3C</li>
     
     
@@ -150,6 +155,9 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">surreal</span> <span class="k">import</span> <span class="n">govnc_guard</span>
+<span class="k">if</span> <span class="n">govnc_guard</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">go_vncdriver</span>
 <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
 <span class="kn">from</span> <span class="nn">surreal.model.simple</span> <span class="k">import</span> <span class="n">LSTMPolicy</span>
 <span class="kn">import</span> <span class="nn">queue</span>
