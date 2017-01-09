@@ -5,16 +5,29 @@ They are taken from [Google Style Guide](https://google.github.io/styleguide/pyg
 
 ## Sphinx guide
 
-We will use Sphinx to extract docstring from our code and generate beautiful documentation pages for us.  
+Please refer to [Sphinx-theme](https://github.com/LinxiFan/Sphinx-theme) for more details. 
 
-### Step-by-step Tutorial
+Demos of the new Sphinx themes can be viewed here:
 
+- [Stanford custom theme](https://linxifan.github.io/Sphinx-demo/) based on Stanford web color palette. 
+- [Neo RTD theme](https://linxifan.github.io/Neo-RTD-theme-demo/). 
 
-### References
+The doc webpages are generated with an enhanced [napolean extension](https://github.com/LinxiFan/sphinxcontrib-napolean). 
 
-- [Official tutorial](http://www.sphinx-doc.org/en/1.5.1/tutorial.html) with `sphinx-quickstart`. 
-- [Detailed manual](http://www.sphinx-doc.org/en/1.5.1/invocation.html) for command line `sphinx-quickstart`, `sphinx-build` and `sphinx-apidoc`. 
-- Sphinx [themes](http://www.sphinx-doc.org/en/1.5.1/theming.html). 
+Run the included ``./sphinx.sh`` script:
+
+```bash
+usage: ./sphinx.sh <command> <args...>
+start:      automate "sphinx-quickstart" command
+    args: <project_name> "<authors>" <version>
+extra:      append extra config code to the end of "docs/source/conf.py"
+p|py:       regenerate pydocs
+    args: <package_name>
+b|build:    clean and rebuild html
+c|commit:   commit generated html to "gh-pages" branch
+push:       push "gh-pages" branch to remote
+```
+
 
 ## Doc Standards
 ### Doc Strings
