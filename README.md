@@ -1,5 +1,7 @@
 # ***Surreal*** initiative
 
+![Travis status](https://img.shields.io/travis/StanfordRL/Surreal.svg)
+
 ## Docs
 
 - Hosted on [github pages](https://stanfordrl.github.io/Surreal).

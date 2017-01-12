@@ -1,12 +1,24 @@
+os: linux
+dist: trusty
+sudo: required
 language: python
 python: "3.5"
+cache: 
+    - pip
+    - apt
 addons:
   apt:
     packages:
         - tmux
         - golang
+
+before_install:
+    - sudo add-apt-repository -y ppa:ubuntu-lxc/lxd-stable 
+    - sudo apt-get update -q
+    - sudo apt-get -y install golang
+
 install:
     - pip install -r requirements.txt
 script:
     # TODO: add a real executable
-    - ./sphinx.sh
+    - python -c "import gym, universe, tensorflow, cv2; print(666666)"
