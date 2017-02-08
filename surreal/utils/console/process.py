@@ -15,19 +15,20 @@ def _env_str(env):
     return ' '.join(['{}={}'.format(k, env[k]) for k in env])
 
 
-def nohup(cmd, 
+def nohup_str(cmd, 
           stdout_log=None, 
           stderr_log=None, 
           append_out=False,
           append_err=False,
           join_out_err=False,
-          verbose=True, 
-          dryrun=False, 
           env=None):
     """
     Args:
       join_out_err: True: > stdout_log 2>&1 and ignore stderr_log
       env: dict of {'env_var': 'env_value'}
+    
+    Returns:
+      a string of command wrapped in nohup
     """
     if stdout_log:
         stdout_log = ('>> ' if append_out else '> ') + stdout_log
@@ -42,7 +43,6 @@ def nohup(cmd,
         else:
             stderr_log = '2> /dev/null'
         
-    if dryrun: print('Dry run:')
     # environment variables for this command
     if env is None:
         env = {}
@@ -51,6 +51,33 @@ def nohup(cmd,
                                         stdout_log, 
                                         stderr_log).strip()
             + ' echo $!')
+    return cmd
+
+
+def nohup(cmd, 
+          stdout_log=None, 
+          stderr_log=None, 
+          append_out=False,
+          append_err=False,
+          join_out_err=False,
+          env=None,
+          verbose=True, 
+          dryrun=False):
+    """
+    Args:
+      join_out_err: True: > stdout_log 2>&1 and ignore stderr_log
+      env: dict of {'env_var': 'env_value'}
+    """
+    cmd = nohup_str(cmd,
+                    stdout_log=stdout_log,
+                    stderr_log=stderr_log,
+                    append_out=append_out,
+                    append_err=append_err,
+                    join_out_err=join_out_err,
+                    env=env)
+        
+    if dryrun: print('Dry run:')
+    # environment variables for this command
     if verbose:
         print(cmd)
     # don't actually run anything

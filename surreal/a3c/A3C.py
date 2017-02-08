@@ -1,15 +1,13 @@
 from __future__ import print_function
 from collections import namedtuple
 import numpy as np
-from surreal import govnc_guard
-if govnc_guard():
-    import go_vncdriver
 import tensorflow as tf
 from surreal.model.simple import LSTMPolicy
-import queue
+import six.moves.queue as queue
 import scipy.signal
 import threading
-
+import distutils.version
+use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
 
 def discount(x, gamma):
     return scipy.signal.lfilter([1], [1, -gamma], x[::-1], axis=0)[::-1]
@@ -73,7 +71,7 @@ One of the key distinctions between a normal environment and a universe environm
 is that a universe environment is _real time_.  This means that there should be a thread
 that would constantly interact with the environment and tell it what to do.  This thread is here.
 """
-    def __init__(self, env, policy, num_local_steps):
+    def __init__(self, env, policy, num_local_steps, visualise):
         threading.Thread.__init__(self)
         self.queue = queue.Queue(5)
         self.num_local_steps = num_local_steps
@@ -83,6 +81,7 @@ that would constantly interact with the environment and tell it what to do.  Thi
         self.daemon = True
         self.sess = None
         self.summary_writer = None
+        self.visualise = visualise
 
     def start_runner(self, sess, summary_writer):
         self.sess = sess
@@ -94,7 +93,7 @@ that would constantly interact with the environment and tell it what to do.  Thi
             self._run()
 
     def _run(self):
-        rollout_provider = env_runner(self.env, self.policy, self.num_local_steps, self.summary_writer)
+        rollout_provider = env_runner(self.env, self.policy, self.num_local_steps, self.summary_writer, self.visualise)
         while True:
             # the timeout variable exists because apparently, if one worker dies, the other workers
             # won't die with it, unless the timeout is set to some large number.  This is an empirical
@@ -103,12 +102,11 @@ that would constantly interact with the environment and tell it what to do.  Thi
             self.queue.put(next(rollout_provider), timeout=600.0)
 
 
-            
 
-def env_runner(env, policy, num_local_steps, summary_writer):
+def env_runner(env, policy, num_local_steps, summary_writer, render):
     """
 The logic of the thread runner.  In brief, it constantly keeps on running
-the policy, and as long as the rollout exceeds a certain length, the thread 
+the policy, and as long as the rollout exceeds a certain length, the thread
 runner appends the policy to the queue.
 """
     last_state = env.reset()
@@ -125,6 +123,8 @@ runner appends the policy to the queue.
             action, value_, features = fetched[0], fetched[1], fetched[2:]
             # argmax to convert from one-hot
             state, reward, terminal, info = env.step(action.argmax())
+            if render:
+                env.render()
 
             # collect the experience
             rollout.add(last_state, action, reward, value_, terminal, last_features)
@@ -155,11 +155,11 @@ runner appends the policy to the queue.
         if not terminal_end:
             rollout.r = policy.value(last_state, *last_features)
 
-        # once we have enough experience, yield it, and have the TheradRunner place it on a queue
+        # once we have enough experience, yield it, and have the ThreadRunner place it on a queue
         yield rollout
 
 class A3C(object):
-    def __init__(self, env, task):
+    def __init__(self, env, task, visualise):
         """
 An implementation of the A3C algorithm that is reasonably well-tuned for the VNC environments.
 Below, we will have a modest amount of complexity due to the way TensorFlow handles data parallelism.
@@ -173,7 +173,7 @@ should be computed.
         with tf.device(tf.train.replica_device_setter(1, worker_device=worker_device)):
             with tf.variable_scope("global"):
                 self.network = LSTMPolicy(env.observation_space.shape, env.action_space.n)
-                self.global_step = tf.get_variable("global_step", [], tf.int32, initializer=tf.zeros_initializer,
+                self.global_step = tf.get_variable("global_step", [], tf.int32, initializer=tf.constant_initializer(0, dtype=tf.int32),
                                                    trainable=False)
 
         with tf.device(worker_device):
@@ -190,7 +190,7 @@ should be computed.
 
             # the "policy gradients" loss:  its derivative is precisely the policy gradient
             # notice that self.ac is a placeholder that is provided externally.
-            # ac will contain the advantages, as calculated in process_rollout
+            # adv will contain the advantages, as calculated in process_rollout
             pi_loss = - tf.reduce_sum(tf.reduce_sum(log_prob_tf * self.ac, [1]) * self.adv)
 
             # loss of value function
@@ -206,19 +206,29 @@ should be computed.
             # on the one hand;  but on the other hand, we get less frequent parameter updates, which
             # slows down learning.  In this code, we found that making local steps be much
             # smaller than 20 makes the algorithm more difficult to tune and to get to work.
-            self.runner = RunnerThread(env, pi, 20)
+            self.runner = RunnerThread(env, pi, 20, visualise)
 
 
             grads = tf.gradients(self.loss, pi.var_list)
 
-            tf.scalar_summary("model/policy_loss", pi_loss / bs)
-            tf.scalar_summary("model/value_loss", vf_loss / bs)
-            tf.scalar_summary("model/entropy", entropy / bs)
-            tf.image_summary("model/state", pi.x)
-            tf.scalar_summary("model/grad_global_norm", tf.global_norm(grads))
-            tf.scalar_summary("model/var_global_norm", tf.global_norm(pi.var_list))
+            if use_tf12_api:
+                tf.summary.scalar("model/policy_loss", pi_loss / bs)
+                tf.summary.scalar("model/value_loss", vf_loss / bs)
+                tf.summary.scalar("model/entropy", entropy / bs)
+                tf.summary.image("model/state", pi.x)
+                tf.summary.scalar("model/grad_global_norm", tf.global_norm(grads))
+                tf.summary.scalar("model/var_global_norm", tf.global_norm(pi.var_list))
+                self.summary_op = tf.summary.merge_all()
 
-            self.summary_op = tf.merge_all_summaries()
+            else:
+                tf.scalar_summary("model/policy_loss", pi_loss / bs)
+                tf.scalar_summary("model/value_loss", vf_loss / bs)
+                tf.scalar_summary("model/entropy", entropy / bs)
+                tf.image_summary("model/state", pi.x)
+                tf.scalar_summary("model/grad_global_norm", tf.global_norm(grads))
+                tf.scalar_summary("model/var_global_norm", tf.global_norm(pi.var_list))
+                self.summary_op = tf.merge_all_summaries()
+
             grads, _ = tf.clip_by_global_norm(grads, 40.0)
 
             # copy weights from the parameter server to the local model
@@ -253,7 +263,7 @@ self explanatory:  take a rollout from the queue of the thread runner.
         """
 process grabs a rollout that's been produced by the thread runner,
 and updates the parameters.  The update is then sent to the parameter
-server. 
+server.
 """
 
         sess.run(self.sync)  # copy weights from shared to local
