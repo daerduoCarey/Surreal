@@ -3,6 +3,7 @@ import os
 import sys
 from six.moves import shlex_quote
 from surreal.utils.io.filesys import script_dir, f_join
+from .worker import SCRIPT_PATH
 
 def new_cmd(session, name, cmd, mode, logdir, shell):
     if isinstance(cmd, (list, tuple)):
@@ -24,7 +25,7 @@ def a3c_command(session, num_workers, remotes, env_id, logdir, shell='bash', mod
 
     base_cmd = [
         'CUDA_VISIBLE_DEVICES=',
-        'python', f_join(script_dir(), 'worker.py'),
+        'python', SCRIPT_PATH,
         '--log-dir', logdir, 
         '--env-id', env_id,
         '--num-workers', str(num_workers)]

@@ -15,6 +15,8 @@ use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.L
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+SCRIPT_PATH = os.path.realpath(__file__)
+
 # Disables write_meta_graph argument, which freezes entire process and is mostly useless.
 class FastSaver(tf.train.Saver):
     def save(self, sess, save_path, global_step=None, latest_filename=None,
