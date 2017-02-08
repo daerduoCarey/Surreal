@@ -10,13 +10,11 @@ from universe.wrappers import BlockingReset, GymCoreAction, EpisodeID, Unvectori
 from universe import spaces as vnc_spaces
 from universe.spaces.vnc_event import keycode
 import time
-import os
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-# universe.configure_logging()
+
 
 def create_env(env_id, client_id, remotes, **kwargs):
-    universe.configure_logging(os.path.expanduser('~/Log/' + env_id))
     spec = gym.spec(env_id)
 
     if spec.tags.get('flashgames', False):
@@ -27,6 +25,7 @@ def create_env(env_id, client_id, remotes, **kwargs):
         # Assume atari.
         assert "." not in env_id  # universe environments have dots in names.
         return create_atari_env(env_id)
+
 
 def create_flash_env(env_id, client_id, remotes, **_):
     env = gym.make(env_id)

@@ -7,8 +7,10 @@ import logging
 import sys, signal
 import time
 import os
+import universe
 from surreal.a3c.A3C import A3C
 from surreal.envs.vnc import create_env
+from surreal.utils.io.filesys import *
 import distutils.version
 use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
 
@@ -25,6 +27,12 @@ class FastSaver(tf.train.Saver):
                                     meta_graph_suffix, False)
 
 def run(args, server):
+    # configure logging
+    logging_dir = f_join(f_expand(args.log_dir), 'log')
+    f_mkdir(logging_dir)
+    universe.configure_logging('{}/{:0>2}.txt'.format(logging_dir, args.task))
+    
+    # create env
     env = create_env(args.env_id, client_id=str(args.task), remotes=args.remotes)
     trainer = A3C(env, args.task, args.visualize)
 
@@ -117,7 +125,7 @@ Setting up Tensorflow for data parallel work
     parser.add_argument('--task', default=0, type=int, help='Task index')
     parser.add_argument('--job-name', default="worker", help='worker or ps')
     parser.add_argument('--num-workers', default=1, type=int, help='Number of workers')
-    parser.add_argument('--log-dir', default="/tmp/pong", help='Log directory path')
+    parser.add_argument('--log-dir', default=os.path.expanduser("~/Train"), help='Log directory path')
     parser.add_argument('--env-id', default="PongDeterministic-v3", help='Environment id')
     parser.add_argument('--port', type=int, default=15000, help='Cluster port starting point')
     parser.add_argument('-r', '--remotes', default=None,

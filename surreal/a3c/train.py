@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 from six.moves import shlex_quote
-from surreal.utils.io.filesys import script_dir, f_join
+from surreal.utils.io.filesys import *
 from .worker import SCRIPT_PATH
 
 def new_cmd(session, name, cmd, mode, logdir, shell):
@@ -96,10 +96,10 @@ parser.add_argument('-w', '--num-workers', default=8, type=int,
 parser.add_argument('-r', '--remotes', default=None,
                     help='The address of pre-existing VNC servers and '
                          'rewarders to use (e.g. -r vnc://localhost:5900+15900,vnc://localhost:5901+15901).')
-parser.add_argument('-e', '--env-id', type=str, default="Pong",
-                    help="Environment id")
-parser.add_argument('-l', '--log-dir', type=str, default="/tmp/pong",
-                    help="Log directory path")
+parser.add_argument('-e', '--env', type=str, default="Pong",
+                    help="Environment short-name")
+parser.add_argument('-l', '--root-logdir', type=str, default="~/Train",
+                    help="Root log directory path")
 parser.add_argument('-n', '--dry-run', action='store_true',
                     help="Print out commands rather than executing them")
 parser.add_argument('-m', '--mode', type=str, default='tmux',
@@ -114,17 +114,17 @@ parser.add_argument('--visualize', action='store_true',
 
 def main():
     args = parser.parse_args()
-    env_id = args.env_id
-    assert 'Deterministic' not in env_id and '-v' not in env_id, 'only provide the main part'
-    ID = '{}-{}'.format(env_id, args.num_workers)
-    args.log_dir = os.path.expanduser('~/Train/' + ID)
-    args.tmux_window = ID
+    env = args.env
+    assert 'Deterministic' not in env and '-v' not in env, 'only provide the main part'
+    log_id = '{}-{}'.format(env, args.num_workers)
+    log_dir = f_expand(f_join(args.root_logdir, log_id))
+    args.tmux_window = log_id
     
     cmds, notes = a3c_command(args.tmux_window, 
                               args.num_workers, 
                               args.remotes, 
-                              env_id + 'Deterministic-v3', 
-                              args.log_dir, 
+                              env + 'NoFrameskip-v3', 
+                              log_dir, 
                               mode=args.mode,
                               port_offset=args.port_offset,
                               virtualenv_cmd='source activate bitworld',
