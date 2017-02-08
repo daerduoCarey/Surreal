@@ -2,28 +2,7 @@ import argparse
 import os
 import sys
 from six.moves import shlex_quote
-
-parser = argparse.ArgumentParser(description="Run commands")
-parser.add_argument('-w', '--num-workers', default=8, type=int,
-                    help="Number of workers")
-parser.add_argument('-r', '--remotes', default=None,
-                    help='The address of pre-existing VNC servers and '
-                         'rewarders to use (e.g. -r vnc://localhost:5900+15900,vnc://localhost:5901+15901).')
-parser.add_argument('-e', '--env-id', type=str, default="Pong",
-                    help="Environment id")
-parser.add_argument('-l', '--log-dir', type=str, default="/tmp/pong",
-                    help="Log directory path")
-parser.add_argument('-n', '--dry-run', action='store_true',
-                    help="Print out commands rather than executing them")
-parser.add_argument('-m', '--mode', type=str, default='tmux',
-                    help="tmux: run workers in a tmux session. nohup: run workers with nohup. child: run workers as child processes")
-parser.add_argument('-p', '--port-offset', type=int, default=1,
-                    help='Port offset for Tensorboard and ClusterSpec')
-parser.add_argument('-t', '--tmux-window', type=str, default='a3c',
-                    help='Tmux window')
-parser.add_argument('--visualize', action='store_true',
-                    help="Visualize the gym environment by running env.render() between each timestep")
-
+from surreal.utils.io.filesys import script_dir, f_join
 
 def new_cmd(session, name, cmd, mode, logdir, shell):
     if isinstance(cmd, (list, tuple)):
@@ -36,8 +15,8 @@ def new_cmd(session, name, cmd, mode, logdir, shell):
         return "nohup {} -c {} >{}/{}.{}.out 2>&1 & echo kill $! >>{}/kill.sh".format(shell, shlex_quote(cmd), logdir, session, name, logdir)
 
 
-def create_commands(session, num_workers, remotes, env_id, logdir, shell='bash', mode='tmux', 
-                    port_offset=0, virtualenv_cmd=None, visualize=False):
+def a3c_command(session, num_workers, remotes, env_id, logdir, shell='bash', mode='tmux', 
+                port_offset=0, virtualenv_cmd=None, visualize=False):
     # for launching the TF workers and for launching tensorboard
     # virtualenv_cmd: string like `source activate MyEnv` for tmux
     tb_port = str(10000 + port_offset * 10)
@@ -45,7 +24,7 @@ def create_commands(session, num_workers, remotes, env_id, logdir, shell='bash',
 
     base_cmd = [
         'CUDA_VISIBLE_DEVICES=',
-        'python', 'worker.py',
+        'python', f_join(script_dir(), 'worker.py'),
         '--log-dir', logdir, 
         '--env-id', env_id,
         '--num-workers', str(num_workers)]
@@ -110,7 +89,29 @@ def create_commands(session, num_workers, remotes, env_id, logdir, shell='bash',
     return cmds, notes
 
 
-def run():
+parser = argparse.ArgumentParser(description="Run commands")
+parser.add_argument('-w', '--num-workers', default=8, type=int,
+                    help="Number of workers")
+parser.add_argument('-r', '--remotes', default=None,
+                    help='The address of pre-existing VNC servers and '
+                         'rewarders to use (e.g. -r vnc://localhost:5900+15900,vnc://localhost:5901+15901).')
+parser.add_argument('-e', '--env-id', type=str, default="Pong",
+                    help="Environment id")
+parser.add_argument('-l', '--log-dir', type=str, default="/tmp/pong",
+                    help="Log directory path")
+parser.add_argument('-n', '--dry-run', action='store_true',
+                    help="Print out commands rather than executing them")
+parser.add_argument('-m', '--mode', type=str, default='tmux',
+                    help="tmux: run workers in a tmux session. nohup: run workers with nohup. child: run workers as child processes")
+parser.add_argument('-p', '--port-offset', type=int, default=1,
+                    help='Port offset for Tensorboard and ClusterSpec')
+parser.add_argument('-t', '--tmux-window', type=str, default='a3c',
+                    help='Tmux window')
+parser.add_argument('--visualize', action='store_true',
+                    help="Visualize the gym environment by running env.render() between each timestep")
+
+
+def main():
     args = parser.parse_args()
     env_id = args.env_id
     assert 'Deterministic' not in env_id and '-v' not in env_id, 'only provide the main part'
@@ -118,15 +119,15 @@ def run():
     args.log_dir = os.path.expanduser('~/Train/' + ID)
     args.tmux_window = ID
     
-    cmds, notes = create_commands(args.tmux_window, 
-                                  args.num_workers, 
-                                  args.remotes, 
-                                  env_id + 'Deterministic-v3', 
-                                  args.log_dir, 
-                                  mode=args.mode,
-                                  port_offset=args.port_offset,
-                                  virtualenv_cmd='source activate bitworld',
-                                  visualize=args.visualize)
+    cmds, notes = a3c_command(args.tmux_window, 
+                              args.num_workers, 
+                              args.remotes, 
+                              env_id + 'Deterministic-v3', 
+                              args.log_dir, 
+                              mode=args.mode,
+                              port_offset=args.port_offset,
+                              virtualenv_cmd='source activate bitworld',
+                              visualize=args.visualize)
     if args.dry_run:
         print("Dry-run mode due to -n flag, otherwise the following commands would be executed:")
     else:
@@ -141,4 +142,4 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    main()

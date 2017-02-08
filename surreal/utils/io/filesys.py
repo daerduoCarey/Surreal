@@ -131,7 +131,7 @@ def script_dir():
     """
     Returns: the dir of current script
     """
-    return os.path.dirname(sys.argv[0])
+    return os.path.dirname(os.path.realpath(sys.argv[0]))
 
 
 def parent_dir(location):
