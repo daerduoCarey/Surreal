@@ -9,8 +9,9 @@ import time
 import os
 import universe
 from surreal.a3c.A3C import A3C
-from surreal.envs.vnc import create_env
+from surreal.envs.vnc import create_env, record_video_wrap
 from surreal.utils.io.filesys import *
+from surreal.utils.image import *
 import distutils.version
 use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
 
@@ -28,12 +29,18 @@ class FastSaver(tf.train.Saver):
 
 def run(args, server):
     # configure logging
-    logging_dir = f_join(f_expand(args.log_dir), 'log')
+    args.log_dir = f_expand(args.log_dir)
+    logging_dir = f_join(args.log_dir, 'log')
+    video_dir = f_join(args.log_dir, 'video')
+    info_dir = f_join(args.log_dir, 'info') # other diagnostics, such as screenshot
     f_mkdir(logging_dir)
+    f_mkdir(video_dir)
+    f_mkdir(info_dir)
     universe.configure_logging('{}/{:0>2}.txt'.format(logging_dir, args.task))
     
     # create env
     env = create_env(args.env_id, client_id=str(args.task), remotes=args.remotes)
+    env = record_video_wrap(env, video_dir=video_dir)
     trainer = A3C(env, args.task, args.visualize)
 
     # Variable names that start with "local" are not saved in checkpoints.
@@ -57,16 +64,16 @@ def run(args, server):
         ses.run(init_all_op)
 
     config = tf.ConfigProto(device_filters=["/job:ps", "/job:worker/task:{}/cpu:0".format(args.task)])
-    logdir = os.path.join(args.log_dir, 'train')
+    event_dir = f_join(args.log_dir, 'train')
 
     if use_tf12_api:
-        summary_writer = tf.summary.FileWriter(logdir + "_%d" % args.task)
+        summary_writer = tf.summary.FileWriter(event_dir + "_%d" % args.task)
     else:
-        summary_writer = tf.train.SummaryWriter(logdir + "_%d" % args.task)
+        summary_writer = tf.train.SummaryWriter(event_dir + "_%d" % args.task)
 
-    logger.info("Events directory: %s_%s", logdir, args.task)
+    logger.info("Events directory: %s_%s", event_dir, args.task)
     sv = tf.train.Supervisor(is_chief=(args.task == 0),
-                             logdir=logdir,
+                             logdir=event_dir,
                              saver=saver,
                              summary_op=None,
                              init_op=init_op,
@@ -94,6 +101,7 @@ def run(args, server):
     # Ask for all the services to stop.
     sv.stop()
     logger.info('reached %s steps. worker stopped.', global_step)
+
 
 def cluster_spec(num_workers, num_ps, port):
     """

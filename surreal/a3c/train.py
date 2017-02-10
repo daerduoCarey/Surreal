@@ -17,7 +17,7 @@ def new_cmd(session, name, cmd, mode, logdir, shell):
 
 
 def a3c_command(session, num_workers, remotes, env_id, logdir, shell='bash', mode='tmux', 
-                port_offset=0, virtualenv_cmd=None, visualize=False):
+                port_offset=0, virtualenv_cmd=None, visualize=False, restart=False):
     # for launching the TF workers and for launching tensorboard
     # virtualenv_cmd: string like `source activate MyEnv` for tmux
     tb_port = str(10000 + port_offset * 10)
@@ -66,19 +66,19 @@ def a3c_command(session, num_workers, remotes, env_id, logdir, shell='bash', mod
         notes += ["Use `tmux kill-session -t {}` to kill the job".format(session)]
     else:
         notes += ["Use `tail -f {}/*.out` to watch process output".format(logdir)]
-    notes += ["Point your browser to http://localhost:12345 to see Tensorboard"]
+    notes += ["Point your browser to http://localhost:{} to see Tensorboard".format(tb_port)]
 
     if mode == 'tmux':
         cmds += [
         "tmux kill-session -t {}".format(session),
         'sleep 2',
-        "rm -rf " + logdir, # ADDED
+        "rm -rf " + logdir if restart else '',
         "mkdir -p {}".format(logdir),
         "tmux new-session -s {} -n {} -d {}".format(session, windows[0], shell)
         ]
         for w in windows[1:]:
             cmds += ["tmux new-window -t {} -n {} {}".format(session, w, shell)]
-        cmds += ["sleep 5"]
+        cmds += ["sleep 2"]
         if virtualenv_cmd:
             for w in windows:
                 cmds.append(new_cmd(session, w, virtualenv_cmd, mode, logdir, shell))
@@ -98,7 +98,9 @@ parser.add_argument('-r', '--remotes', default=None,
                          'rewarders to use (e.g. -r vnc://localhost:5900+15900,vnc://localhost:5901+15901).')
 parser.add_argument('-e', '--env', type=str, default="Pong",
                     help="Environment short-name")
-parser.add_argument('-l', '--root-logdir', type=str, default="~/Train",
+parser.add_argument('-s', '--suffix', type=str, default="",
+                    help="Optional env suffix, will affect naming of logdir and tmux window")
+parser.add_argument('-l', '--log-dir', type=str, default="~/Train",
                     help="Root log directory path")
 parser.add_argument('-n', '--dry-run', action='store_true',
                     help="Print out commands rather than executing them")
@@ -110,25 +112,33 @@ parser.add_argument('-t', '--tmux-window', type=str, default='a3c',
                     help='Tmux window')
 parser.add_argument('--visualize', action='store_true',
                     help="Visualize the gym environment by running env.render() between each timestep")
+parser.add_argument('-re', '--restart', action='store_true',
+                    help="Delete the old save dir of parameters, restart the training from scratch.")
 
 
 def main():
     args = parser.parse_args()
     env = args.env
     assert 'Deterministic' not in env and '-v' not in env, 'only provide the main part'
-    log_id = '{}-{}'.format(env, args.num_workers)
-    log_dir = f_expand(f_join(args.root_logdir, log_id))
+    if args.suffix:
+        log_id = '{}-{}'.format(env, args.suffix)
+    else:
+        log_id = env
+    logdir = f_expand(f_join(args.log_dir, log_id))
     args.tmux_window = log_id
     
-    cmds, notes = a3c_command(args.tmux_window, 
-                              args.num_workers, 
-                              args.remotes, 
-                              env + 'NoFrameskip-v3', 
-                              log_dir, 
+    ENV_SUFFIX = 'NoFrameskip-v3' if 1 else 'Deterministic-v3'
+    
+    cmds, notes = a3c_command(session=args.tmux_window, 
+                              num_workers=args.num_workers, 
+                              remotes=args.remotes, 
+                              env_id=env + ENV_SUFFIX,
+                              logdir=logdir, 
                               mode=args.mode,
                               port_offset=args.port_offset,
                               virtualenv_cmd='source activate bitworld',
-                              visualize=args.visualize)
+                              visualize=args.visualize,
+                              restart=args.restart)
     if args.dry_run:
         print("Dry-run mode due to -n flag, otherwise the following commands would be executed:")
     else:

@@ -2,13 +2,14 @@ import cv2
 from gym.spaces.box import Box
 import numpy as np
 import gym
-from gym import spaces
+from gym import spaces, wrappers
 import logging
 import universe
 from universe import vectorized
 from universe.wrappers import BlockingReset, GymCoreAction, EpisodeID, Unvectorize, Vectorize, Vision, Logger
 from universe import spaces as vnc_spaces
 from universe.spaces.vnc_event import keycode
+from .atari_wrappers import wrap_deepmind
 import time
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -55,6 +56,7 @@ def create_flash_env(env_id, client_id, remotes, **_):
                     'fine_quality_level': 50, 'subsample_level': 3})
     return env
 
+
 def create_vncatari_env(env_id, client_id, remotes, **_):
     env = gym.make(env_id)
     env = Vision(env)
@@ -71,7 +73,25 @@ def create_vncatari_env(env_id, client_id, remotes, **_):
     env.configure(remotes=remotes, start_timeout=15 * 60, fps=fps, client_id=client_id)
     return env
 
-def create_atari_env(env_id):
+
+def create_atari_env_deepmind(env_id):
+    env = gym.make(env_id)
+    env = wrap_deepmind(env)
+    env = Vectorize(env)
+    env = DiagnosticsInfo(env)
+    env = Unvectorize(env)
+    return env
+
+
+def record_video_wrap(env, video_dir, record_period=1000, clear_old=True):
+    video_callable = lambda episode_index : (episode_index+1) % record_period == 0
+    return wrappers.Monitor(env, video_dir, 
+                            video_callable=video_callable,
+                            force=clear_old)
+
+
+def create_atari_env_simple(env_id):
+    "Legacy code from starter-agent"
     env = gym.make(env_id)
     env = Vectorize(env)
     env = AtariRescale42x42(env)
@@ -79,8 +99,13 @@ def create_atari_env(env_id):
     env = Unvectorize(env)
     return env
 
+
+create_atari_env = create_atari_env_deepmind if 1 else create_atari_env_simple
+
+
 def DiagnosticsInfo(env, *args, **kwargs):
     return vectorized.VectorizeFilter(env, DiagnosticsInfoI, *args, **kwargs)
+
 
 class DiagnosticsInfoI(vectorized.Filter):
     def __init__(self, log_interval=503):
