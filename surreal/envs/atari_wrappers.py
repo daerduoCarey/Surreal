@@ -109,6 +109,40 @@ class MaxAndSkipEnv(gym.Wrapper):
         return obs
 
 
+class StackFrameWrapper(gym.Wrapper):
+    def __init__(self, env, buff=4):
+        """
+        Stack the last n frames as input channels
+
+        Args:
+          buff: number of last frames to be stacked
+        """
+        super(StackFrameWrapper, self).__init__(env)
+        # most recent raw observations (for max pooling across time steps)
+        self._obs_buffer = deque(maxlen=buff)
+        self._buff = buff
+
+
+    def _step(self, action):
+        obs, reward, done, info = self.env.step(action)
+        self._obs_buffer.append(obs)
+        return self._stack(), reward, done, info
+
+
+    def _reset(self):
+        """Clear past frame buffer and init. to first obs. from inner env."""
+        self._obs_buffer.clear()
+        obs = self.env.reset()
+        # at the beginning, we fill the buffer with the first frame
+        for _ in range(self._obs_buffer):
+            self._obs_buffer.append(obs)
+        return self._stack()
+    
+    
+    def _stack(self):
+        return np.stack(self._obs_buffer, axis=0)
+
+
 def _process_frame84_debug(frame):
     print('frame')
     F = os.path.expanduser('~/Temp/imgs/{}.png').format
@@ -198,6 +232,7 @@ def wrap_deepmind(env, scale_float=True):
     env = EpisodicLifeEnv(env)
     env = NoopResetEnv(env, noop_max=30)
     env = MaxAndSkipEnv(env, skip=4)
+    env = StackFrameWrapper(env, buff=4)
     env = FireResetEnv(env)
     env = ProcessFrame84(env)
     env = ClippedRewardsWrapper(env)
