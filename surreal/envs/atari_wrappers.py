@@ -80,12 +80,14 @@ class EpisodicLifeEnv(gym.Wrapper):
 
 
 class MaxAndSkipEnv(gym.Wrapper):
-    def __init__(self, env=None, skip=4):
+    def __init__(self, env=None, skip=4, max=False):
         """Return only every `skip`-th frame"""
         super(MaxAndSkipEnv, self).__init__(env)
         # most recent raw observations (for max pooling across time steps)
         self._obs_buffer = deque(maxlen=2)
-        self._skip       = skip
+        self._skip = skip
+        self._max = max
+
 
     def _step(self, action):
         total_reward = 0.0
@@ -97,9 +99,12 @@ class MaxAndSkipEnv(gym.Wrapper):
             if done:
                 break
 
-        max_frame = np.max(np.stack(self._obs_buffer), axis=0)
+        if self._max:
+            frame = np.max(np.stack(self._obs_buffer), axis=0)
+        else:
+            frame = self._obs_buffer[-1]
+        return frame, total_reward, done, info
 
-        return max_frame, total_reward, done, info
 
     def _reset(self):
         """Clear past frame buffer and init. to first obs. from inner env."""
@@ -121,6 +126,10 @@ class StackFrameWrapper(gym.Wrapper):
         # most recent raw observations (for max pooling across time steps)
         self._obs_buffer = deque(maxlen=buff)
         self._buff = buff
+        old_shape = self.observation_space.shape
+        assert old_shape[-1] == 1, 'must be single channel'
+        new_shape = old_shape[:2] + (buff,)
+        self.observation_space = spaces.Box(low=0, high=255, shape=new_shape)
 
 
     def _step(self, action):
@@ -134,13 +143,12 @@ class StackFrameWrapper(gym.Wrapper):
         self._obs_buffer.clear()
         obs = self.env.reset()
         # at the beginning, we fill the buffer with the first frame
-        for _ in range(self._obs_buffer):
+        for _ in range(self._buff):
             self._obs_buffer.append(obs)
         return self._stack()
     
-    
     def _stack(self):
-        return np.stack(self._obs_buffer, axis=0)
+        return np.concatenate(self._obs_buffer, axis=-1)
 
 
 def _process_frame84_debug(frame):
@@ -231,10 +239,10 @@ def wrap_deepmind(env, scale_float=True):
     assert 'NoFrameskip' in env.spec.id
     env = EpisodicLifeEnv(env)
     env = NoopResetEnv(env, noop_max=30)
-    env = MaxAndSkipEnv(env, skip=4)
-    env = StackFrameWrapper(env, buff=4)
+    env = MaxAndSkipEnv(env, skip=4, max=False)
     env = FireResetEnv(env)
     env = ProcessFrame84(env)
+    env = StackFrameWrapper(env, buff=4)
     env = ClippedRewardsWrapper(env)
     if scale_float:
         env = RescaleFrameFloat(env)

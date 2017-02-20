@@ -44,7 +44,7 @@ def categorical_sample(logits, d):
 
 
 
-class DeprecLSTMPolicy(object):
+class OLD_LSTMPolicy(object):
     "Original policy from starter-agent"
     def __init__(self, ob_space, ac_space):
         self.x = x = tf.placeholder(tf.float32, [None] + list(ob_space))
@@ -91,7 +91,23 @@ class DeprecLSTMPolicy(object):
         return sess.run(self.vf, {self.x: [ob], self.state_in[0]: c, self.state_in[1]: h})[0]
 
 
-class LSTMPolicy(object):
+class Policy(object):
+    def state_in_feed(self, values, feed=None):
+        """
+        Augment feed for state_in
+        Args:
+          values: numpy arrays of states, must be in order of state_in
+          feed: if None, return a new dict, otherwise augment the old one
+        """
+        if feed is None:
+            feed = {}
+        for i, val in enumerate(values):
+            feed[self.state_in[i]] = val
+        return feed
+        
+
+
+class LSTMPolicy(Policy):
     def __init__(self, ob_space, ac_space):
         self.x = x = tf.placeholder(tf.float32, [None] + list(ob_space))
 
@@ -127,11 +143,69 @@ class LSTMPolicy(object):
     def get_initial_features(self):
         return self.state_init
 
-    def act(self, ob, c, h):
+    
+    def act(self, ob, *last_states):
         sess = tf.get_default_session()
-        return sess.run([self.sample, self.vf] + self.state_out,
-                        {self.x: [ob], self.state_in[0]: c, self.state_in[1]: h})
+        feed = {self.x: [ob]}
+        feed = self.state_in_feed(last_states, feed)
+        return sess.run([self.sample, self.vf] + self.state_out, feed)
 
-    def value(self, ob, c, h):
+    def value(self, ob, *last_states):
         sess = tf.get_default_session()
-        return sess.run(self.vf, {self.x: [ob], self.state_in[0]: c, self.state_in[1]: h})[0]
+        feed = {self.x: [ob]}
+        feed = self.state_in_feed(last_states, feed)
+        return sess.run(self.vf, feed)[0]
+
+
+# class AtariCNNPolicy(Policy):
+#     batched = True
+#     def _build(self, hps):
+#         x = self.s
+# 
+#         x = tf.nn.relu(conv2d(x, 32, "l1", [8, 8], [4, 4]))  # -> [21, 21, 32]
+#         x = tf.nn.relu(conv2d(x, 64, "l2", [4, 4], [2, 2]))  # -> [11, 11, 64]
+#         x = tf.nn.relu(conv2d(x, 64, "l3", [3, 3], [1, 1]))  # -> [11, 11, 64]
+# 
+#         x = flatten(x)
+#         x = tf.nn.relu(linear(x, hps.size, "lin", normalized_columns_initializer(1.0)))
+#         logits = linear(x, self.policy_dist.d, "action", normalized_columns_initializer(0.01))
+#         self.policy_cpd = self.policy_dist.cpd(logits)
+#         vf_params = linear(x, self.vf_dist.d, "value", normalized_columns_initializer(1.0))
+#         self.vf_cpd = self.vf_dist.cpd(vf_params)
+# 
+#     @classmethod
+#     def get_default_hparams(cls):
+#         return HParams(size=512)
+
+class CNNPolicy(Policy):
+    def __init__(self, ob_space, ac_space):
+        self.x = x = tf.placeholder(tf.float32, [None] + list(ob_space), name='state')
+#         x = tf.nn.relu(conv2d(x, 32, "l1", [8, 8], [4, 4]))  # -> [21, 21, 32]
+#         x = tf.nn.relu(conv2d(x, 64, "l2", [4, 4], [2, 2]))  # -> [11, 11, 64]
+#         x = tf.nn.relu(conv2d(x, 64, "l3", [3, 3], [1, 1]))  # -> [11, 11, 64]
+        x = tf.nn.relu(conv2d(x, 16, "l1", [8, 8], [4, 4]))  # -> [21, 21, 32]
+        x = tf.nn.relu(conv2d(x, 32, "l2", [4, 4], [2, 2]))  # -> [11, 11, 64]
+        x = flatten(x)
+        x = tf.nn.relu(linear(x, 256, "lin", normalized_columns_initializer(1.0)))
+        self.logits = linear(x, ac_space, "action", normalized_columns_initializer(0.01))
+        self.vf = tf.reshape(linear(x, 1, "value", normalized_columns_initializer(1.0)), [-1])
+        self.state_in = []
+        self.state_out = []
+        self.sample = categorical_sample(self.logits, ac_space)[0, :]
+        self.var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, tf.get_variable_scope().name)
+
+    def get_initial_features(self):
+        return []
+    
+    
+    def act(self, ob, *last_states):
+        sess = tf.get_default_session()
+        feed = {self.x: [ob]}
+        feed = self.state_in_feed(last_states, feed)
+        return sess.run([self.sample, self.vf] + self.state_out, feed)
+
+    def value(self, ob, *last_states):
+        sess = tf.get_default_session()
+        feed = {self.x: [ob]}
+        feed = self.state_in_feed(last_states, feed)
+        return sess.run(self.vf, feed)[0]

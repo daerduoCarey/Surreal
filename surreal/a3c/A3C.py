@@ -2,7 +2,7 @@ from __future__ import print_function
 from collections import namedtuple
 import numpy as np
 import tensorflow as tf
-from surreal.model.simple import LSTMPolicy
+from surreal.model.simple import *
 import six.moves.queue as queue
 import scipy.signal
 import threading
@@ -169,7 +169,7 @@ runner appends the policy to the queue.
 
 
 class A3C(object):
-    def __init__(self, env, task, visualize):
+    def __init__(self, env, task, policy_class=CNNPolicy, visualize=False):
         """
 An implementation of the A3C algorithm that is reasonably well-tuned for the VNC environments.
 Below, we will have a modest amount of complexity due to the way TensorFlow handles data parallelism.
@@ -181,13 +181,13 @@ should be computed.
         worker_device = "/job:worker/task:{}/cpu:0".format(task)
         with tf.device(tf.train.replica_device_setter(1, worker_device=worker_device)):
             with tf.variable_scope("global"):
-                self.network = LSTMPolicy(env.observation_space.shape, env.action_space.n)
+                self.network = policy_class(env.observation_space.shape, env.action_space.n)
                 self.global_step = tf.get_variable("global_step", [], tf.int32, initializer=tf.constant_initializer(0, dtype=tf.int32),
                                                    trainable=False)
 
         with tf.device(worker_device):
             with tf.variable_scope("local"):
-                self.local_network = pi = LSTMPolicy(env.observation_space.shape, env.action_space.n)
+                self.local_network = pi = policy_class(env.observation_space.shape, env.action_space.n)
                 pi.global_step = self.global_step
 
             self.ac = tf.placeholder(tf.float32, [None, env.action_space.n], name="ac")
@@ -247,7 +247,7 @@ should be computed.
             inc_step = self.global_step.assign_add(tf.shape(pi.x)[0])
 
             # each worker has a different set of adam optimizer parameters
-            opt = tf.train.AdamOptimizer(1e-4)
+            opt = tf.train.AdamOptimizer(7e-4)
             self.train_op = tf.group(opt.apply_gradients(grads_and_vars), inc_step)
             self.summary_writer = None
             self.local_steps = 0
@@ -256,10 +256,11 @@ should be computed.
         self.runner.start_runner(sess, summary_writer)
         self.summary_writer = summary_writer
 
+
     def pull_batch_from_queue(self):
         """
-self explanatory:  take a rollout from the queue of the thread runner.
-"""
+        self explanatory:  take a rollout from the queue of the thread runner.
+        """
         rollout = self.runner.queue.get(timeout=600.0)
         while not rollout.terminal:
             try:
@@ -268,13 +269,13 @@ self explanatory:  take a rollout from the queue of the thread runner.
                 break
         return rollout
 
+
     def process(self, sess):
         """
-process grabs a rollout that's been produced by the thread runner,
-and updates the parameters.  The update is then sent to the parameter
-server.
-"""
-
+        process grabs a rollout that's been produced by the thread runner,
+        and updates the parameters.  The update is then sent to the parameter
+        server.
+        """
         sess.run(self.sync)  # copy weights from shared to local
         rollout = self.pull_batch_from_queue()
         batch = process_rollout(rollout, gamma=0.99, lambda_=1.0)
@@ -291,9 +292,9 @@ server.
             self.ac: batch.a,
             self.adv: batch.adv,
             self.r: batch.r,
-            self.local_network.state_in[0]: batch.features[0],
-            self.local_network.state_in[1]: batch.features[1],
         }
+        feed_dict = self.local_network.state_in_feed(batch.features[:2],
+                                                     feed_dict)
 
         fetched = sess.run(fetches, feed_dict=feed_dict)
 

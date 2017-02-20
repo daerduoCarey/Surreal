@@ -93,7 +93,7 @@ def a3c_command(session, num_workers, remotes, env_id, logdir, shell='bash', mod
 parser = argparse.ArgumentParser(description="Run commands")
 parser.add_argument('-w', '--num-workers', default=8, type=int,
                     help="Number of workers")
-parser.add_argument('-r', '--remotes', default=None,
+parser.add_argument('--remotes', default=None,
                     help='The address of pre-existing VNC servers and '
                          'rewarders to use (e.g. -r vnc://localhost:5900+15900,vnc://localhost:5901+15901).')
 parser.add_argument('-e', '--env', type=str, default="Pong",
@@ -112,7 +112,7 @@ parser.add_argument('-t', '--tmux-window', type=str, default='a3c',
                     help='Tmux window')
 parser.add_argument('--visualize', action='store_true',
                     help="Visualize the gym environment by running env.render() between each timestep")
-parser.add_argument('-re', '--restart', action='store_true',
+parser.add_argument('-r', '--restart', action='store_true',
                     help="Delete the old save dir of parameters, restart the training from scratch.")
 
 
