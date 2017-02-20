@@ -16,12 +16,24 @@ def new_cmd(session, name, cmd, mode, logdir, shell):
         return "nohup {} -c {} >{}/{}.{}.out 2>&1 & echo kill $! >>{}/kill.sh".format(shell, shlex_quote(cmd), logdir, session, name, logdir)
 
 
-def a3c_command(session, num_workers, remotes, env_id, logdir, shell='bash', mode='tmux', 
-                port_offset=0, virtualenv_cmd=None, visualize=False, restart=False):
+def a3c_command(session, 
+                num_workers, 
+                remotes, 
+                env_id, 
+                logdir, 
+                shell='bash', 
+                mode='tmux', 
+                port_offset=0, 
+                virtualenv_cmd=None, 
+                visualize=False, 
+                resume=False):
     # for launching the TF workers and for launching tensorboard
     # virtualenv_cmd: string like `source activate MyEnv` for tmux
     tb_port = str(10000 + port_offset * 10)
     cluster_port = str(15000 + port_offset * 20)
+    
+    if resume:
+        assert f_exists(logdir), 'no logdir {} to resume from.'.format(logdir)
 
     base_cmd = [
         'CUDA_VISIBLE_DEVICES=',
@@ -72,7 +84,7 @@ def a3c_command(session, num_workers, remotes, env_id, logdir, shell='bash', mod
         cmds += [
         "tmux kill-session -t {}".format(session),
         'sleep 2',
-        "rm -rf " + logdir if restart else '',
+        "rm -rf " + logdir if not resume else '',
         "mkdir -p {}".format(logdir),
         "tmux new-session -s {} -n {} -d {}".format(session, windows[0], shell)
         ]
@@ -112,8 +124,8 @@ parser.add_argument('-t', '--tmux-window', type=str, default='a3c',
                     help='Tmux window')
 parser.add_argument('--visualize', action='store_true',
                     help="Visualize the gym environment by running env.render() between each timestep")
-parser.add_argument('-r', '--restart', action='store_true',
-                    help="Delete the old save dir of parameters, restart the training from scratch.")
+parser.add_argument('-r', '--resume', action='store_true',
+                    help="Do not delete the old save dir of parameters, restart the training from scratch.")
 
 
 def main():
@@ -138,7 +150,7 @@ def main():
                               port_offset=args.port_offset,
                               virtualenv_cmd='source activate bitworld',
                               visualize=args.visualize,
-                              restart=args.restart)
+                              resume=args.resume)
     if args.dry_run:
         print("Dry-run mode due to -n flag, otherwise the following commands would be executed:")
     else:

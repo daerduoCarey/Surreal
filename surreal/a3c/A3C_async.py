@@ -162,7 +162,6 @@ runner appends the policy to the queue.
                 break
 
         if not terminal_end:
-            # if a partial rollout, use value function at the last step to bootstrap
             rollout.r = policy.value(last_state, *last_features)
 
         # once we have enough experience, yield it, and have the ThreadRunner place it on a queue
@@ -216,7 +215,8 @@ should be computed.
             # on the one hand;  but on the other hand, we get less frequent parameter updates, which
             # slows down learning.  In this code, we found that making local steps be much
             # smaller than 20 makes the algorithm more difficult to tune and to get to work.
-#             self.runner = RunnerThread(env, pi, 20, visualize)
+            self.runner = RunnerThread(env, pi, 20, visualize)
+
 
             grads = tf.gradients(self.loss, pi.var_list)
 
@@ -252,15 +252,9 @@ should be computed.
             self.summary_writer = None
             self.local_steps = 0
 
-
     def start(self, sess, summary_writer):
-#         self.runner.start_runner(sess, summary_writer)
+        self.runner.start_runner(sess, summary_writer)
         self.summary_writer = summary_writer
-        self.env_runner = env_runner(self.env, 
-                                     self.local_network, 
-                                     num_local_steps=5, 
-                                     summary_writer=self.summary_writer, 
-                                     render=False)
 
 
     def pull_batch_from_queue(self):
@@ -283,10 +277,8 @@ should be computed.
         server.
         """
         sess.run(self.sync)  # copy weights from shared to local
-        
-        rollout = next(self.env_runner)
+        rollout = self.pull_batch_from_queue()
         batch = process_rollout(rollout, gamma=0.99, lambda_=1.0)
-#         print('DEBUG BATCH', batch.si.shape, batch.a, batch.adv, batch.r, batch.features)
 
         should_compute_summary = self.task == 0 and self.local_steps % 11 == 0
 
