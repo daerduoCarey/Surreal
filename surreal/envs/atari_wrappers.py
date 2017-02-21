@@ -231,10 +231,10 @@ def wrap_deepmind(env, scale_float=True):
     assert 'NoFrameskip' in env.spec.id
     env = EpisodicLifeEnv(env)
     env = NoopResetEnv(env, noop_max=30)
-    env = MaxAndSkipEnv(env, skip=4)
-    env = StackFrameWrapper(env, buff=4)
     env = FireResetEnv(env)
+    env = MaxAndSkipEnv(env, skip=4)
     env = ProcessFrame84(env)
+#     env = StackFrameWrapper(env, buff=4)
     env = ClippedRewardsWrapper(env)
     if scale_float:
         env = RescaleFrameFloat(env)
