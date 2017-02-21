@@ -215,7 +215,7 @@ should be computed.
             # on the one hand;  but on the other hand, we get less frequent parameter updates, which
             # slows down learning.  In this code, we found that making local steps be much
             # smaller than 20 makes the algorithm more difficult to tune and to get to work.
-            self.runner = RunnerThread(env, pi, 20, visualize)
+#             self.runner = RunnerThread(env, pi, 20, visualize)
 
 
             grads = tf.gradients(self.loss, pi.var_list)
@@ -253,8 +253,14 @@ should be computed.
             self.local_steps = 0
 
     def start(self, sess, summary_writer):
-        self.runner.start_runner(sess, summary_writer)
+#         self.runner.start_runner(sess, summary_writer)
         self.summary_writer = summary_writer
+        self.env_runner = env_runner(self.env, 
+                                     self.local_network, 
+                                     num_local_steps=5, 
+                                     summary_writer=self.summary_writer, 
+                                     render=False)
+
 
     def pull_batch_from_queue(self):
         """
@@ -274,9 +280,9 @@ process grabs a rollout that's been produced by the thread runner,
 and updates the parameters.  The update is then sent to the parameter
 server.
 """
-
         sess.run(self.sync)  # copy weights from shared to local
-        rollout = self.pull_batch_from_queue()
+#         rollout = self.pull_batch_from_queue()
+        rollout = next(self.env_runner)
         batch = process_rollout(rollout, gamma=0.99, lambda_=1.0)
 
         should_compute_summary = self.task == 0 and self.local_steps % 11 == 0
