@@ -152,7 +152,7 @@ class StackFrameWrapper(gym.Wrapper):
 
 
 def _process_frame84_debug(frame):
-    print('frame')
+    print('frame', frame.shape)
     F = os.path.expanduser('~/Temp/imgs/{}.png').format
     save_img(frame, F('frame'))
     img = np.reshape(frame, [210, 160, 3]).astype(np.float32)
@@ -167,11 +167,12 @@ def _process_frame84_debug(frame):
     x_t = resized_screen[18:102, :]
     print('x_t')
     save_img(x_t, F('x_t'))
+    os.system('open ' + F('x_t'))
     x_t = np.reshape(x_t, [84, 84, 1])
     return x_t.astype(np.uint8)
 
 
-def _process_frame84(frame):
+def _process_frame84_old(frame):
     img = np.reshape(frame, [210, 160, 3]).astype(np.float32)
     img = img[:, :, 0] * 0.299 + img[:, :, 1] * 0.587 + img[:, :, 2] * 0.114
     resized_screen = cv2.resize(img, (84, 110),  interpolation=cv2.INTER_LINEAR)
@@ -179,7 +180,19 @@ def _process_frame84(frame):
     x_t = np.reshape(x_t, [84, 84, 1])
     return x_t.astype(np.uint8)
 
-# _process_frame84 = _process_frame84_debug
+
+def _process_frame84(frame, crop=True):
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+    if crop:
+        frame = cv2.resize(frame, (84, 110),  interpolation=cv2.INTER_AREA)
+        return frame[18:102, :, np.newaxis]
+    else:
+        frame = cv2.resize(frame, (84, 84), interpolation=cv2.INTER_AREA)
+        return frame[:, :, np.newaxis]
+
+# DEBUG
+# _process_frame84 = _process_frame84
+
 
 class ProcessFrame84(gym.Wrapper):
     """
@@ -187,16 +200,17 @@ class ProcessFrame84(gym.Wrapper):
     tf.cast(state, tf.float32) / 255.0
     Rescale on GPU instead of CPU improves data transfer efficiency
     """
-    def __init__(self, env=None):
+    def __init__(self, env, crop=False):
         super(ProcessFrame84, self).__init__(env)
         self.observation_space = spaces.Box(low=0, high=255, shape=(84, 84, 1))
+        self._crop = crop
 
     def _step(self, action):
         obs, reward, done, info = self.env.step(action)
-        return _process_frame84(obs), reward, done, info
+        return _process_frame84(obs, crop=self._crop), reward, done, info
 
     def _reset(self):
-        return _process_frame84(self.env.reset())
+        return _process_frame84(self.env.reset(), crop=self._crop)
 
 
 class RescaleFrameFloat(gym.Wrapper):
@@ -239,7 +253,7 @@ def wrap_deepmind(env, scale_float=True):
     assert 'NoFrameskip' in env.spec.id
     env = EpisodicLifeEnv(env)
     env = NoopResetEnv(env, noop_max=30)
-    env = MaxAndSkipEnv(env, skip=4, max=False)
+    env = MaxAndSkipEnv(env, skip=4, max=True)
     env = FireResetEnv(env)
     env = ProcessFrame84(env)
     env = StackFrameWrapper(env, buff=4)

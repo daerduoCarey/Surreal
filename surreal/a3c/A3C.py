@@ -4,15 +4,38 @@ import numpy as np
 import tensorflow as tf
 from surreal.model.simple import *
 import six.moves.queue as queue
-import scipy.signal
 import threading
 import distutils.version
 from surreal.utils.image import *
 from surreal.utils.io.filesys import *
 use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
 
+
+def discount_(rewards, gamma, dones=None):
+    """
+    discount([30,20,10], 0.8) -> [52.4, 28., 10.]
+    [30 + 20*.8 + 10*.8^2, 28 + 10*.8, 10]
+    One-liner:
+    ```
+    import scipy.signal
+    scipy.signal.lfilter([1], [1, -gamma], x[::-1], axis=0)[::-1]
+    ```
+    """
+    discounted = []
+    r = 0
+    if dones is None:
+        dones = [0] * len(rewards)
+    for reward, done in zip(reversed(rewards), reversed(dones)):
+        r = reward + gamma*r
+        r = r * (1. - done)
+        discounted.append(r)
+    return np.array(discounted[::-1], dtype=np.float32)
+
+
+import scipy.signal
 def discount(x, gamma):
     return scipy.signal.lfilter([1], [1, -gamma], x[::-1], axis=0)[::-1]
+
 
 def process_rollout(rollout, gamma, lambda_=1.0):
     """
@@ -34,6 +57,7 @@ def process_rollout(rollout, gamma, lambda_=1.0):
     return Batch(batch_si, batch_a, batch_adv, batch_r, rollout.terminal, features)
 
 Batch = namedtuple("Batch", ["si", "a", "adv", "r", "terminal", "features"])
+
 
 class PartialRollout(object):
     """
@@ -80,7 +104,7 @@ def env_runner(env, policy, num_local_steps, summary_writer, render):
 
         for _ in range(num_local_steps):
             fetched = policy.act(last_state, *last_features)
-            action, value_, features = fetched[0], fetched[1], fetched[2:]
+            action, value, features = fetched[0], fetched[1], fetched[2:]
             # argmax to convert from one-hot
             state, reward, terminal, info = env.step(action.argmax())
             
@@ -94,7 +118,7 @@ def env_runner(env, policy, num_local_steps, summary_writer, render):
                 env.render()
 
             # collect the experience
-            rollout.add(last_state, action, reward, value_, terminal, last_features)
+            rollout.add(last_state, action, reward, value, terminal, last_features)
             length += 1
             rewards += reward
 
@@ -153,21 +177,20 @@ class A3C(object):
             # the "policy gradients" loss:  its derivative is precisely the policy gradient
             # notice that self.ac is a placeholder that is provided externally.
             # adv will contain the advantages, as calculated in process_rollout
+            # TODO: use tf.nn.sparse....
             pi_loss = - tf.reduce_sum(tf.reduce_sum(log_prob_tf * self.ac, [1]) * self.adv)
 
             # loss of value function
+            # TODO: reduce_mean?
             vf_loss = 0.5 * tf.reduce_sum(tf.square(pi.vf - self.r))
             entropy = - tf.reduce_sum(prob_tf * log_prob_tf)
 
             bs = tf.to_float(tf.shape(pi.x)[0])
+            # DM trick: learning rate for critic is HALF that of actor
             self.loss = pi_loss + 0.5 * vf_loss - entropy * 0.01
 
             # 20 represents the number of "local steps":  the number of timesteps
             # we run the policy before we update the parameters.
-            # The larger local steps is, the lower is the variance in our policy gradients estimate
-            # on the one hand;  but on the other hand, we get less frequent parameter updates, which
-            # slows down learning.  In this code, we found that making local steps be much
-            # smaller than 20 makes the algorithm more difficult to tune and to get to work.
 #             self.runner = RunnerThread(env, pi, 20, visualize)
 
             grads = tf.gradients(self.loss, pi.var_list)
@@ -180,16 +203,18 @@ class A3C(object):
             tf.summary.scalar("model/var_global_norm", tf.global_norm(pi.var_list))
             self.summary_op = tf.summary.merge_all()
 
-            grads, _ = tf.clip_by_global_norm(grads, 40.0)
+            grads, _ = tf.clip_by_global_norm(grads, 5.0)
 
             # copy weights from the parameter server to the local model
             self.sync = tf.group(*[v1.assign(v2) for v1, v2 in zip(pi.var_list, self.network.var_list)])
 
             grads_and_vars = list(zip(grads, self.network.var_list))
             inc_step = self.global_step.assign_add(tf.shape(pi.x)[0])
+            lr = tf.train.polynomial_decay(3e-4, self.global_step, 30e6, 1e-9)
 
             # each worker has a different set of adam optimizer parameters
-            opt = tf.train.AdamOptimizer(7e-4)
+            opt = tf.train.RMSPropOptimizer(lr, decay=0.99, epsilon=1e-5)
+#             opt = tf.train.AdamOptimizer(lr)
             self.train_op = tf.group(opt.apply_gradients(grads_and_vars), inc_step)
             self.summary_writer = None
             self.local_steps = 0
