@@ -40,7 +40,7 @@ def run(args, server):
     
     # create env
     env = create_env(args.env_id, client_id=str(args.task), remotes=args.remotes)
-    env = record_video_wrap(env, video_dir=video_dir)
+#     env = record_video_wrap(env, video_dir=video_dir)
     trainer = A3C(env, args.task, visualize=args.visualize)
 
     # Variable names that start with "local" are not saved in checkpoints.

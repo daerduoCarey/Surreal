@@ -11,6 +11,15 @@ from surreal.utils.io.filesys import *
 use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
 
 
+# ============ hypers ============
+LR = 3e-4
+TOTAL_STEPS = 60e6
+OPTIMIZER = 'RMS'
+USE_GAE = True
+LOCAL_STEPS = 5
+# ================================
+
+
 def discount_(rewards, gamma, dones=None):
     """
     discount([30,20,10], 0.8) -> [52.4, 28., 10.]
@@ -48,13 +57,17 @@ def process_rollout(rollout, gamma, lambda_=1.0):
 
     rewards_plus_v = np.asarray(rollout.rewards + [rollout.r])
     batch_r = discount(rewards_plus_v, gamma)[:-1]
-    delta_t = rewards + gamma * vpred_t[1:] - vpred_t[:-1]
-    # this formula for the advantage comes "Generalized Advantage Estimation":
-    # https://arxiv.org/abs/1506.02438
-    batch_adv = discount(delta_t, gamma * lambda_)
-
+    if USE_GAE:
+        # this formula for the advantage comes "Generalized Advantage Estimation":
+        # https://arxiv.org/abs/1506.02438
+        delta_t = rewards + gamma * vpred_t[1:] - vpred_t[:-1]
+        batch_adv = discount(delta_t, gamma * lambda_)
+    else:
+        batch_adv = batch_r - rollout.values
     features = rollout.features[0]
     return Batch(batch_si, batch_a, batch_adv, batch_r, rollout.terminal, features)
+
+        
 
 Batch = namedtuple("Batch", ["si", "a", "adv", "r", "terminal", "features"])
 
@@ -103,8 +116,7 @@ def env_runner(env, policy, num_local_steps, summary_writer, render):
         rollout = PartialRollout()
 
         for _ in range(num_local_steps):
-            fetched = policy.act(last_state, *last_features)
-            action, value, features = fetched[0], fetched[1], fetched[2:]
+            action, value, features = policy.act(last_state, *last_features)
             # argmax to convert from one-hot
             state, reward, terminal, info = env.step(action.argmax())
             
@@ -210,11 +222,13 @@ class A3C(object):
 
             grads_and_vars = list(zip(grads, self.network.var_list))
             inc_step = self.global_step.assign_add(tf.shape(pi.x)[0])
-            lr = tf.train.polynomial_decay(3e-4, self.global_step, 30e6, 1e-9)
+            lr = tf.train.polynomial_decay(LR, self.global_step, TOTAL_STEPS, 1e-9)
 
             # each worker has a different set of adam optimizer parameters
-            opt = tf.train.RMSPropOptimizer(lr, decay=0.99, epsilon=1e-5)
-#             opt = tf.train.AdamOptimizer(lr)
+            if OPTIMIZER.lower() == 'adam':
+                opt = tf.train.AdamOptimizer(lr)
+            else:
+                opt = tf.train.RMSPropOptimizer(lr, decay=0.99, epsilon=1e-5)
             self.train_op = tf.group(opt.apply_gradients(grads_and_vars), inc_step)
             self.summary_writer = None
             self.local_steps = 0
@@ -225,7 +239,7 @@ class A3C(object):
         self.summary_writer = summary_writer
         self.env_runner = env_runner(self.env, 
                                      self.local_network, 
-                                     num_local_steps=5, 
+                                     num_local_steps=LOCAL_STEPS, 
                                      summary_writer=self.summary_writer, 
                                      render=False)
 

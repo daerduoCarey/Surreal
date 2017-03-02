@@ -151,27 +151,6 @@ class StackFrameWrapper(gym.Wrapper):
         return np.concatenate(self._obs_buffer, axis=-1)
 
 
-def _process_frame84_debug(frame):
-    print('frame', frame.shape)
-    F = os.path.expanduser('~/Temp/imgs/{}.png').format
-    save_img(frame, F('frame'))
-    img = np.reshape(frame, [210, 160, 3]).astype(np.float32)
-    print('img')
-    save_img(img, F('img'))
-    img = img[:, :, 0] * 0.299 + img[:, :, 1] * 0.587 + img[:, :, 2] * 0.114
-    print('imggray')
-    save_img(img, F('imggray'))
-    resized_screen = cv2.resize(img, (84, 110),  interpolation=cv2.INTER_LINEAR)
-    print('resized_screen')
-    save_img(resized_screen, F('resized_screen'))
-    x_t = resized_screen[18:102, :]
-    print('x_t')
-    save_img(x_t, F('x_t'))
-    os.system('open ' + F('x_t'))
-    x_t = np.reshape(x_t, [84, 84, 1])
-    return x_t.astype(np.uint8)
-
-
 def _process_frame84_old(frame):
     img = np.reshape(frame, [210, 160, 3]).astype(np.float32)
     img = img[:, :, 0] * 0.299 + img[:, :, 1] * 0.587 + img[:, :, 2] * 0.114
@@ -190,8 +169,33 @@ def _process_frame84(frame, crop=True):
         frame = cv2.resize(frame, (84, 84), interpolation=cv2.INTER_AREA)
         return frame[:, :, np.newaxis]
 
+
+_DEBUG_STEP = 0
+def _process_frame84_debug(frame, crop=True):
+    global _DEBUG_STEP
+    _DEBUG_STEP += 1
+    _debug = _DEBUG_STEP % 100 == 1
+    F = os.path.expanduser('~/Temp/imgs/{}.png').format
+    show = lambda name: os.system('open ' + F(name))
+
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+    if True or crop:
+        frame = cv2.resize(frame, (84, 110),  interpolation=cv2.INTER_AREA)
+        if _debug:
+            save_img(frame, F('original'))
+            show('original')
+        frame = frame[18:102, :, np.newaxis]
+        if _debug:
+            save_img(frame, F('cropped'))
+            show('cropped')
+            input()
+        return frame
+    else:
+        frame = cv2.resize(frame, (84, 84), interpolation=cv2.INTER_AREA)
+        return frame[:, :, np.newaxis]
+
 # DEBUG
-# _process_frame84 = _process_frame84
+# _process_frame84 = _process_frame84_debug
 
 
 class ProcessFrame84(gym.Wrapper):
@@ -249,13 +253,25 @@ class ClippedRewardsWrapper(gym.Wrapper):
 
 
 # TODO: set all scale_float=False and use tf.cast instead across all envs
-def wrap_deepmind(env, scale_float=True):
+def wrap_deepmind(env, scale_float=True, crop='auto'):
+    """
+    Typical: Pong, Breakout, SpaceInvaders, Seaquest, BeamRider, Enduro, Qbert
+    
+    crop: 
+        True - downsample and crop
+        False - direct downsampling
+        'auto' - only crop Pong and Breakout
+    """
     assert 'NoFrameskip' in env.spec.id
+    if crop == 'auto':
+        NO_CROP_GAMES = [] # not sure whether Qbert should be cropped or not
+        crop = not any((game in env.spec.id) for game in NO_CROP_GAMES)
+        print('wrap_deepmind: crop =', crop)
     env = EpisodicLifeEnv(env)
     env = NoopResetEnv(env, noop_max=30)
     env = MaxAndSkipEnv(env, skip=4, max=True)
     env = FireResetEnv(env)
-    env = ProcessFrame84(env)
+    env = ProcessFrame84(env, crop=crop)
     env = StackFrameWrapper(env, buff=4)
     env = ClippedRewardsWrapper(env)
     if scale_float:
