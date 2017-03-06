@@ -26,11 +26,17 @@ def a3c_command(session,
                 port_offset=0, 
                 virtualenv_cmd=None, 
                 visualize=False, 
-                resume=False):
+                resume=False,
+                test_mode=None):
     # for launching the TF workers and for launching tensorboard
     # virtualenv_cmd: string like `source activate MyEnv` for tmux
     tb_port = str(10000 + port_offset * 10)
     cluster_port = str(15000 + port_offset * 20)
+    
+    # evaluation mode
+    if test_mode:
+        resume = True
+        num_workers = 2
     
     if resume:
         assert f_exists(logdir), 'no logdir {} to resume from.'.format(logdir)
@@ -44,6 +50,9 @@ def a3c_command(session,
 
     if visualize:
         base_cmd += ['--visualize']
+
+    if test_mode:
+        base_cmd += ['--test', test_mode]
 
     if remotes is None:
         remotes = ["1"] * num_workers
@@ -61,9 +70,8 @@ def a3c_command(session,
                              base_cmd + ["--job-name", "worker", "--task", str(i), "--remotes", remotes[i], "--port", cluster_port], mode, logdir, shell)]
 
     cmds_map += [new_cmd(session, "tb", ["tensorboard", "--logdir", logdir, "--port", tb_port], mode, logdir, shell)]
-    if mode == 'tmux':
-        cmds_map += [new_cmd(session, "htop", ["htop"], mode, logdir, shell)]
-    windows += ['tb', 'htop']
+#     if mode == 'tmux': cmds_map += [new_cmd(session, "htop", ["htop"], mode, logdir, shell)]
+    windows += ['tb']
 
     notes = []
     cmds = [
@@ -103,7 +111,7 @@ def a3c_command(session,
 
 
 parser = argparse.ArgumentParser(description="Run commands")
-parser.add_argument('-w', '--num-workers', default=8, type=int,
+parser.add_argument('-n', '--num-workers', default=8, type=int,
                     help="Number of workers")
 parser.add_argument('--remotes', default=None,
                     help='The address of pre-existing VNC servers and '
@@ -114,18 +122,18 @@ parser.add_argument('-s', '--suffix', type=str, default="",
                     help="Optional env suffix, will affect naming of logdir and tmux window")
 parser.add_argument('-l', '--log-dir', type=str, default="~/Train",
                     help="Root log directory path")
-parser.add_argument('-n', '--dry-run', action='store_true',
+parser.add_argument('--dry-run', action='store_true',
                     help="Print out commands rather than executing them")
 parser.add_argument('-m', '--mode', type=str, default='tmux',
                     help="tmux: run workers in a tmux session. nohup: run workers with nohup. child: run workers as child processes")
 parser.add_argument('-p', '--port-offset', type=int, default=1,
                     help='Port offset for Tensorboard and ClusterSpec')
-parser.add_argument('-t', '--tmux-window', type=str, default='a3c',
-                    help='Tmux window')
 parser.add_argument('--visualize', action='store_true',
                     help="Visualize the gym environment by running env.render() between each timestep")
 parser.add_argument('-r', '--resume', action='store_true',
                     help="Do not delete the old save dir of parameters, restart the training from scratch.")
+parser.add_argument('-t', '--test', type=str, default=None, choices=['d', 's'],
+                    help="Choices: d - deterministic, s - stochastic.")
 
 
 def main():
@@ -137,11 +145,10 @@ def main():
     else:
         log_id = env
     logdir = f_expand(f_join(args.log_dir, log_id))
-    args.tmux_window = log_id
     
     ENV_SUFFIX = 'NoFrameskip-v3' if 1 else 'Deterministic-v3'
     
-    cmds, notes = a3c_command(session=args.tmux_window, 
+    cmds, notes = a3c_command(session=log_id, 
                               num_workers=args.num_workers, 
                               remotes=args.remotes, 
                               env_id=env + ENV_SUFFIX,
@@ -150,7 +157,8 @@ def main():
                               port_offset=args.port_offset,
                               virtualenv_cmd='source activate bitworld',
                               visualize=args.visualize,
-                              resume=args.resume)
+                              resume=args.resume,
+                              test_mode=args.test)
     if args.dry_run:
         print("Dry-run mode due to -n flag, otherwise the following commands would be executed:")
     else:

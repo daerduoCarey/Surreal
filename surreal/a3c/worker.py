@@ -9,7 +9,7 @@ import time
 import os
 import universe
 from surreal.a3c.A3C import A3C
-from surreal.envs.vnc import create_env, record_video_wrap
+from surreal.envs.vnc import *
 from surreal.utils.io.filesys import *
 from surreal.utils.image import *
 import distutils.version
@@ -38,10 +38,17 @@ def run(args, server):
     f_mkdir(info_dir)
     universe.configure_logging('{}/{:0>2}.txt'.format(logging_dir, args.task))
     
+    if args.test:
+        mode = 'test-' + args.test
+        logger.info('TEST MODE: ' + ('stochastic' if args.test == 's' else 'deterministic'))
+    else:
+        mode = 'train'
+        
     # create env
-    env = create_env(args.env_id, client_id=str(args.task), remotes=args.remotes)
+#     env = create_env(args.env_id, client_id=str(args.task), remotes=args.remotes)
+    env = create_atari_env(args.env_id, mode=mode)
 #     env = record_video_wrap(env, video_dir=video_dir)
-    trainer = A3C(env, args.task, visualize=args.visualize)
+    trainer = A3C(env, args.task, visualize=args.visualize, mode=mode)
 
     # Variable names that start with "local" are not saved in checkpoints.
     if use_tf12_api:
@@ -84,7 +91,7 @@ def run(args, server):
                              save_model_secs=30,
                              save_summaries_secs=30)
 
-    num_global_steps = 100000000
+    num_global_steps = 1000000000
 
     logger.info(
         "Starting session. If this hangs, we're mostly likely waiting to connect to the parameter server. " +
@@ -123,11 +130,11 @@ More tensorflow setup for data parallelism
     cluster['worker'] = all_workers
     return cluster
 
+
 def main(_):
     """
 Setting up Tensorflow for data parallel work
 """
-
     parser = argparse.ArgumentParser(description=None)
     parser.add_argument('-v', '--verbose', action='count', dest='verbosity', default=0, help='Set verbosity.')
     parser.add_argument('--task', default=0, type=int, help='Task index')
@@ -136,7 +143,9 @@ Setting up Tensorflow for data parallel work
     parser.add_argument('--log-dir', default=os.path.expanduser("~/Train"), help='Log directory path')
     parser.add_argument('--env-id', default="PongDeterministic-v3", help='Environment id')
     parser.add_argument('--port', type=int, default=15000, help='Cluster port starting point')
-    parser.add_argument('-r', '--remotes', default=None,
+    parser.add_argument('-t', '--test', type=str, default=None, choices=['d', 's'],
+                        help="Choices: d - deterministic, s - stochastic.")
+    parser.add_argument('--remotes', default=None,
                         help='References to environments to create (e.g. -r 20), '
                              'or the address of pre-existing VNC servers and '
                              'rewarders to use (e.g. -r vnc://localhost:5900+15900,vnc://localhost:5901+15901)')

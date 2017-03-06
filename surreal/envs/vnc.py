@@ -74,9 +74,9 @@ def create_vncatari_env(env_id, client_id, remotes, **_):
     return env
 
 
-def create_atari_env_deepmind(env_id):
+def create_atari_env_deepmind(env_id, mode):
     env = gym.make(env_id)
-    env = wrap_deepmind(env)
+    env = wrap_deepmind(env, mode)
     env = Vectorize(env)
     env = DiagnosticsInfo(env)
     env = Unvectorize(env)
@@ -90,7 +90,7 @@ def record_video_wrap(env, video_dir, record_period=1000, clear_old=True):
                             force=clear_old)
 
 
-def create_atari_env_simple(env_id):
+def create_atari_env_simple(env_id, mode):
     "Legacy code from starter-agent"
     env = gym.make(env_id)
     env = Vectorize(env)

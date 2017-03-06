@@ -15,7 +15,7 @@ use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.L
 LR = 3e-4
 TOTAL_STEPS = 60e6
 OPTIMIZER = 'RMS'
-USE_GAE = True
+USE_GAE = False
 LOCAL_STEPS = 5
 # ================================
 
@@ -164,19 +164,20 @@ def env_runner(env, policy, num_local_steps, summary_writer, render):
 
 
 class A3C(object):
-    def __init__(self, env, task, policy_class=CNNPolicy, visualize=False):
+    def __init__(self, env, task, policy_class=CNNPolicy, visualize=False, mode='train'):
         self.env = env
         self.task = task
+        self.is_train = (mode == 'train')
         worker_device = "/job:worker/task:{}/cpu:0".format(task)
         with tf.device(tf.train.replica_device_setter(1, worker_device=worker_device)):
             with tf.variable_scope("global"):
-                self.network = policy_class(env.observation_space.shape, env.action_space.n)
+                self.network = policy_class(env.observation_space.shape, env.action_space.n, mode)
                 self.global_step = tf.get_variable("global_step", [], tf.int32, initializer=tf.constant_initializer(0, dtype=tf.int32),
                                                    trainable=False)
 
         with tf.device(worker_device):
             with tf.variable_scope("local"):
-                self.local_network = pi = policy_class(env.observation_space.shape, env.action_space.n)
+                self.local_network = pi = policy_class(env.observation_space.shape, env.action_space.n, mode)
                 pi.global_step = self.global_step
 
             self.ac = tf.placeholder(tf.float32, [None, env.action_space.n], name="ac")
@@ -224,12 +225,16 @@ class A3C(object):
             inc_step = self.global_step.assign_add(tf.shape(pi.x)[0])
             lr = tf.train.polynomial_decay(LR, self.global_step, TOTAL_STEPS, 1e-9)
 
-            # each worker has a different set of adam optimizer parameters
-            if OPTIMIZER.lower() == 'adam':
-                opt = tf.train.AdamOptimizer(lr)
+            if self.is_train:
+                # each worker has a different set of adam optimizer parameters
+                if OPTIMIZER.lower() == 'adam':
+                    opt = tf.train.AdamOptimizer(lr)
+                else:
+                    opt = tf.train.RMSPropOptimizer(lr, decay=0.99, epsilon=1e-5)
+                self.train_op = tf.group(opt.apply_gradients(grads_and_vars), inc_step)
             else:
-                opt = tf.train.RMSPropOptimizer(lr, decay=0.99, epsilon=1e-5)
-            self.train_op = tf.group(opt.apply_gradients(grads_and_vars), inc_step)
+                self.train_op = tf.no_op()
+                
             self.summary_writer = None
             self.local_steps = 0
 
@@ -283,6 +288,11 @@ class A3C(object):
                                                      feed_dict)
 
         fetched = sess.run(fetches, feed_dict=feed_dict)
+        
+        # DEBUG
+#         logits = sess.run(self.local_network.sample, feed_dict=feed_dict)
+#         print('DEBUG', logits.shape, logits)
+
 
         if should_compute_summary:
             self.summary_writer.add_summary(tf.Summary.FromString(fetched[0]), fetched[-1])

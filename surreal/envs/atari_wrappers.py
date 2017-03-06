@@ -253,9 +253,11 @@ class ClippedRewardsWrapper(gym.Wrapper):
 
 
 # TODO: set all scale_float=False and use tf.cast instead across all envs
-def wrap_deepmind(env, scale_float=True, crop='auto'):
+def wrap_deepmind(env, mode, scale_float=True, crop='auto'):
     """
     Typical: Pong, Breakout, SpaceInvaders, Seaquest, BeamRider, Enduro, Qbert
+    
+    mode: 'train' or 'test'
     
     crop: 
         True - downsample and crop
@@ -263,17 +265,21 @@ def wrap_deepmind(env, scale_float=True, crop='auto'):
         'auto' - only crop Pong and Breakout
     """
     assert 'NoFrameskip' in env.spec.id
+    is_train = (mode == 'train')
+
     if crop == 'auto':
         NO_CROP_GAMES = [] # not sure whether Qbert should be cropped or not
         crop = not any((game in env.spec.id) for game in NO_CROP_GAMES)
         print('wrap_deepmind: crop =', crop)
-    env = EpisodicLifeEnv(env)
+    if is_train:
+        env = EpisodicLifeEnv(env)
     env = NoopResetEnv(env, noop_max=30)
     env = MaxAndSkipEnv(env, skip=4, max=True)
     env = FireResetEnv(env)
     env = ProcessFrame84(env, crop=crop)
     env = StackFrameWrapper(env, buff=4)
-    env = ClippedRewardsWrapper(env)
+    if is_train:
+        env = ClippedRewardsWrapper(env)
     if scale_float:
         env = RescaleFrameFloat(env)
     return env

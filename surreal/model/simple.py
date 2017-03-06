@@ -47,6 +47,9 @@ def categorical_sample(logits, d):
     return tf.one_hot(value, d)
 
 
+def argmax_sample(logits, d):
+    return tf.one_hot(tf.argmax(logits, axis=1), d)
+
 
 class OLD_LSTMPolicy(object):
     "Original policy from starter-agent"
@@ -163,7 +166,13 @@ class LSTMPolicy(Policy):
 
 
 class CNNPolicy(Policy):
-    def __init__(self, ob_space, ac_space):
+    def __init__(self, ob_space, ac_space, mode):
+        """
+        mode:
+        - train
+        - test-s: stochastic testing (multinomial sampling)
+        - test-d: deterministic testing (argmax)
+        """
         self.x = x = tf.placeholder(tf.float32, [None] + list(ob_space), name='state')
         x = tf.nn.relu(conv2d(x, 16, "l1", [8, 8], [4, 4]))  # -> [21, 21, 32]
         x = tf.nn.relu(conv2d(x, 32, "l2", [4, 4], [2, 2]))  # -> [11, 11, 64]
@@ -176,8 +185,14 @@ class CNNPolicy(Policy):
         self.vf = tf.reshape(linear(x, 1, "value"), [-1])
         self.state_in = []
         self.state_out = []
-        self.sample = categorical_sample(self.logits, ac_space)[0, :]
+        if mode in ['train', 'test-s']:
+            self.sample = categorical_sample(self.logits, ac_space)[0, :]
+        elif mode == 'test-d':
+            self.sample = argmax_sample(self.logits, ac_space)[0, :]
+        else:
+            raise ValueError("Unknown mode: {}. Must be one of 'train', 'test")
         self.var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, tf.get_variable_scope().name)
+        
 
     def get_initial_features(self):
         return []
