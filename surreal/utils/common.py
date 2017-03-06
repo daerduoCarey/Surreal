@@ -274,6 +274,41 @@ def pack_args(args):
     else:
         return args
 
+
+class CheckInterval(object):
+    def __init__(self, interval, init_value=0):
+        self.interval = interval
+        self.counter = init_value
+
+    
+    def trigger(self, value):
+        """
+        Returns: True if the value is over an interval
+        """
+        if value > self.counter + self.interval:
+            self.counter = value
+            return True
+        else:
+            return False
+
+
+class CheckPeriodic(object):
+    def __init__(self, period, first=False):
+        """
+        first: if True, triggers at the first time
+        """
+        self.period = period
+        self.counter = -1 if first else 0
+
+    
+    def trigger(self):
+        """
+        Returns: True if `trigger()` has been called `period` times
+        """
+        self.counter += 1
+        return self.counter % self.period == 0
+
+
 # ======================== ArgParser ========================
 class _SingleMetavarFormatter(argparse.HelpFormatter):
     "Helper for better metavar display in ArgParser"

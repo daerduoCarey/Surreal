@@ -1,5 +1,6 @@
 from __future__ import print_function
 from collections import namedtuple
+import time
 import numpy as np
 import tensorflow as tf
 from surreal.model.simple import *
@@ -8,14 +9,14 @@ import threading
 import distutils.version
 from surreal.utils.image import *
 from surreal.utils.io.filesys import *
-use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
+from surreal.utils.common import CheckInterval, CheckPeriodic
 
 
 # ============ hypers ============
 LR = 3e-4
-TOTAL_STEPS = 60e6
-OPTIMIZER = 'RMS'
-USE_GAE = False
+TOTAL_STEPS = 80e6
+OPTIMIZER = 'rms'
+USE_GAE = True
 LOCAL_STEPS = 5
 # ================================
 
@@ -172,6 +173,8 @@ class A3C(object):
         with tf.device(tf.train.replica_device_setter(1, worker_device=worker_device)):
             with tf.variable_scope("global"):
                 self.network = policy_class(env.observation_space.shape, env.action_space.n, mode)
+            # tf.train.Supervisor will display global_step on TB. Create a new varscope to workaround the naming.
+            with tf.variable_scope("diagnostics"):
                 self.global_step = tf.get_variable("global_step", [], tf.int32, initializer=tf.constant_initializer(0, dtype=tf.int32),
                                                    trainable=False)
 
@@ -208,12 +211,12 @@ class A3C(object):
 
             grads = tf.gradients(self.loss, pi.var_list)
 
-            tf.summary.scalar("model/policy_loss", pi_loss / bs)
-            tf.summary.scalar("model/value_loss", vf_loss / bs)
-            tf.summary.scalar("model/entropy", entropy / bs)
-            tf.summary.image("model/state", pi.x)
-            tf.summary.scalar("model/grad_global_norm", tf.global_norm(grads))
-            tf.summary.scalar("model/var_global_norm", tf.global_norm(pi.var_list))
+            tf.summary.scalar("diagnostics/policy_loss", pi_loss / bs)
+            tf.summary.scalar("diagnostics/value_loss", vf_loss / bs)
+            tf.summary.scalar("diagnostics/entropy", entropy / bs)
+            tf.summary.image("diagnostics/state", pi.x)
+            tf.summary.scalar("diagnostics/grad_global_norm", tf.global_norm(grads))
+            tf.summary.scalar("diagnostics/var_global_norm", tf.global_norm(pi.var_list))
             self.summary_op = tf.summary.merge_all()
 
             grads, _ = tf.clip_by_global_norm(grads, 5.0)
@@ -236,15 +239,18 @@ class A3C(object):
                 self.train_op = tf.no_op()
                 
             self.summary_writer = None
-            self.local_steps = 0
+            self.summary_period = CheckPeriodic(100)
+            self.eval_interval = CheckInterval(20000)
 
 
     def start(self, sess, summary_writer):
 #         self.runner.start_runner(sess, summary_writer)
         self.summary_writer = summary_writer
+        # don't limit eval mode
+        num_local_steps=LOCAL_STEPS if self.is_train else 10000000
         self.env_runner = env_runner(self.env, 
                                      self.local_network, 
-                                     num_local_steps=LOCAL_STEPS, 
+                                     num_local_steps=num_local_steps,
                                      summary_writer=self.summary_writer, 
                                      render=False)
 
@@ -265,13 +271,19 @@ class A3C(object):
         and updates the parameters.  The update is then sent to the parameter
         server.
         """
-        sess.run(self.sync)  # copy weights from shared to local
+        # print('DEBUG', self.global_step.eval())
+        if (self.is_train or 
+            self.eval_interval.trigger(self.global_step.eval())):
+            # in eval mode, only evaluate every N steps.
+            sess.run(self.sync)  # copy weights from shared to local
+            rollout = next(self.env_runner)
         
-        rollout = next(self.env_runner)
-        batch = process_rollout(rollout, gamma=0.99, lambda_=1.0)
-#         print('DEBUG BATCH', batch.si.shape, batch.a, batch.adv, batch.r, batch.features)
+        if not self.is_train:
+            time.sleep(10) # don't evaluate too often
+            return
 
-        should_compute_summary = self.task == 0 and self.local_steps % 11 == 0
+        batch = process_rollout(rollout, gamma=0.99, lambda_=1.0)
+        should_compute_summary = self.task == 0 and self.summary_period.trigger()
 
         if should_compute_summary:
             fetches = [self.summary_op, self.train_op, self.global_step]
@@ -288,13 +300,7 @@ class A3C(object):
                                                      feed_dict)
 
         fetched = sess.run(fetches, feed_dict=feed_dict)
-        
-        # DEBUG
-#         logits = sess.run(self.local_network.sample, feed_dict=feed_dict)
-#         print('DEBUG', logits.shape, logits)
-
 
         if should_compute_summary:
             self.summary_writer.add_summary(tf.Summary.FromString(fetched[0]), fetched[-1])
             self.summary_writer.flush()
-        self.local_steps += 1

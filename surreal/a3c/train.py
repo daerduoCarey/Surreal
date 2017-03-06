@@ -55,7 +55,7 @@ def a3c_command(session,
         base_cmd += ['--test', test_mode]
 
     if remotes is None:
-        remotes = ["1"] * num_workers
+        remotes = ["1"] * (num_workers + 2)
     else:
         remotes = remotes.split(',')
         assert len(remotes) == num_workers
@@ -66,12 +66,26 @@ def a3c_command(session,
     for i in range(num_workers):
         win = "w-{}".format(i)
         windows.append(win)
-        cmds_map += [new_cmd(session, win, 
-                             base_cmd + ["--job-name", "worker", "--task", str(i), "--remotes", remotes[i], "--port", cluster_port], mode, logdir, shell)]
+        cmd = base_cmd + ["--job-name", "worker", 
+                          "--task", str(i), 
+                          "--remotes", remotes[i], 
+                          "--port", cluster_port]
+        cmds_map += [new_cmd(session, win, cmd, mode, logdir, shell)]
 
     cmds_map += [new_cmd(session, "tb", ["tensorboard", "--logdir", logdir, "--port", tb_port], mode, logdir, shell)]
-#     if mode == 'tmux': cmds_map += [new_cmd(session, "htop", ["htop"], mode, logdir, shell)]
     windows += ['tb']
+
+    # ========= evaluation threads ==========
+    for i in range(2):
+        test_mode = ['s', 'd'][i]
+        win = 'eval-' + test_mode
+        windows.append(win)
+        cmd = base_cmd + ["--job-name", "worker", 
+                          "--task", str(num_workers + i), 
+                          "--remotes", remotes[i], 
+                          "--port", cluster_port,
+                          "--test", test_mode]
+        cmds_map += [new_cmd(session, win, cmd, mode, logdir, shell)]
 
     notes = []
     cmds = [
@@ -132,8 +146,8 @@ parser.add_argument('--visualize', action='store_true',
                     help="Visualize the gym environment by running env.render() between each timestep")
 parser.add_argument('-r', '--resume', action='store_true',
                     help="Do not delete the old save dir of parameters, restart the training from scratch.")
-parser.add_argument('-t', '--test', type=str, default=None, choices=['d', 's'],
-                    help="Choices: d - deterministic, s - stochastic.")
+parser.add_argument('-t', '--test', action='store_true', 
+                    help='run evaluation mode')
 
 
 def main():

@@ -51,14 +51,9 @@ def run(args, server):
     trainer = A3C(env, args.task, visualize=args.visualize, mode=mode)
 
     # Variable names that start with "local" are not saved in checkpoints.
-    if use_tf12_api:
-        variables_to_save = [v for v in tf.global_variables() if not v.name.startswith("local")]
-        init_op = tf.variables_initializer(variables_to_save)
-        init_all_op = tf.global_variables_initializer()
-    else:
-        variables_to_save = [v for v in tf.all_variables() if not v.name.startswith("local")]
-        init_op = tf.initialize_variables(variables_to_save)
-        init_all_op = tf.initialize_all_variables()
+    variables_to_save = [v for v in tf.global_variables() if not v.name.startswith("local")]
+    init_op = tf.variables_initializer(variables_to_save)
+    init_all_op = tf.global_variables_initializer()
     saver = FastSaver(variables_to_save)
 
     var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, tf.get_variable_scope().name)
@@ -71,14 +66,11 @@ def run(args, server):
         ses.run(init_all_op)
 
     config = tf.ConfigProto(device_filters=["/job:ps", "/job:worker/task:{}/cpu:0".format(args.task)])
-    event_dir = f_join(args.log_dir, 'train')
+    event_dir = f_join(args.log_dir, mode)
 
-    if use_tf12_api:
-        summary_writer = tf.summary.FileWriter(event_dir + "_%d" % args.task)
-    else:
-        summary_writer = tf.train.SummaryWriter(event_dir + "_%d" % args.task)
+    event_suffix = '_{}'.format(args.task) if mode == 'train' else ''
+    summary_writer = tf.summary.FileWriter(event_dir + event_suffix)
 
-    logger.info("Events directory: %s_%s", event_dir, args.task)
     sv = tf.train.Supervisor(is_chief=(args.task == 0),
                              logdir=event_dir,
                              saver=saver,
@@ -92,7 +84,6 @@ def run(args, server):
                              save_summaries_secs=30)
 
     num_global_steps = 1000000000
-
     logger.info(
         "Starting session. If this hangs, we're mostly likely waiting to connect to the parameter server. " +
         "One common cause is that the parameter server DNS name isn't resolving yet, or is misspecified.")
@@ -110,10 +101,7 @@ def run(args, server):
     logger.info('reached %s steps. worker stopped.', global_step)
 
 
-def cluster_spec(num_workers, num_ps, port):
-    """
-More tensorflow setup for data parallelism
-"""
+def cluster_spec(num_workers, num_eval, num_ps, port):
     cluster = {}
 
     all_ps = []
@@ -124,7 +112,7 @@ More tensorflow setup for data parallelism
     cluster['ps'] = all_ps
 
     all_workers = []
-    for _ in range(num_workers):
+    for _ in range(num_workers + num_eval):
         all_workers.append('{}:{}'.format(host, port))
         port += 1
     cluster['worker'] = all_workers
@@ -138,7 +126,7 @@ Setting up Tensorflow for data parallel work
     parser = argparse.ArgumentParser(description=None)
     parser.add_argument('-v', '--verbose', action='count', dest='verbosity', default=0, help='Set verbosity.')
     parser.add_argument('--task', default=0, type=int, help='Task index')
-    parser.add_argument('--job-name', default="worker", help='worker or ps')
+    parser.add_argument('--job-name', default="worker", choices=['worker', 'ps'], help='worker or ps')
     parser.add_argument('--num-workers', default=1, type=int, help='Number of workers')
     parser.add_argument('--log-dir', default=os.path.expanduser("~/Train"), help='Log directory path')
     parser.add_argument('--env-id', default="PongDeterministic-v3", help='Environment id')
@@ -155,7 +143,7 @@ Setting up Tensorflow for data parallel work
                         help="visualize the gym environment by running env.render() between each timestep")
 
     args = parser.parse_args()
-    spec = cluster_spec(args.num_workers, 1, args.port)
+    spec = cluster_spec(args.num_workers, 2, 1, args.port)
     cluster = tf.train.ClusterSpec(spec).as_cluster_def()
 
     def shutdown(signal, frame):
