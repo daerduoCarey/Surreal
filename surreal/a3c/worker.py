@@ -8,12 +8,11 @@ import sys, signal
 import time
 import os
 import universe
-from surreal.a3c.A3C import A3C
+from surreal.a3c.A3C import A3C, POLICY
 from surreal.envs.vnc import *
 from surreal.utils.io.filesys import *
 from surreal.utils.image import *
 import distutils.version
-use_tf12_api = distutils.version.LooseVersion(tf.VERSION) >= distutils.version.LooseVersion('0.12.0')
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -46,7 +45,7 @@ def run(args, server):
         
     # create env
 #     env = create_env(args.env_id, client_id=str(args.task), remotes=args.remotes)
-    env = create_atari_env(args.env_id, mode=mode)
+    env = create_atari_env(args.env_id, mode=mode, use_stack=(POLICY == 'cnn'))
 #     env = record_video_wrap(env, video_dir=video_dir)
     trainer = A3C(env, args.task, visualize=args.visualize, mode=mode)
 

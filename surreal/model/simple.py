@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.rnn as rnn
 
+
 def normalized_columns_initializer(std=1.0):
     def _initializer(shape, dtype=None, partition_info=None):
         out = np.random.randn(*shape).astype(np.float32)
@@ -99,6 +100,13 @@ class OLD_LSTMPolicy(object):
 
 
 class Policy(object):
+    def __init__(self, ob_space, ac_space, mode):
+        self.ob_space = ob_space
+        self.ac_space = ac_space
+        self.mode = mode
+        print('ob_space', self.ob_space, 'ac_space', self.ac_space, 'mode', self.mode)
+        
+        
     def state_in_feed(self, values, feed=None):
         """
         Augment feed for state_in
@@ -126,12 +134,25 @@ class Policy(object):
         feed = {self.x: [ob]}
         feed = self.state_in_feed(last_states, feed)
         return sess.run(self.vf, feed)[0]
+    
+    
+    def get_sample(self):
+        if self.mode in ['train', 'test-s']:
+            return categorical_sample(self.logits, self.ac_space)[0, :]
+        elif self.mode == 'test-d':
+            return argmax_sample(self.logits, self.ac_space)[0, :]
+        else:
+            raise ValueError("Unknown mode: {}. Must be one of 'train', 'test")
+    
 
 
 class LSTMPolicy(Policy):
-    def __init__(self, ob_space, ac_space):
+    def __init__(self, ob_space, ac_space, mode):
+        super(LSTMPolicy, self).__init__(ob_space, ac_space, mode)
         self.x = x = tf.placeholder(tf.float32, [None] + list(ob_space))
 
+#         x = tf.nn.relu(conv2d(x, 16, "l1", [8, 8], [4, 4]))
+#         x = tf.nn.relu(conv2d(x, 32, "l2", [4, 4], [2, 2]))
         for i in range(4):
             x = tf.nn.elu(conv2d(x, 32, "l{}".format(i + 1), [3, 3], [2, 2]))
         # introduce a "fake" batch dimension of 1 after flatten so that we can do LSTM over time dim
@@ -155,11 +176,11 @@ class LSTMPolicy(Policy):
             time_major=False)
         lstm_c, lstm_h = lstm_state
         x = tf.reshape(lstm_outputs, [-1, size])
-        self.logits = linear(x, ac_space, "action", normalized_columns_initializer(0.01))
-        self.vf = tf.reshape(linear(x, 1, "value", normalized_columns_initializer(1.0)), [-1])
+        self.logits = linear(x, ac_space, "action")
+        self.vf = tf.reshape(linear(x, 1, "value"), [-1])
         self.state_out = [lstm_c[:1, :], lstm_h[:1, :]]
-        self.sample = categorical_sample(self.logits, ac_space)[0, :]
         self.var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, tf.get_variable_scope().name)
+        self.sample = self.get_sample()
 
     def get_initial_features(self):
         return self.state_init
@@ -173,9 +194,10 @@ class CNNPolicy(Policy):
         - test-s: stochastic testing (multinomial sampling)
         - test-d: deterministic testing (argmax)
         """
+        super(CNNPolicy, self).__init__(ob_space, ac_space, mode)
         self.x = x = tf.placeholder(tf.float32, [None] + list(ob_space), name='state')
-        x = tf.nn.relu(conv2d(x, 16, "l1", [8, 8], [4, 4]))  # -> [21, 21, 32]
-        x = tf.nn.relu(conv2d(x, 32, "l2", [4, 4], [2, 2]))  # -> [11, 11, 64]
+        x = tf.nn.relu(conv2d(x, 16, "l1", [8, 8], [4, 4]))
+        x = tf.nn.relu(conv2d(x, 32, "l2", [4, 4], [2, 2]))
         x = flatten(x)
 #         x = tf.nn.relu(linear(x, 256, "lin", normalized_columns_initializer(1.0)))
 #         self.logits = linear(x, ac_space, "action", normalized_columns_initializer(0.01))
@@ -185,13 +207,8 @@ class CNNPolicy(Policy):
         self.vf = tf.reshape(linear(x, 1, "value"), [-1])
         self.state_in = []
         self.state_out = []
-        if mode in ['train', 'test-s']:
-            self.sample = categorical_sample(self.logits, ac_space)[0, :]
-        elif mode == 'test-d':
-            self.sample = argmax_sample(self.logits, ac_space)[0, :]
-        else:
-            raise ValueError("Unknown mode: {}. Must be one of 'train', 'test")
         self.var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, tf.get_variable_scope().name)
+        self.sample = self.get_sample()
         
 
     def get_initial_features(self):

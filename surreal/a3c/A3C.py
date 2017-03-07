@@ -5,11 +5,14 @@ import numpy as np
 import tensorflow as tf
 from surreal.model.simple import *
 import six.moves.queue as queue
+import logging
 import threading
-import distutils.version
 from surreal.utils.image import *
 from surreal.utils.io.filesys import *
 from surreal.utils.common import CheckInterval, CheckPeriodic
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 # ============ hypers ============
@@ -18,8 +21,8 @@ TOTAL_STEPS = 80e6
 OPTIMIZER = 'rms'
 USE_GAE = True
 LOCAL_STEPS = 5
+POLICY = 'cnn' if 1 else 'lstm'
 # ================================
-
 
 def discount_(rewards, gamma, dones=None):
     """
@@ -165,10 +168,14 @@ def env_runner(env, policy, num_local_steps, summary_writer, render):
 
 
 class A3C(object):
-    def __init__(self, env, task, policy_class=CNNPolicy, visualize=False, mode='train'):
+    def __init__(self, env, task, policy_class=POLICY, visualize=False, mode='train'):
         self.env = env
         self.task = task
         self.is_train = (mode == 'train')
+        if isinstance(policy_class, str):
+            policy_class = CNNPolicy if policy_class == 'cnn' else LSTMPolicy
+        logger.info('Policy class: {}'.format(policy_class))
+
         worker_device = "/job:worker/task:{}/cpu:0".format(task)
         with tf.device(tf.train.replica_device_setter(1, worker_device=worker_device)):
             with tf.variable_scope("global"):

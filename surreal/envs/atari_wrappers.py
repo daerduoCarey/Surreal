@@ -253,7 +253,7 @@ class ClippedRewardsWrapper(gym.Wrapper):
 
 
 # TODO: set all scale_float=False and use tf.cast instead across all envs
-def wrap_deepmind(env, mode, scale_float=True, crop='auto'):
+def wrap_deepmind(env, mode, scale_float=True, crop='auto', use_stack=True):
     """
     Typical: Pong, Breakout, SpaceInvaders, Seaquest, BeamRider, Enduro, Qbert
     
@@ -277,7 +277,8 @@ def wrap_deepmind(env, mode, scale_float=True, crop='auto'):
     env = MaxAndSkipEnv(env, skip=4, max=True)
     env = FireResetEnv(env)
     env = ProcessFrame84(env, crop=crop)
-    env = StackFrameWrapper(env, buff=4)
+    if use_stack:
+        env = StackFrameWrapper(env, buff=4)
     if is_train:
         env = ClippedRewardsWrapper(env)
     if scale_float:
