@@ -8,7 +8,7 @@ import sys, signal
 import time
 import os
 import universe
-from surreal.a3c.A3C import A3C, POLICY
+from surreal.a3c.A3C import A3C, POLICY, ELASTIC
 from surreal.envs.vnc import *
 from surreal.utils.io.filesys import *
 from surreal.utils.image import *
@@ -51,8 +51,14 @@ def run(args, server):
 
     # Variable names that start with "local" are not saved in checkpoints.
     variables_to_save = [v for v in tf.global_variables() if not v.name.startswith("local")]
+    variables_local = [v for v in tf.global_variables() if v.name.startswith("local")]
+    # DEBUG
+    for v in tf.global_variables():
+        print(v.name, v.get_shape())
+    print('='*80)
     init_op = tf.variables_initializer(variables_to_save)
     init_all_op = tf.global_variables_initializer()
+    init_local_op = tf.variables_initializer(variables_local)
     saver = FastSaver(variables_to_save)
 
     var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, tf.get_variable_scope().name)
@@ -87,7 +93,9 @@ def run(args, server):
         "Starting session. If this hangs, we're mostly likely waiting to connect to the parameter server. " +
         "One common cause is that the parameter server DNS name isn't resolving yet, or is misspecified.")
     with sv.managed_session(server.target, config=config) as sess, sess.as_default():
-        sess.run(trainer.sync)
+        if ELASTIC:
+            sess.run(init_local_op)
+        sess.run(trainer.global_sync)
         trainer.start(sess, summary_writer)
         global_step = sess.run(trainer.global_step)
         logger.info("Starting training at step=%d", global_step)

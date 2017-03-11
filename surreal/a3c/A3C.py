@@ -22,6 +22,12 @@ OPTIMIZER = 'rms'
 USE_GAE = True
 LOCAL_STEPS = 5
 POLICY = 'cnn' if 1 else 'lstm'
+ELASTIC = False
+ELASTIC_PERIOD = 4
+ELASTIC_COEFF = 0.8 / 16
+
+if not ELASTIC:
+    ELASTIC_PERIOD = 1
 # ================================
 
 def discount_(rewards, gamma, dones=None):
@@ -124,12 +130,6 @@ def env_runner(env, policy, num_local_steps, summary_writer, render):
             # argmax to convert from one-hot
             state, reward, terminal, info = env.step(action.argmax())
             
-            # TEMP
-#             import random
-#             if random.randint(0, 10000) == 5:
-#                 img = (state * 255.).astype(np.uint8)
-#                 save_img(img, f_expand('~/Temp/imgs/{}.png'.format(random.randint(1, 1000000000000))))
-            
             if render:
                 env.render()
 
@@ -179,7 +179,7 @@ class A3C(object):
         worker_device = "/job:worker/task:{}/cpu:0".format(task)
         with tf.device(tf.train.replica_device_setter(1, worker_device=worker_device)):
             with tf.variable_scope("global"):
-                self.network = policy_class(env.observation_space.shape, env.action_space.n, mode)
+                self.global_network = policy_class(env.observation_space.shape, env.action_space.n, mode)
             # tf.train.Supervisor will display global_step on TB. Create a new varscope to workaround the naming.
             with tf.variable_scope("diagnostics"):
                 self.global_step = tf.get_variable("global_step", [], tf.int32, initializer=tf.constant_initializer(0, dtype=tf.int32),
@@ -216,7 +216,9 @@ class A3C(object):
             # we run the policy before we update the parameters.
 #             self.runner = RunnerThread(env, pi, 20, visualize)
 
-            grads = tf.gradients(self.loss, pi.var_list)
+            local_vars = self.local_network.var_list
+            global_vars = self.global_network.var_list
+            grads = tf.gradients(self.loss, local_vars)
 
             tf.summary.scalar("diagnostics/policy_loss", pi_loss / bs)
             tf.summary.scalar("diagnostics/value_loss", vf_loss / bs)
@@ -229,9 +231,17 @@ class A3C(object):
             grads, _ = tf.clip_by_global_norm(grads, 5.0)
 
             # copy weights from the parameter server to the local model
-            self.sync = tf.group(*[v1.assign(v2) for v1, v2 in zip(pi.var_list, self.network.var_list)])
-
-            grads_and_vars = list(zip(grads, self.network.var_list))
+            self.global_sync = tf.group(*[v1.assign(v2) for v1, v2 in zip(local_vars, global_vars)])
+            if ELASTIC:
+                diffs = [ELASTIC_COEFF * (v1 - v2) for v1, v2 in zip(local_vars, global_vars)]
+                update_local = [v.assign_sub(diff) for v, diff in zip(local_vars, diffs)]
+                update_global = [v.assign_add(diff) for v, diff in zip(global_vars, diffs)]
+                self.sync = tf.group(*(update_local + update_global))
+                grad_vars = local_vars
+            else:
+                self.sync = self.global_sync
+                grad_vars = global_vars
+                
             inc_step = self.global_step.assign_add(tf.shape(pi.x)[0])
             lr = tf.train.polynomial_decay(LR, self.global_step, TOTAL_STEPS, 1e-9)
 
@@ -241,12 +251,14 @@ class A3C(object):
                     opt = tf.train.AdamOptimizer(lr)
                 else:
                     opt = tf.train.RMSPropOptimizer(lr, decay=0.99, epsilon=1e-5)
-                self.train_op = tf.group(opt.apply_gradients(grads_and_vars), inc_step)
+                self.train_op = tf.group(opt.apply_gradients(list(zip(grads, grad_vars))), 
+                                         inc_step)
             else:
                 self.train_op = tf.no_op()
                 
             self.summary_writer = None
             self.summary_period = CheckPeriodic(100)
+            self.elastic_period = CheckPeriodic(ELASTIC_PERIOD)
             self.eval_interval = CheckInterval(20000)
 
 
@@ -262,33 +274,24 @@ class A3C(object):
                                      render=False)
 
 
-    def pull_batch_from_queue(self):
-        rollout = self.runner.queue.get(timeout=600.0)
-        while not rollout.terminal:
-            try:
-                rollout.extend(self.runner.queue.get_nowait())
-            except queue.Empty:
-                break
-        return rollout
+    def evaluate(self, sess):
+        # print('DEBUG', self.global_step.eval())
+        if self.eval_interval.trigger(self.global_step.eval()):
+            sess.run(self.global_sync)
+            next(self.env_runner)
+        time.sleep(10) # don't evaluate too often
 
 
-    def process(self, sess):
+    def train(self, sess):
         """
         process grabs a rollout that's been produced by the thread runner,
         and updates the parameters.  The update is then sent to the parameter
         server.
         """
-        # print('DEBUG', self.global_step.eval())
-        if (self.is_train or 
-            self.eval_interval.trigger(self.global_step.eval())):
-            # in eval mode, only evaluate every N steps.
-            sess.run(self.sync)  # copy weights from shared to local
-            rollout = next(self.env_runner)
+        if not ELASTIC or self.elastic_period.trigger():
+            sess.run(self.sync)
+        rollout = next(self.env_runner)
         
-        if not self.is_train:
-            time.sleep(10) # don't evaluate too often
-            return
-
         batch = process_rollout(rollout, gamma=0.99, lambda_=1.0)
         should_compute_summary = self.task == 0 and self.summary_period.trigger()
 
@@ -311,3 +314,10 @@ class A3C(object):
         if should_compute_summary:
             self.summary_writer.add_summary(tf.Summary.FromString(fetched[0]), fetched[-1])
             self.summary_writer.flush()
+    
+    
+    def process(self, sess):
+        if self.is_train:
+            self.train(sess)
+        else:
+            self.evaluate(sess)
